@@ -31,17 +31,52 @@ function createNav() {
 
 	const { subscribe, set } = writable<View>(initial);
 
+	let currentHash = typeof window !== 'undefined' ? (window.location.hash || '#/') : '#/';
+	const scrollPositions = new Map<string, number>();
+
 	function navigate(view: View) {
 		if (typeof window !== 'undefined') {
-			window.location.hash = viewToHash(view);
+			const newHash = viewToHash(view);
+			if (currentHash === newHash) {
+				window.scrollTo({ top: 0, behavior: 'smooth' });
+				return;
+			}
+			scrollPositions.set(currentHash, window.scrollY);
+			window.location.hash = newHash;
+			currentHash = newHash;
+			set(view);
+			
+			setTimeout(() => {
+				const saved = scrollPositions.get(newHash);
+				if (saved !== undefined) {
+					window.scrollTo({ top: saved, behavior: 'instant' });
+				} else {
+					window.scrollTo({ top: 0, behavior: 'smooth' });
+				}
+			}, 10);
+		} else {
+			set(view);
 		}
-		set(view);
 	}
 
 	// Sync store when user presses Back/Forward (or edits hash manually)
 	if (typeof window !== 'undefined') {
 		window.addEventListener('hashchange', () => {
-			set(parseHash(window.location.hash));
+			const newHash = window.location.hash || '#/';
+			if (currentHash === newHash) return; // Ignore if fired by navigate()
+
+			scrollPositions.set(currentHash, window.scrollY);
+			currentHash = newHash;
+			set(parseHash(newHash));
+			
+			setTimeout(() => {
+				const saved = scrollPositions.get(newHash);
+				if (saved !== undefined) {
+					window.scrollTo({ top: saved, behavior: 'instant' });
+				} else {
+					window.scrollTo({ top: 0, behavior: 'smooth' });
+				}
+			}, 10);
 		});
 	}
 

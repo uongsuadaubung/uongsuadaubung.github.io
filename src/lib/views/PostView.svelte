@@ -33,7 +33,6 @@
 	const title = $derived(String(meta.title ?? 'Untitled'));
 	const date = $derived(String(meta.date ?? ''));
 	const tags = $derived(Array.isArray(meta.tags) ? (meta.tags as string[]) : []);
-	const description = $derived(String(meta.description ?? ''));
 	const formatted = $derived(
 		date
 			? new Date(date).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long', day: 'numeric' })
@@ -63,7 +62,6 @@
 					</div>
 				{/if}
 				<h1 class="post-title">{title}</h1>
-				{#if description}<p class="post-description">{description}</p>{/if}
 				<div class="post-meta">
 					{#if formatted}<time datetime={date}>{formatted}</time>{/if}
 				</div>
@@ -142,13 +140,6 @@
 		line-height: 1.2;
 		color: var(--text-heading);
 		margin-bottom: var(--space-4);
-	}
-
-	.post-description {
-		font-size: 1.1rem;
-		color: var(--text-secondary);
-		line-height: 1.65;
-		margin-bottom: var(--space-5);
 	}
 
 	.post-meta {

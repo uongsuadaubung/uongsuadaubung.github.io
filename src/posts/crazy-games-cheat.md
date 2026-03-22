@@ -14,7 +14,7 @@ Tôi chọn thử 1 game Mage Tower Idle Defense để chơi thì thấy nó cũ
 
 ![minh-hoa](/images/crazy-games-cheat/image-02.png)
 
-"Mage Tower Idle Defense là một game chiến thuật nhàn rỗi trên Crazy Games, nơi bạn nhập vai pháp sư bảo vệ tòa tháp khỏi những đợt quái vật tấn công. Người chơi có thể mở khóa phép thuật mạnh mẽ, nâng cấp rune và kỹ năng, hoàn thành nhiệm vụ hàng ngày để tăng sức mạnh ngay cả khi không trực tuyến. Game được phát triển bởi JellyBeans Studios, chơi trực tiếp trên trình duyệt, không cần tải về.​"
+> Mage Tower Idle Defense là một game chiến thuật nhàn rỗi trên Crazy Games, nơi bạn nhập vai pháp sư bảo vệ tòa tháp khỏi những đợt quái vật tấn công. Người chơi có thể mở khóa phép thuật mạnh mẽ, nâng cấp rune và kỹ năng, hoàn thành nhiệm vụ hàng ngày để tăng sức mạnh ngay cả khi không trực tuyến. Game được phát triển bởi JellyBeans Studios, chơi trực tiếp trên trình duyệt, không cần tải về.​
 
 Biết là chơi game trong giờ làm việc là không đúng, nhưng hôm nay ở đây chúng ta trao đổi học thuật, cụ thể là cheat vì cái game này nếu chơi tử tế phải cày cuốc cực kì mệt nên là mình không đủ kiên nhẫn mặc dù là game Idle 😢
 
@@ -26,9 +26,9 @@ Sau khi chơi vài ván thì theo thói quen nghề nghiệp mình mở Inspect 
 
 Game chạy trong 1 cái domain khác "play.jellybeansstudios.com" qua iframe, nó tải thêm 
 
-- https://sdk.crazygames.com/crazygames-sdk-v3.js
-- https://play.jellybeansstudios.com/crazygames/magetower/16227719/assets/MageTower.82b9a147.loader.js
-- https://play.jellybeansstudios.com/crazygames/magetower/16227719/assets/MageTower.82b9a147.framework.js
+- `https://sdk.crazygames.com/crazygames-sdk-v3.js`
+- `https://play.jellybeansstudios.com/crazygames/magetower/16227719/assets/MageTower.82b9a147.loader.js`
+- `https://play.jellybeansstudios.com/crazygames/magetower/16227719/assets/MageTower.82b9a147.framework.js`
 
 sau đó refresh trang 1 lần để tìm kiếm thông tin thấy
 
@@ -52,9 +52,11 @@ Bên Storage thì thế này
 
 ![minh-hoa](/images/crazy-games-cheat/image-10.png)
 
-Giải mã base64 thì sẽ có nội dung đọc được nhưng ta sẽ chỉ tập trung vào mấy trường như gold, soulds, gems ở đây thôi nhé
+Giải mã base64 thì sẽ có nội dung đọc được nhưng ta sẽ chỉ tập trung vào mấy trường như `gold`, `souls`, `gems` ở đây thôi nhé
 
-> `{"Id":"gold","Type":"Currency","Balance":<span style="color: red;">AAAAA</span>},{"Id":"souls","Type":"Currency","Balance":<span style="color: red;">BBBBB</span>},{"Id":"xp","Type":"Experience","Balance":CCCCC},{"Id":"gems","Type":"Currency","Balance":<span style="color: red;">DDDDD</span>},{"Id":"level","Type":"Experience","Balance":EEEEE},}`
+```json
+{"Id":"gold","Type":"Currency","Balance":"AAAAA"},{"Id":"souls","Type":"Currency","Balance":"BBBBB"},{"Id":"xp","Type":"Experience","Balance":CCCCC},{"Id":"gems","Type":"Currency","Balance":"DDDDD"},{"Id":"level","Type":"Experience","Balance":EEEEE},}
+```
 
 Giờ phân tích lên kế hoạch gian lận 1 chút nào: trước mắt thì mình thấy có 2 cách, 
 
