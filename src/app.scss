@@ -238,7 +238,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 // =============================================
-// SHIKI CODE BLOCKS (dual theme)
+// HIGHLIGHT.JS CODE BLOCKS
 // =============================================
 
 .code-block {
@@ -260,15 +260,6 @@ h1, h2, h3, h4, h5, h6 {
 			font-size: inherit;
 		}
 	}
-
-	// Show correct theme
-	.shiki.github-dark { display: block; }
-	.shiki.github-light { display: none; }
-}
-
-[data-theme='light'] .code-block {
-	.shiki.github-dark { display: none; }
-	.shiki.github-light { display: block; }
 }
 
 // =============================================
