@@ -61,7 +61,6 @@
 						{#each tags as tag}<span class="tag">#{tag}</span>{/each}
 					</div>
 				{/if}
-				<h1 class="post-title">{title}</h1>
 				<div class="post-meta">
 					{#if formatted}<time datetime={date}>{formatted}</time>{/if}
 				</div>
@@ -132,14 +131,6 @@
 		padding: 2px var(--space-2);
 		border-radius: var(--radius-full);
 		font-weight: 500;
-	}
-
-	.post-title {
-		font-size: clamp(1.8rem, 4vw, 2.8rem);
-		letter-spacing: -0.03em;
-		line-height: 1.2;
-		color: var(--text-heading);
-		margin-bottom: var(--space-4);
 	}
 
 	.post-meta {

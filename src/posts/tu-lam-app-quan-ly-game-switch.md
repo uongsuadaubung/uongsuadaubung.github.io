@@ -1,0 +1,66 @@
+---
+title: "Hành trình tự làm app quản lý Game Switch: Từ một ý tưởng nhỏ đến ứng dụng hoàn chỉnh"
+date: "2026-03-23"
+tags: ["Lập Trình", "Tauri", "SvelteKit", "Rust", "GitHub Actions"]
+description: "Bài viết chia sẻ lại quá trình phát triển ứng dụng Switch Games Manager, bao gồm những khó khăn gặp phải, quá trình thay đổi kiến trúc và cách tích hợp GitHub Actions để tự động hóa quy trình xử lý dữ liệu."
+published: true
+---
+
+Thời gian gần đây, tôi có nhu cầu tải và cài đặt game cho máy Nintendo Switch từ một kho lưu trữ Google Drive của cửa hàng cung cấp. Mặc dù số lượng game rất lớn, nhưng điểm hạn chế là giao diện danh sách rất khó nhìn và không hỗ trợ tìm kiếm hay bộ lọc linh hoạt. Đặc biệt, tôi không có cách nào để theo dõi các **cập nhật mới** hay tìm nhanh các tựa game có **Việt Hoá**.
+
+![Giao diện Excel Gốc](/images/switch-games-manager/excel-list.png)
+*Danh sách game từ tệp Excel gốc mà cửa hàng cung cấp - chứa thông tin khá đồ sộ nhưng rất khó quan sát và tìm kiếm.*
+
+Vì tính chất công việc là lập trình viên, tôi quyết định bắt tay vào tự viết một ứng dụng quản lý game Switch nhỏ nhằm giải quyết vấn đề cá nhân này.
+
+### 1. Bắt đầu với một ý tưởng đơn giản và những hạn chế
+
+Ở những commit đầu tiên, ý tưởng cốt lõi của tôi khá trực diện: Tạo một ứng dụng Desktop (sử dụng Tauri) đọc trực tiếp dữ liệu từ file cửa hàng. Nguồn cấp ban đầu của tiệm là một đường link file Excel (chứa nhiều sheet). Nếu người dùng chọn "Download as Web Page (.html)", tệp tải về sẽ tự động được nén dưới dạng `.zip`. Ý tưởng của tôi là kéo thẳng file `.zip` đó về, tự động giải nén trong nền và dùng mã JavaScript/Rust phân tích (parse) cú pháp HTML tĩnh ngay trên ứng dụng máy khách (Client).
+
+![Giao diện App](/images/switch-games-manager/main-view.png)
+*Giao diện danh sách game sau khi ứng dụng đã hoàn thiện kiến trúc*
+
+Sau khi thử nghiệm cá nhân ổn thỏa, dự định tiếp theo của tôi là đem chia sẻ công cụ này cho các anh em cùng group chơi Switch. Thế nhưng, nếu giữ cơ chế cũ, mỗi lần cửa hàng cập nhật danh sách game mới, tất cả mọi người sẽ lại phải hì hục đi tải thủ công file `.zip` kia về máy tính của họ để ứng dụng đọc. Điều này tạo ra một trải nghiệm vô cùng bất tiện. Vấn đề thực sự nằm ở sự thiếu tính đồng bộ hệ thống, khiến cho luồng cập nhật dữ liệu cục bộ trở thành rào cản lớn ngăn cản việc chia sẻ tool cho nhiều người dùng cùng lúc.
+
+### 2. Thay đổi phương pháp: Phân tách hệ thống với GitHub Actions
+
+Để giải quyết bài toán dùng chung, một giải pháp máy chủ API tập trung là điều bắt buộc. Từ đó, tôi quyết định đập đi xây lại cấu trúc dự án và chia làm hai phần riêng biệt: `switch_games` (Frontend App dùng chung để anh em cài) và một kho lưu trữ thiết lập riêng mang tên `switch_games_data` (Data Backend đóng vai trò API tập trung).
+
+Thay vì phải duy trì một Backend Server tốn kém, tôi áp dụng tiện ích **GitHub Workflows**. Mục tiêu là để tự động hóa toàn bộ luồng xử lý:
+
+1. Mỗi khi thư viện game có thay đổi, tôi chỉ việc thao tác xuất bản Web Page (.html) từ link Excel của cửa hàng thành file `latest.zip` như thường lệ, rồi đẩy lên thư mục `source/` của kho `switch_games_data`.
+2. Github Action (CI/CD) sẽ tự động kích hoạt, chạy một kịch bản bằng Python để giải nén, bóc tách các link tải khớp với cấu trúc excel gốc.
+3. Kịch bản này đồng thời quét dữ liệu để tải hàng loạt ảnh Cover của game về định dạng `.jpg`, tối ưu hóa kích thước và lưu vào thư mục `images/`.
+4. Cuối cùng, hệ thống tự động chuẩn hóa dữ liệu thành mảng JSON `games.json` rồi tự tạo bản commit đẩy trở lại kho lưu trữ.
+
+Mặc dù quy trình nghe rất logic, nhưng thực tế việc cấu hình CI/CD đã tốn khá nhiều thời gian để thử nghiệm và điều chỉnh. Những commit như `test new bump script`, `update lại cấu trúc link cho khớp với excel`, hay `xóa bỏ workflow thừa` cứ liên tục xuất hiện trước khi toàn bộ hệ thống (pipeline) có thể chạy trơn tru thành công.
+
+### 3. Hoàn thiện mặt giao diện SvelteKit + Tauri
+
+Khi đã có file dữ liệu `games.json` chuẩn hóa phân phối trực tiếp thông qua GitHub Raw, ứng dụng `switch_games` (Client) trở nên vô cùng nhẹ nhàng. 
+
+Tôi cấu hình để ứng dụng sử dụng bộ khung **Tauri + SvelteKit + Rust**. Mỗi lần khởi động, ứng dụng sẽ trực tiếp fetch tệp `games.json` từ thư viện API về để kiểm tra và đồng bộ lại danh sách tự động.
+
+Thay vì tạo một cơ chế Cache hình ảnh và dữ liệu phức tạp dưới tầng hệ thống, tôi quyết định giữ ứng dụng thật tinh gọn. Hiện tại, ứng dụng chỉ sử dụng Local Storage để lưu trữ các metadata (các thông số cấu hình và trạng thái của người dùng). Toàn bộ dữ liệu bộ sưu tập game và hình ảnh đều sẽ được gọi API liên tục theo thời gian thực để đảm bảo thư viện luôn ở trạng thái mới nhất.
+
+Ở các bước hoàn thiện cuối cùng, tôi tập trung vào cải thiện trải nghiệm giao diện người dùng. Có hàng loạt commit như `cải thiện rất nhiều thứ`, `animation`, `feat: web download button, CSS color tokens` được đẩy lên.
+
+![Bộ Lọc bá đạo](/images/switch-games-manager/viet-hoa-filter.png)
+*Tính năng lọc game Việt Hóa giúp thao tác tìm kiếm dễ dàng hơn nhiều.*
+
+![Filter Đa Tầng](/images/switch-games-manager/multi-filter.png)
+*Kết hợp bộ lọc đa điều kiện: Vừa phải là game Kinh Dị, Vừa có ngôn ngữ Việt Hóa.*
+
+![Giao diện Grid View](/images/switch-games-manager/gridview.png)
+*Giao diện dạng lưới (Grid View) giúp việc quan sát kho game trở nên cực kỳ trực quan và bắt mắt.*
+
+Đến thời điểm này, ứng dụng cuối cùng đã sở hữu các tính năng vượt trội so với trải nghiệm duyệt file Drive cơ bản:
+- Giao diện có nhiều chế độ hiển thị (List View, Grid View) với ảnh Cover hiển thị cực kỳ sắc nét.
+- Thanh tìm kiếm tốc độ siêu tốc.
+- Bộ lọc nhiều lớp hỗ trợ tìm nhanh phân loại game cụ thể.
+- Tính năng xem Review Trailer trên YouTube nhúng hoàn toàn bên trong ứng dụng.
+
+### Tổng kết
+Quá trình xây dựng ứng dụng này là một chặng đường dài, đòi hỏi việc nâng cấp liên tục thông qua rất nhiều phiên bản thử nghiệm (từ `v0.5.2`, qua `v0.5.3`, đến `v0.6.0`). Gần đây nhất, dự án kết thúc bước đầu bằng một commit `clean code thừa không còn sử dụng` và đẩy lên phiên bản hoàn chỉnh `v1.0.0`. 
+
+Tuy khởi đầu chỉ là một ý tưởng phục vụ nhu cầu giải trí nhỏ nhoi, dự án lại là cơ hội quý giá giúp tôi áp dụng nhuần nhuyễn sự kết hợp đa công nghệ: Từ dựng giao diện Tauri, SvelteKit cho đến tự động hóa máy chủ thông qua Python và GitHub Actions.

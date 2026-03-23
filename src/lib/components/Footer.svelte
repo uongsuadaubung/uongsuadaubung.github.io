@@ -15,9 +15,14 @@
 
 <footer class="footer">
 	<div class="container footer-inner">
-		<p class="copyright">
-			© {new Date().getFullYear()} <span class="gradient-text">uongsuadaubung</span> — Built with SvelteKit
-		</p>
+		<div class="copyright-wrap">
+			<p class="copyright">
+				&copy; {new Date().getFullYear()} <span class="gradient-text">uongsuadaubung</span>. All rights reserved.
+			</p>
+			<p class="tech-stack">
+				Designed & Built with <a href="https://kit.svelte.dev" target="_blank" rel="noopener noreferrer" class="svelte-link">SvelteKit</a>
+			</p>
+		</div>
 		<div class="social-links">
 			{#each socialLinks as link}
 				<a href={link.href} target="_blank" rel="noopener noreferrer" aria-label={link.label} class="social-link">
@@ -48,9 +53,50 @@
 		}
 	}
 
+	.copyright-wrap {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-1);
+
+		@media (max-width: 480px) {
+			align-items: center;
+		}
+	}
+
 	.copyright {
 		font-size: 0.875rem;
+		color: var(--text-primary);
+		font-weight: 500;
+	}
+
+	.tech-stack {
+		font-size: 0.8rem;
 		color: var(--text-muted);
+
+		.svelte-link {
+			color: var(--text-secondary);
+			text-decoration: none;
+			position: relative;
+			transition: color var(--transition-fast);
+
+			&::after {
+				content: '';
+				position: absolute;
+				bottom: -1px;
+				left: 0;
+				width: 100%;
+				height: 1px;
+				background-color: var(--border);
+				transition: background-color var(--transition-fast);
+			}
+
+			&:hover {
+				color: var(--accent-1);
+				&::after {
+					background-color: var(--accent-1);
+				}
+			}
+		}
 	}
 
 	.gradient-text {

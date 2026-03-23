@@ -1,7 +1,7 @@
 ---
 title: "Hack Minesweeper - part 2"
 date: "2020-06-06"
-tags: ["Cheat Engine", "Chọc ngoáy", "Hack Game"]
+tags: ["Hack Game"]
 description: "Hướng dẫn đọc bộ nhớ game Minesweeper bằng C# và hiển thị map bom ra console."
 published: true
 ---
@@ -178,7 +178,7 @@ for (int i = 0; i < myheight; i++)
 
 Và đây là thành quả đạt được:
 
-<iframe allowfullscreen="allowfullscreen" frameborder="0" height="500" src="https://www.blogger.com/video.g?token=AD6v5dxvxh7AJb5Rzuc9rAPgfmjFtp6py17I-LWYFwhh_IQkZGLCQIPojELMYJjTiBkQTFpqbsiGmQwpsDpHeZlrle-dznWNYn8-5fgQp98t2OjsdRDc_Wh-Oro1cApctn4YOfHPsVY&origin=uongsuadaubung.blogspot.com" width="500"></iframe>
+<iframe title="video" allowfullscreen="allowfullscreen" frameborder="0" height="500" src="https://www.blogger.com/video.g?token=AD6v5dxvxh7AJb5Rzuc9rAPgfmjFtp6py17I-LWYFwhh_IQkZGLCQIPojELMYJjTiBkQTFpqbsiGmQwpsDpHeZlrle-dznWNYn8-5fgQp98t2OjsdRDc_Wh-Oro1cApctn4YOfHPsVY&origin=uongsuadaubung.blogspot.com" width="500"></iframe>
 
 Full code mình sẽ update tại [đây](https://github.com/uongsuadaubung/Hack-Minesweeper-csharp).
 

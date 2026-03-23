@@ -1,7 +1,7 @@
 ---
 title: "Hack Plants Vs Zombies GOTY Edition - part 3"
 date: "2020-06-11"
-tags: ["Cheat Engine", "Hack Game"]
+tags: ["Hack Game"]
 description: "Tiếp tục với series phá hoại game PvZ, ở phần trước mình đã tìm được địa chỉ pointer của mặt trời, xu và hồi phục nhanh cho cây. Hướng dẫn hack one hit."
 published: true
 ---

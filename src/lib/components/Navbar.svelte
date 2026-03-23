@@ -7,13 +7,14 @@
 	const navLinks = [
 		{ id: 'home', label: 'Home' },
 		{ id: 'blog', label: 'Blog' },
-		{ id: 'about', label: 'About' }
+		{ id: 'about', label: 'About' },
+		{ id: 'resume', label: 'Resume' }
 	] as const;
 
 	let currentId = $state('home');
 	nav.subscribe((v) => (currentId = v.id));
 
-	function go(id: 'home' | 'blog' | 'about') {
+	function go(id: 'home' | 'blog' | 'about' | 'resume') {
 		nav[id]();
 		mobileOpen = false;
 	}

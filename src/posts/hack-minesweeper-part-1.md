@@ -1,7 +1,7 @@
 ---
 title: "Hack Minesweeper - part 1"
 date: "2020-06-05"
-tags: ["Cheat Engine", "Hack Game"]
+tags: ["Hack Game"]
 description: "Hướng dẫn viết hack game Minesweeper. Hướng dẫn làm game trainer. Chia sẻ kinh nghiệm lập trình."
 published: true
 ---

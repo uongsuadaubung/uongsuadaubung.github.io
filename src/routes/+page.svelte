@@ -3,6 +3,7 @@
 	import BlogView from '$lib/views/BlogView.svelte';
 	import PostView from '$lib/views/PostView.svelte';
 	import AboutView from '$lib/views/AboutView.svelte';
+	import ResumeView from '$lib/views/ResumeView.svelte';
 	import { nav } from '$lib/stores/nav';
 	import { getPosts } from '$lib/posts';
 	import type { Post } from '$lib/posts';
@@ -27,6 +28,8 @@
 		<PostView slug={currentView.slug} />
 	{:else if currentView.id === 'about'}
 		<AboutView />
+	{:else if currentView.id === 'resume'}
+		<ResumeView />
 	{/if}
 </div>
 

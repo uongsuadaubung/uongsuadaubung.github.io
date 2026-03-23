@@ -1,7 +1,7 @@
 ---
 title: "Hack Plants Vs Zombies GOTY Edition - part 4"
 date: "2020-06-12"
-tags: ["Cheat Engine", "Hack Game"]
+tags: ["Hack Game"]
 description: "Phần 4: Hướng dẫn các bạn cách làm auto nhặt mặt trời và tự động nhặt xu."
 published: true
 ---

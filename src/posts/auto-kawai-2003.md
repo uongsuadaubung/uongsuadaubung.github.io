@@ -1,7 +1,7 @@
 ---
 title: "Auto Kawai 2003"
 date: "2023-09-06"
-tags: ["Cheat Engine", "Hack Game"]
+tags: ["Hack Game"]
 description: "Do hôm trước tải một cái thư mục mấy game cũ về thì bao gồm cả game pikachu ở phần trước mình làm auto và cả game này nên là có ý tưởng là..."
 published: true
 ---

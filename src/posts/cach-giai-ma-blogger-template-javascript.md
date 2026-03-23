@@ -1,7 +1,7 @@
 ---
 title: "Cách giải mã blogger template JavaScript"
 date: "2020-06-15"
-tags: ["Chọc ngoáy"]
+tags: ["Hack Game"]
 description: "Chỉ cần search trên google là có thể tìm thấy hàng nghìn cái template cho blogger, bài viết này review cách decode những đoạn script obfuscate trong template."
 published: true
 ---
