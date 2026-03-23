@@ -1,7 +1,7 @@
 ---
 title: "Hack Plants Vs Zombies GOTY Edition - part 5"
 date: "2020-06-14"
-tags: ["Cheat Engine", "Hack Game"]
+tags: ["Hack Game"]
 description: "Phần 5: Tổng hợp lại thành tool hoàn chỉnh viết bằng C# (Winform)."
 published: true
 ---

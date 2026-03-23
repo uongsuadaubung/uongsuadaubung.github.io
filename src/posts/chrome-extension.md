@@ -1,7 +1,7 @@
 ---
 title: "Chrome extension"
 date: "2025-05-14"
-tags: ["Coding"]
+tags: ["Lập Trình"]
 description: "Tôi từng nhìn thấy một video trên Tiktok hay là Facebook gì đó đại loại nội dung video là trong 1 phòng thi thì có một sinh viên sử d..."
 published: true
 ---

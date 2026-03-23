@@ -1,7 +1,7 @@
 ---
 title: "Auto game Pikachu/Pokemon - Part 1"
 date: "2023-08-31"
-tags: ["Cheat Engine", "Hack Game"]
+tags: ["Hack Game"]
 description: "Nhìn vào hai hình này chắc là biết game gì luôn đúng không nếu không nghe qua thì cũng phải nhìn thấy vì mình nghĩ nó huyền thoại cmnr..."
 published: true
 ---

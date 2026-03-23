@@ -1,7 +1,7 @@
 ---
 title: "Hack Plants Vs Zombies GOTY Edition - part 2"
 date: "2020-06-10"
-tags: ["Cheat Engine", "Hack Game"]
+tags: ["Hack Game"]
 description: "Phần 1 không có quan trọng lắm vì nó chỉ mang tính chất giới thiệu và viết lại class MyMemory để code tối ưu hơn, phần 2 sẽ hướng dẫn tìm pointer của mặt trời."
 published: true
 ---

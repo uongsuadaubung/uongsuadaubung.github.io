@@ -1,7 +1,7 @@
 ---
 title: "Tailwind Component"
 date: "2024-09-06"
-tags: []
+tags: ["Chuyện Nghề"]
 description: "Sau một thời gian ngắn tìm hiểu về Tailwind mình thấy cũng khá là hay, do là trước giờ mình từng làm về Vuejs hay React thì công ty đều sử..."
 published: true
 ---

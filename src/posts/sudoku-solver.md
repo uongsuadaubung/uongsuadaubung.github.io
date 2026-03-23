@@ -1,7 +1,7 @@
 ---
 title: "Sudoku Solver"
 date: "2023-09-08"
-tags: ["Cheat Engine", "Hack Game"]
+tags: ["Hack Game"]
 description: "Vài năm trước mình có tìm hiểu về thuật toán Backtracking và chả hiểu cái quần què gì hết luôn, tự nhiên thời gian gần đ..."
 published: true
 ---

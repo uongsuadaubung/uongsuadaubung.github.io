@@ -1,7 +1,7 @@
 ---
 title: "Auto game Pikachu/Pokemon - Part 2"
 date: "2023-09-01"
-tags: ["Cheat Engine", "Hack Game"]
+tags: ["Hack Game"]
 description: "Phần này sẽ nặng về code hơn tí, đầu tiên là mình sẽ tạo một mảng 2 chiều có row = 11 và col = 18 để mình lưu các con pokemon lại, như..."
 published: true
 ---

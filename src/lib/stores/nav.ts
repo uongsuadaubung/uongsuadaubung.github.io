@@ -8,13 +8,15 @@ export type View =
 	| { id: 'home' }
 	| { id: 'blog' }
 	| { id: 'post'; slug: string }
-	| { id: 'about' };
+	| { id: 'about' }
+	| { id: 'resume' };
 
 function parseHash(hash: string): View {
 	const path = hash.replace(/^#\/?/, '');
 	if (path === 'blog') return { id: 'blog' };
 	if (path === 'about') return { id: 'about' };
 	if (path.startsWith('post/')) return { id: 'post', slug: path.slice(5) };
+	if (path === 'resume') return { id: 'resume' };
 	return { id: 'home' };
 }
 
@@ -22,6 +24,7 @@ function viewToHash(view: View): string {
 	if (view.id === 'blog') return '#/blog';
 	if (view.id === 'about') return '#/about';
 	if (view.id === 'post') return `#/post/${view.slug}`;
+	if (view.id === 'resume') return '#/resume';
 	return '#/';
 }
 
@@ -85,7 +88,8 @@ function createNav() {
 		home: () => navigate({ id: 'home' }),
 		blog: () => navigate({ id: 'blog' }),
 		post: (slug: string) => navigate({ id: 'post', slug }),
-		about: () => navigate({ id: 'about' })
+		about: () => navigate({ id: 'about' }),
+		resume: () => navigate({ id: 'resume' })
 	};
 }
 

@@ -1,7 +1,7 @@
 ---
 title: "Nextjs"
 date: "2024-09-07"
-tags: []
+tags: ["Chuyện Nghề"]
 description: "Kế hoạch có chút thay đổi, vì hiện tại mình đang làm việc trên công ty khá bận và còn kèm thêm cả dự án với người anh nữa nên chả thể..."
 published: true
 ---

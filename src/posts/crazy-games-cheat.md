@@ -1,7 +1,7 @@
 ---
 title: "Crazy Games cheat"
 date: "2025-10-11"
-tags: []
+tags: ["Hack Game"]
 description: "Gần cuối dự án nên mình cũng rảnh hơn một chút, nên lên hỏi Chatgpt về game Idle nào hay để chơi giải trí một tí không, được nó đưa đến tr..."
 published: true
 ---

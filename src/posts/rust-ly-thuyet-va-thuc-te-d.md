@@ -1,7 +1,7 @@
 ---
 title: "Rust, lý thuyết và thực tế :D"
 date: "2025-10-25"
-tags: []
+tags: ["Chuyện Nghề"]
 description: "Từng học qua nhiều ngôn ngữ lập trình từ thời đại học như C++, Java, C#... rồi đi làm thì code Nodejs, mình thấy mỗi ngôn ngữ đều có cái h..."
 published: true
 ---
