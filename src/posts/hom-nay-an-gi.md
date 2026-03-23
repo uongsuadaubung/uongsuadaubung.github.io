@@ -12,6 +12,9 @@ Không biết các bạn thế nào, chứ mình thấy cứ tầm 5 - 6 giờ c
 
 Thế là quyết định xắn tay áo hý hửng viết một chiếc app nhỏ bằng Svelte kết hợp Tauri để quay ngẫu nhiên trực tiếp trên màn hình máy tính cho tiết kiệm thời gian. Tưởng làm cái vòng quay cho vui là dễ, ai ngờ đâm đầu vào mới thấy phát sinh một mớ vấn đề... 
 
+![Màn hình chính của ứng dụng](/images/hom-nay-an-gi/man-hinh-chinh.png)
+*Giao diện màn hình chính của ứng dụng với chiếc vòng quay định mệnh.*
+
 ## 1. Nỗi đau nạp Dữ liệu & Sự cố CORS
 
 Tiêu chí ban đầu là ứng dụng phải thực dụng, món ăn phải có Món chính và Món rau. Nếu chỉ code cứng (hard-code) vài món vào file thì quá chán, nên mình mở ChatGPT lên, nhờ AI xuất ngay một danh sách 50 món Việt Nam kèm công thức nấu, rồi chép vào thẳng Google Sheet (Excel). Mình định dùng trang Sheet đó làm cơ sở dữ liệu luôn.
@@ -121,5 +124,11 @@ Khúc đau đầu nhất là tìm được đường cong `cubic-bezier(0.2, 0.8
 ## 3. Tổng kết
 
 Mất đâu đó vài buổi tối hì hục, ứng dụng cũng gói gọn thành file chạy trên Desktop. Giờ cứ chiều đến trước lúc về, anh em lại bật app lên quay xạch xạch xem tối nay về phải đi ăn món gì. Ấn vào kết quả nó còn hiển thị thêm "Cách nấu: Xào tỏi / Nướng than" từ data AI cung cấp khá là trực quan. 
+
+![Chốt đơn bữa tối](/images/hom-nay-an-gi/chon-xong-mon.png)
+*Quay xong là ứng dụng tự động hiển thị món ăn (cả món mặn lẫn rau) may mắn của ngày.*
+
+![Xem công thức nấu ăn](/images/hom-nay-an-gi/xem-cong-thuc-nau.png)
+*Bấm vào kết quả để xem ngay công thức do AI hướng dẫn.*
 
 Thấy làm mấy cái phần mềm cá nhân nhỏ nhỏ dọn gọn gàng nhu cầu thế này công nhận giúp ích được rất nhiều. Bạn nào cũng lười vắt óc suy luận giống mình, có hứng thì ghé qua repo Github lấy mã nguồn về trổ tài thử nhé. Hẹn mọi người ở một dự án tự build khác!
