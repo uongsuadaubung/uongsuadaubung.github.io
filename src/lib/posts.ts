@@ -19,24 +19,31 @@ export async function getPosts(): Promise<Post[]> {
 	const posts: Post[] = [];
 
 	for (const path in modules) {
-		const mod = await modules[path]();
-		const slug = path.split('/').pop()?.replace('.md', '') ?? '';
-		const meta = mod.metadata;
+		try {
+			const mod = await modules[path]();
+			const slug = path.split('/').pop()?.replace('.md', '') ?? '';
+			const meta = mod.metadata;
 
-		if (meta.published !== false) {
-			const content = String(mod.default);
-			const wordCount = content.replace(/<[^>]+>/g, '').split(/\s+/).length;
-			const minutes = Math.max(1, Math.round(wordCount / 200));
+			if (meta.published !== false) {
+				const content = String(mod.default);
+				const wordCount = content.replace(/<[^>]+>/g, '').split(/\s+/).length;
+				const minutes = Math.max(1, Math.round(wordCount / 200));
 
-			posts.push({
-				slug,
-				title: meta.title ?? 'Untitled',
-				date: meta.date ?? new Date().toISOString(),
-				tags: Array.isArray(meta.tags) ? meta.tags : [],
-				description: meta.description ?? '',
-				readingTime: `${minutes} phút đọc`,
-				published: true
-			});
+				posts.push({
+					slug,
+					title: meta.title ?? 'Untitled',
+					date: meta.date ?? new Date().toISOString(),
+					tags: Array.isArray(meta.tags) ? meta.tags : [],
+					description: meta.description ?? '',
+					readingTime: `${minutes} phút đọc`,
+					published: true
+				});
+			}
+		} catch (e) {
+			console.error(`Error loading post ${path}:`, e);
+			if (import.meta.env.DEV) {
+				throw e;
+			}
 		}
 	}
 
