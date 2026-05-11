@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { nav } from '$lib/stores/nav';
+	import MiniGame from '$lib/components/MiniGame.svelte';
 
 	const skills = [
 		{ category: 'Frontend', items: ['SvelteKit', 'TypeScript', 'SCSS/Sass', 'HTML5', 'Vite'] },
@@ -53,6 +54,10 @@
 	</section>
 
 	<div class="container about-body">
+		<section class="section game-section">
+			<MiniGame />
+		</section>
+
 		<section class="section">
 			<h2 class="section-title">Kỹ năng</h2>
 			<div class="skills-grid">

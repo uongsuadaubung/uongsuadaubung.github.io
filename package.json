@@ -4,9 +4,8 @@
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
-		"preinstall": "npx only-allow bun",
-		"dev": "bun x --bun vite dev",
-		"build": "bun x --bun vite build",
+		"dev": "vite dev",
+		"build": "vite build",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -23,8 +22,10 @@
 	},
 	"dependencies": {
 		"@sveltejs/adapter-static": "^3.0.10",
+		"@types/three": "^0.184.1",
 		"highlight.js": "^11.11.1",
 		"mdsvex": "^0.12.7",
-		"sass": "^1.99.0"
+		"sass": "^1.99.0",
+		"three": "^0.184.0"
 	}
 }
