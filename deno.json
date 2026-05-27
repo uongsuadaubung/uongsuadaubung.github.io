@@ -1,0 +1,13 @@
+{
+  "tasks": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check-css": "deno run -A scripts/check-unused-css.ts"
+  },
+  "compilerOptions": {
+    "jsx": "preserve",
+    "jsxImportSource": "solid-js"
+  },
+  "nodeModulesDir": "manual"
+}

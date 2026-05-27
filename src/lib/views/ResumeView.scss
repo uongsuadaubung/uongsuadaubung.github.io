@@ -1,0 +1,224 @@
+.resume-view {
+	max-width: 800px;
+	margin: 0 auto;
+	animation: fadeIn var(--transition-base) ease;
+	padding-top: var(--space-8);
+	padding-bottom: var(--space-12);
+
+	.resume-header {
+		text-align: center;
+		margin-bottom: var(--space-8);
+
+		.page-title {
+			font-size: 2.5rem;
+			font-weight: 800;
+			margin-bottom: var(--space-2);
+			background: var(--accent-gradient);
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+			background-clip: text;
+		}
+
+		.role {
+			font-size: 1.25rem;
+			color: var(--text-secondary);
+			font-weight: 500;
+			margin-bottom: var(--space-3);
+		}
+
+		.contact-info {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			row-gap: var(--space-3);
+			column-gap: var(--space-6);
+			color: var(--text-secondary);
+			font-size: 0.95rem;
+
+			.contact-item {
+				display: flex;
+				align-items: center;
+				gap: var(--space-2);
+				opacity: 0.85;
+
+				svg {
+					color: var(--accent-1);
+					opacity: 0.9;
+				}
+			}
+
+			a.contact-item {
+				text-decoration: none;
+				transition:
+					color var(--transition-fast),
+					opacity var(--transition-fast);
+
+				&:hover {
+					color: var(--accent-1);
+					opacity: 1;
+				}
+			}
+		}
+	}
+
+	.resume-section {
+		margin-bottom: var(--space-8);
+		background: var(--bg-elevated);
+		border-radius: var(--radius-lg);
+		padding: var(--space-6) var(--space-8);
+		border: 1px solid var(--border-subtle);
+
+		h2 {
+			font-size: 1.5rem;
+			color: var(--text-heading);
+			border-bottom: 2px solid var(--border-subtle);
+			padding-bottom: var(--space-2);
+			margin-bottom: var(--space-5);
+		}
+
+		p {
+			color: var(--text-secondary);
+			line-height: 1.6;
+		}
+
+		@media (max-width: 640px) {
+			padding: var(--space-4);
+		}
+	}
+
+	.skills-container {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-6);
+
+		.resume-skill-category h3 {
+			font-size: 1.1rem;
+			color: var(--text-heading);
+			font-weight: 700;
+			margin-bottom: var(--space-3);
+		}
+
+		.skills-list {
+			list-style: none;
+			padding: 0;
+			margin: 0;
+			color: var(--text-secondary);
+
+			li {
+				margin-bottom: 6px;
+				font-size: 0.9rem;
+				line-height: 1.6;
+
+				strong {
+					color: var(--text-primary);
+				}
+			}
+		}
+	}
+
+	.experience-item,
+	.project-item,
+	.education-item {
+		margin-bottom: var(--space-6);
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	.exp-header,
+	.proj-header,
+	.edu-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		margin-bottom: var(--space-1);
+
+		@media (max-width: 480px) {
+			flex-direction: column;
+		}
+
+		h3 {
+			font-size: 1.25rem;
+			color: var(--text-heading);
+			margin: 0;
+			font-weight: 700;
+		}
+
+		span {
+			color: var(--accent-2);
+			font-size: 0.9rem;
+			font-weight: 500;
+		}
+	}
+
+	.proj-header h3 .proj-link {
+		color: inherit;
+		text-decoration: none;
+		position: relative;
+		transition: color var(--transition-fast);
+
+		&:hover {
+			color: var(--accent-1);
+			&::after {
+				content: "";
+				position: absolute;
+				bottom: -2px;
+				left: 0;
+				width: 100%;
+				height: 2px;
+				background-color: var(--accent-1);
+			}
+		}
+	}
+
+	.exp-role {
+		font-weight: 600;
+		color: var(--text-primary) !important;
+		margin-bottom: var(--space-2);
+	}
+
+	.proj-tech {
+		font-size: 0.9rem;
+		color: var(--text-muted) !important;
+		margin-bottom: var(--space-2);
+	}
+
+	.exp-details,
+	.proj-details {
+		list-style-type: none;
+		padding-left: 0;
+		color: var(--text-secondary);
+		line-height: 1.6;
+
+		& > li {
+			margin-bottom: var(--space-4);
+
+			strong {
+				color: var(--text-primary);
+			}
+		}
+
+		ul {
+			list-style-type: none;
+			padding-left: var(--space-3);
+			margin-top: var(--space-2);
+			border-left: 2px solid var(--border);
+
+			li {
+				position: relative;
+				padding-left: calc(var(--space-3) + 6px);
+				margin-bottom: var(--space-2);
+
+				&::before {
+					content: "-";
+					position: absolute;
+					left: 4px;
+					top: -1px;
+					color: var(--accent-1);
+					font-weight: 700;
+				}
+			}
+		}
+	}
+}
