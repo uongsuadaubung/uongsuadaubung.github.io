@@ -8,9 +8,9 @@ published: true
 
 ![minh-hoa](/images/crazy-games-cheat/image-01.png)
 
-Gần cuối dự án nên mình cũng rảnh hơn một chút, nên lên hỏi Chatgpt về game Idle nào hay để chơi giải trí một tí không, được nó đưa đến trang Crazy Games, giới thiệu qua 1 chút để có nhiều chữ thì "Crazy Games là một nền tảng chơi game trực tuyến miễn phí, cung cấp hàng nghìn trò chơi đa dạng từ hành động, mô phỏng, giải đố, đến thể thao. Người dùng có thể chơi ngay trên trình duyệt mà không cần tải về, rất tiện lợi và phù hợp cho mọi lứa tuổi.", tôi vừa copy từ AI ra
+Gần cuối dự án nên mình cũng rảnh hơn một chút, nên lên hỏi Chatgpt về game Idle nào hay để chơi giải trí một tí không, được nó đưa đến trang Crazy Games, giới thiệu qua 1 chút để có nhiều chữ thì "Crazy Games là một nền tảng chơi game trực tuyến miễn phí, cung cấp hàng nghìn trò chơi đa dạng từ hành động, mô phỏng, giải đố, đến thể thao. Người dùng có thể chơi ngay trên trình duyệt mà không cần tải về, rất tiện lợi và phù hợp cho mọi lứa tuổi.", mình vừa copy từ AI ra
 
-Tôi chọn thử 1 game Mage Tower Idle Defense để chơi thì thấy nó cũng ổn chơi cũng vui 
+Mình chọn thử 1 game Mage Tower Idle Defense để chơi thì thấy nó cũng ổn chơi cũng vui 
 
 ![minh-hoa](/images/crazy-games-cheat/image-02.png)
 
@@ -43,7 +43,7 @@ dò đến request tìm kiếm thử thì thấy có 1 request
 ![minh-hoa](/images/crazy-games-cheat/image-06.png)
 ![minh-hoa](/images/crazy-games-cheat/image-07.png)
 
-tôi copy url đó dùng fetch trong console để xem thử nội dung
+mình copy url đó dùng fetch trong console để xem thử nội dung
 
 ![minh-hoa](/images/crazy-games-cheat/image-08.png)
 ![minh-hoa](/images/crazy-games-cheat/image-09.png)
