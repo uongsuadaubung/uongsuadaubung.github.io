@@ -12,15 +12,15 @@ Nếu anh em là tín đồ của dòng game thủ thành huyền thoại, chắ
 
 Nhưng đời không như là mơ. Vì đây là web game nên toàn bộ dữ liệu cày cuốc (mặt trời, vàng bạc, các map đấu đang chơi dở...) đều được lưu trữ trực tiếp dưới trình duyệt bằng `localStorage`. 
 
-Một ngày đẹp trời, do trình duyệt tự động dọn dẹp cache giải phóng bộ nhớ, hoặc do mình đổi sang máy tính khác ở văn phòng để lén lén chơi game... **Bùm!** Toàn bộ save game biến mất sạch sẽ không tì vết, công sức cày cuốc bấy lâu bay màu như một cơn gió. Trái tim rỉ máu! 
+Một ngày đẹp trời, do trình duyệt tự động dọn dẹp cache giải phóng bộ nhớ, hoặc do mình đổi sang máy tính khác ở văn phòng... **Bùm!** Toàn bộ save game biến mất, công sức cày cuốc bấy lâu bay màu như một cơn gió.
 
-Lấy cục save cũ chép qua chép lại bằng "F12 thần chưởng" thủ công thì quá mỏi tay. Để giải quyết triệt để sự ức chế này, mình quyết định tự code một cái browser extension để lo trọn gói việc đồng bộ save game lên đám mây, kèm theo vài tính năng phụ nhưng cực kỳ "đáng tiền bát gạo".
+Lấy cục save cũ chép qua chép lại thủ công thì khá bất tiện. Để giải quyết việc này, mình quyết định tự code một cái browser extension để lo trọn gói việc đồng bộ save game lên đám mây, kèm theo vài tính năng phụ.
 
 ---
 
 ## 🔍 Bước 1: Ý tưởng dùng GitHub Gist làm "Mây" (Cloud) giá 0 đồng
 
-Để lưu trữ save game lên cloud, giải pháp thông thường là dựng một cái backend (Node.js/Python), kết nối database (MongoDB/Postgres), rồi thiết lập cơ chế đăng nhập OAuth lằng nhằng. Nghĩ đến cảnh duy trì server tốn tiền và đống cấu hình phức tạp là mình thấy lười cmnr (thật ra mình không có tiền).
+Để lưu trữ save game lên cloud, giải pháp thông thường là dựng một cái backend (Node.js/Python), kết nối database (MongoDB/Postgres), rồi thiết lập cơ chế đăng nhập OAuth lằng nhằng. Nghĩ đến cảnh duy trì server tốn tiền và cấu hình phức tạp là mình thấy hơi ngại (thực ra là mình không muốn tốn phí duy trì server).
 
 Thế là mình nảy ra ý định tận dụng ngay **GitHub Gist API**. 
 * **Miễn phí 100%:** GitHub cho phép tạo Gist không giới hạn.
@@ -86,7 +86,7 @@ Kết quả? Vừa vào trận đấu là Mặt Trời hay Xu Vàng vừa rơi r
 
 ## 🔄 Cơ chế Smart Sync 3-Way: Tránh ghi đè save oan uổng
 
-Khi chơi game trên nhiều thiết bị (lúc ở văn phòng, lúc về nhà), việc lệch save game là chuyện cơm bữa. Nếu extension cứ mù quáng lấy save mới nhất đè lên save cũ thì sớm muộn gì anh em cũng gặp cảnh khóc ròng vì mất tiến trình chơi.
+Khi chơi game trên nhiều thiết bị (lúc ở văn phòng, lúc về nhà), việc lệch save game là chuyện cơm bữa. Nếu extension cứ lấy save mới nhất đè lên save cũ thì sớm muộn gì anh em cũng có thể bị mất dữ liệu tiến trình chơi game.
 
 Để giải quyết triệt để bài toán này, mình đã tự thiết kế một cơ chế đồng bộ thông minh gọi là **3-Way Sync (Đồng bộ 3 chiều) dựa trên mã băm (hash-based)** tương tự như cách Git giải quyết các xung đột merge code.
 

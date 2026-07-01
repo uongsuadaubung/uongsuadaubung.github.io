@@ -26,7 +26,7 @@ Sau một thời gian vứt bài rải rác trên mạng, mình quyết định 
 | Host máy chủ | **GitHub Pages** | Cứ deploy là chạy, ưu điểm lớn nhất là: Miễn phí 100%! |
 
 Quyết tâm dựng lên cái web này không phải để múa kỹ năng, mà động lực thực sự phía sau lại rất "thực dụng". Mình muốn có một chỗ toàn quyền kiểm soát để:
-- Ghi chép lại những "trầm cảm" và kinh nghiệm xương máu sau những đợt thiết kế app, làm framework.
+- Ghi chép lại những bài học và kinh nghiệm thực tế sau những đợt thiết kế app, làm framework.
 - Khoe nhẹ (và lưu trữ) toàn bộ các project mà mình rảnh rỗi code chống cháy lúc nửa đêm.
 - Xây dựng một "CV sống" thứ thiệt để bất kì ai lướt vào đều nhìn thấu cái tâm hồn làm nghề của mình.
 
@@ -42,4 +42,4 @@ Dựng lên cái nền móng này thì cũng tốn mất bao nhiêu ly cà phê.
 
 > "Bất kỳ dòng code thối nào mà chạy được, đều đáng để lưu lại cho anh em cùng gỡ lỗi."
 
-Thay cho dòng lệnh in ra màn hình huyền thoại `print("Hello, World");`, mình xin gửi lời chào đến thế giới mạng! Hẹn gặp lại mọi người ở những chuyến vật lộn với bug và chia sẻ hệ thống sắp tới! 🚀
+Thay cho dòng lệnh in ra màn hình huyền thoại `print("Hello, World");`, mình xin gửi lời chào đến thế giới mạng! Hẹn gặp lại mọi người ở những chia sẻ về gỡ lỗi và phát triển hệ thống sắp tới! 🚀

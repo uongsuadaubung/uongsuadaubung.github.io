@@ -45,7 +45,7 @@ Trời má lại nữa? Chơi gì kì vậy trời? Mã hóa tận 3 lần liề
 
 ![Another packed](/images/cach-giai-ma-blogger-template-javascript/image-07.png)
 
-Ô đây chắc là "Trùm cuối" rồi 😂😂, tất cả tên biến đều mã hóa đi theo cách nhìn cho nó giống với mã hex, chứ còn lại các từ khóa của JS như là function, setInterval, hay thậm chí `$` của jQuery nữa kìa, trông có vẻ tất cả mọi thứ đều tập trung vào cái mảng `_0xcb61` chắc đây có thể là 1 kiểu mã hóa nào đó liên quan đến mảng, mình lại search tiếp cách decode thì......
+Ô đây chắc là phần phức tạp nhất rồi 😂😂, tất cả tên biến đều mã hóa đi theo cách nhìn cho nó giống với mã hex, chứ còn lại các từ khóa của JS như là function, setInterval, hay thậm chí `$` của jQuery nữa kìa, trông có vẻ tất cả mọi thứ đều tập trung vào cái mảng `_0xcb61` chắc đây có thể là 1 kiểu mã hóa nào đó liên quan đến mảng, mình lại search tiếp cách decode thì......
 
 ![Decoded array obfuscation](/images/cach-giai-ma-blogger-template-javascript/image-08.png)
 

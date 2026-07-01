@@ -18,9 +18,9 @@ Làm trang tĩnh (Static site) hiển thị thông tin rạp cưới, ảnh cô 
 
 Thế là mình nảy số: Tại sao không tận dụng Google Sheets làm Database, và dùng **Google Apps Script (GAS)** làm "API nội bộ"? Mình hỳ hục viết một đoạn script trên Google Drive nhận request POST để ghi thẳng lời chúc vào file Excel.
 
-Hý hửng vào trang web, nhập lời chúc mẫu, bấm GỬI... BÙM! Trình duyệt báo đỏ lừ: `CORS Policy Error`. Mọi nỗ lực gọi hàm `fetch` bình thường bằng `application/json` đều bị Google chặn đứng từ vòng gửi xe (Preflight Request). Bế tắc, lên mạng rảo bước hết các diễn đàn, cuối cùng mình cũng mò ra được một "thủ thuật hắc ám": Chuyển đổi Content-Type sang dạng thô để đánh lừa trình duyệt!
+Tuy nhiên, ngay khi gửi thử lời chúc, trình duyệt báo lỗi: `CORS Policy Error`. Mọi nỗ lực gọi hàm `fetch` thông thường bằng `application/json` đều bị Google chặn ở bước Preflight Request. Sau khi tìm hiểu trên các diễn đàn, mình phát hiện ra một giải pháp: Chuyển đổi Content-Type sang dạng `text/plain` để không kích hoạt Preflight Request.
 
-Dưới đây là tuyệt chiêu xử lý AJAX "vượt rào" đẫm nước mắt của mình:
+Dưới đây là đoạn mã xử lý AJAX để lách Preflight check của CORS:
 
 ```javascript
 // Gửi dữ liệu dưới dạng text/plain để lách Preflight check của CORS
@@ -50,7 +50,7 @@ Tưởng chừng xong xuôi, vợ mình lại dặn: *"Thiệp bên nhà gái ph
 
 Nếu làm theo tư duy thông thường, mình có thể tạo một đống câu lệnh IF ELSE vướng víu trong mã nguồn, dựa vào URL có param `?side=nhatrai` để chuyển giao diện. Nhưng như thế cái đuôi URL gửi cho người lớn rất xấu. Hoặc copy ra thành 2 project riêng biệt? Lúc code lại hay sửa ảnh thì lại phải chép qua chép lại à? KHÔNG BAO GIỜ! Tổ nghề không cho phép mình lặp lại mã (Don't Repeat Yourself).
 
-Để giữ cho thư mục làm việc luôn chỉ là 1 source code gốc duy nhất, mình quyết định viết một file thần thánh `deploy.js` ở tầng Build bằng NodeJS. File script này sẽ thay mình tự động đóng gói toàn bộ và đập thẳng lên **2 repository hoàn toàn khác nhau** trên Github.
+Để giữ cho thư mục làm việc luôn chỉ là 1 source code gốc duy nhất, mình quyết định viết một file script `deploy.js` tự động ở tầng Build bằng NodeJS. File script này sẽ thay mình tự động đóng gói toàn bộ và đập thẳng lên **2 repository hoàn toàn khác nhau** trên Github.
 
 ```javascript
 const folders = ['groom', 'bride'];

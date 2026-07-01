@@ -33,23 +33,23 @@ const matches: string[] = htmlContent.match(regex) || [];
 
 Sau khi có link ảnh, mình lôi thư viện `pdf-lib` và `sharp` ra để sắp xếp ảnh thành một trang PDF. Nhồi buffer ảnh vào trang PDF rồi lưu lại thế là xong, vứt file ném trả bà chị. Quá đơn giản... nếu câu chuyện chỉ dừng lại ở đây.
 
-## 2. Nỗi ám ảnh "Giao diện người dùng"
+## 2. Thiết kế giao diện web
 
-Code xong script chạy terminal rẹt rẹt ra file, mình tự dưng thấy ngứa nghề. Công cụ hay thế này mà khóa chặt trong màn hình dòng lệnh thì hơi phí, ngoài mình ra chẳng ai xài được. Mình nảy số tự hỏi: "Tại sao không bọc nó lại thành một trang web giao diện thân thiện nhỉ?". Thế là mình quyết định chơi lớn: **Nâng cấp trực tiếp nó thành một Web App thực thụ** để cộng đồng mạng hay bất kỳ ai có link đều dễ dàng dán vào tải được luôn.
+Sau khi code xong script chạy trên terminal, mình muốn đóng gói nó thành một giao diện web đơn giản để dễ sử dụng hơn thay vì gõ dòng lệnh. Mình quyết định dựng một Web App nhỏ để bất kỳ ai có link đều dễ dàng dán vào và tải được luôn.
 
-Mình dựng vội cái server Express, dùng EJS làm giao diện nhập URL, và kết nối MongoDB để lưu trạng thái tải file của từng user. Cứ tưởng ném cái hàm tạo PDF hôm qua vào trong Router của Express là xong bài. Mình hý hửng gõ lệnh chạy thử, mở 2 tab lên test tính năng tải song song.
+Mình dựng server Express, dùng EJS làm giao diện nhập URL, và kết nối MongoDB để lưu trạng thái tải file của từng user. Cứ tưởng ném cái hàm tạo PDF hôm qua vào trong Router của Express là xong. Mình chạy thử và mở 2 tab lên test tính năng tải song song.
 
-BÙM. Màn hình console đỏ lừ, tab trình duyệt quay mòng mòng, server giật lag không phản hồi. 
+Tuy nhiên, khi thử tải song song ở 2 tab khác nhau, server lập tức phản hồi rất chậm.
 
-Ngồi debug mờ cả mắt, mãi lúc sau mới nhảy số phát hiện ra vấn đề oái oăm: Quá trình dùng `sharp` để convert Buffer ảnh và `pdf-lib` để vẽ lại file PDF là một **tác vụ ngốn CPU cực tàn bạo!** Vì Node.js vốn chạy đơn luồng (Single Thread), nên khi luồng chính đang gồng mình xử lý tạo PDF cho tab thứ nhất, nó block luôn toàn bộ luồng request, làm tab thứ hai và tất cả người dùng khác kẹt cứng không truy cập được server.
+Sau khi tìm hiểu, mình phát hiện ra vấn đề: quá trình dùng `sharp` để convert Buffer ảnh và `pdf-lib` để vẽ lại file PDF là một tác vụ nặng ngốn nhiều tài nguyên CPU. Vì Node.js chạy đơn luồng (Single Thread), nên khi luồng chính xử lý tạo PDF cho tab thứ nhất, nó sẽ chặn luồng request của các tab khác, khiến người dùng khác không thể truy cập được server.
 
-## 3. Quá trình vật lộn với Worker Threads
+## 3. Áp dụng Worker Threads
 
-Nhận ra lỗi sai tai hại về thiết kế hệ thống, mình tức tốc lao vào tái cấu trúc. Bài toán giờ đây là phải đưa toàn bộ khâu tải ảnh và nhào nặn PDF ra một luồng riêng. Lời giải xuất hiện: `worker_threads`.
+Để giải quyết vấn đề nghẽn tiến trình, mình tiến hành tái cấu trúc. Bài toán giờ đây là phải đưa toàn bộ khâu tải ảnh và tạo PDF ra một luồng riêng. Lời giải xuất hiện: `worker_threads`.
 
-Mình ném đoạn code tạo PDF sang một file độc lập tên là `pdfWorker.ts`. Tuy nhiên, nếu có 100 người vào nhập link cùng lúc mà gọi ra 100 Worker thì chắc xẹp luôn cả con máy chủ RAM 1GB của mình. Mình bắt buộc phải code thêm một lớp **WorkerPool** ngầm để giới hạn số luồng hoạt động. 
+Mình ném đoạn code tạo PDF sang một file độc lập tên là `pdfWorker.ts`. Tuy nhiên, nếu có quá nhiều người dùng gọi tạo PDF cùng lúc, hệ thống sẽ dễ bị quá tải. Mình thiết lập một lớp **WorkerPool** để giới hạn số luồng hoạt động. 
 
-Đây là đoạn code xương máu đã ra đời trong khoảnh khắc bế tắc đó:
+Dưới đây là cách mình triển khai WorkerPool:
 
 ```typescript
 import { Worker } from 'worker_threads';
@@ -96,6 +96,6 @@ Mỗi User gửi request xong, server lập tức đẩy dữ liệu ID xuống 
 
 ## 4. Chốt sổ
 
-Gửi luôn một cái link web public sang cho bà chị dùng, thấy bả thao tác mượt mà tải file sầm sập mà lòng vui như trúng số. Thật ra cái hành trình từ một dòng Script ăn xổi, đắp thịt dần qua mô hình bất đồng bộ và tối ưu đa luồng bằng Worker là thứ tốn không ít nơ-ron thần kinh, nhưng cái cảm giác thấy server mình chịu tải trơn tru xứng đáng đến từng phút đồng hồ mày mò.
+Gửi luôn cái link web public sang cho bà chị dùng, thấy bả thao tác tải file mượt mà là thấy vui rồi. Hành trình phát triển từ một dòng script đơn giản đến mô hình xử lý bất đồng bộ và tối ưu bằng Worker tuy mất chút thời gian tìm tòi, nhưng đổi lại hệ thống hoạt động ổn định và hiệu quả hơn.
 
-Tất cả code dự án Server + Worker này, anh em nào tò mò cách setup Express bắt tay với Puppeteer và MongoDB thì cứ sang repo Github tài khoản của mình mà tham khảo nhé. Cứ clone về, điền URI MongoDB vô là chạy phe phé. Hành trình cày cuốc công cụ cào mạng này xin khép lại, hẹn anh em ở một bài vật lộn hệ thống kế tiếp :v!
+Tất cả code dự án Server + Worker này, anh em nào quan tâm cách setup Express với Puppeteer và MongoDB thì cứ sang repo Github của mình tham khảo nhé. Cứ clone về, điền URI MongoDB vô là chạy được ngay. Hẹn anh em ở một chia sẻ hệ thống kế tiếp :v!

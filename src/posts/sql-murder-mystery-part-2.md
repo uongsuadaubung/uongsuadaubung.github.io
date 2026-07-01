@@ -1,12 +1,12 @@
 ---
-title: "Tập tành làm thám tử với SQL Murder Mystery - Part 2: Truy quét trùm cuối"
+title: "Tập tành làm thám tử với SQL Murder Mystery - Part 2: Truy tìm kẻ đứng sau chủ mưu"
 date: "2023-07-30"
 tags: ["Hack Game", "Lập Trình"]
-description: "Hành trình giăng bẫy bắt trùm cuối trong SQL Murder Mystery. Vận dụng kĩ năng Join đa bảng cực gắt chỉ trong 1 nốt nhạc."
+description: "Hành trình giăng bẫy bắt kẻ đứng sau chủ mưu trong SQL Murder Mystery. Vận dụng kĩ năng Join đa bảng cực gắt chỉ trong 1 nốt nhạc."
 published: true
 ---
 
-# Tập tành làm thám tử với SQL Murder Mystery - Part 2: Truy quét trùm cuối
+# Tập tành làm thám tử với SQL Murder Mystery - Part 2: Truy tìm kẻ đứng sau chủ mưu
 
 Tiếp nối phần trước còn đang dang dở. Sau khi tóm được thằng bé sát thủ đâm thuê chém mướn Jeremy Bowers ở Part 1, hệ thống nó gáy kháy mình là phía sau còn có chủ mưu rùng rợn hơn. Lần này, game nó còn xúi "Nếu tự tin kĩ năng SQL thì dùng không quá 2 câu lệnh thôi". 
 
@@ -23,7 +23,7 @@ select * from interview where person_id = 67318;
 Kết quả lấy được lời khai cực xịn:
 > Tôi đã được một phụ nữ nhiều tiền thuê. Không biết tên bả là gì nhưng bả cao tầm 5'5" (65") hoặc 5'7" (67"). Tóc đỏ và lái một chiếc Tesla Model S. Tôi biết bả từng đi tham gia sự kiện SQL Symphony Concert tới tận 3 lần vào tháng 12 năm 2017.
 
-## 2. Câu truy vấn thần thánh giải quyết mọi vấn đề
+## 2. Câu truy vấn giải quyết mọi vấn đề
 
 Vậy là tốn cmn mất 1 câu lệnh gõ tay rồi. Giờ chỉ còn dùng 1 cú lệnh duy nhất để moi ra thủ phạm này thôi. Rà lại các thông tin:
 *   Là nữ (`gender = 'female'`)

@@ -87,6 +87,6 @@ where (p.id = 28819 or p.id = 67318) and dl.plate_number like '%H42W%';
 Khớp cmn lệnh! Chỉ có **Jeremy Bowers** là có biển xe chứa ký tự trên do đi con Chevrolet Spark LS. Mình hý hửng Submit kết quả vào game thì nó báo:
 > Xin chúc mừng! Bạn đã tìm thấy kẻ giết người! Nhưng... hãy thử truy vấn bản ghi phỏng vấn của hắn ta để tìm ra tên tội phạm thực sự đứng sau...
 
-Ôi vãi, hóa ra thằng này chỉ là dân đâm thuê chém mướn, sau nó còn có Trùm Cuối.
+Ôi vãi, hóa ra thằng này chỉ là kẻ thực hiện, phía sau còn có kẻ chủ mưu đứng đầu.
 
-Đến đây cũng mỏi tay gõ phím cmnr. Thui lười quá chả viết nữa, để lúc khác khỏe khỏe thì mình tung nốt Part 2 truy tìm con Boss đứng sau nhé :v
+Đến đây cũng mỏi tay gõ phím cmnr. Thui lười quá chả viết nữa, để lúc khác khỏe khỏe thì mình tung nốt Part 2 truy tìm kẻ đứng sau chủ mưu nhé :v

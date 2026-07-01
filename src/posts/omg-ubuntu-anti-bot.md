@@ -2,7 +2,7 @@
 title: "Viết crawler tin công nghệ và phát hiện thú vị về cơ chế chống bot của OMG! Ubuntu"
 date: 2026-06-29
 tags: ["crawl", "anti-bot", "security", "side-project"]
-description: "Vì lười lướt qua lại giữa chục trang tin tức công nghệ mỗi sáng, mình quyết định tự build một crawler gom mọi thứ về một nơi và vô tình đụng độ một cơ chế chống bot khá dị của OMG! Ubuntu."
+description: "Muốn đọc tin tức nhanh chóng mà không cần mở quá nhiều tab, mình quyết định viết một crawler gom tin về một nơi và vô tình đụng độ một cơ chế chống bot khá dị của OMG! Ubuntu."
 published: true
 ---
 
@@ -10,7 +10,7 @@ published: true
 
 Mỗi sáng thức dậy, thói quen khó bỏ của mình là nhâm nhi tách cà phê và lướt qua hàng tá trang tin công nghệ để xem thế giới hôm nay có drama hay ho gì mới không. Từ mấy trang tin tức quốc tế, diễn đàn cho đến mấy blog chuyên biệt về Linux, mã nguồn mở... trang nào mình cũng muốn ngó qua một chút để cập nhật xu hướng.
 
-Thế nhưng, cái sự sung sướng khi đọc tin nhanh chóng bị lung lay bởi... sự lười biếng. Nghĩ cảnh mỗi sáng phải mở hàng chục tab trình duyệt, click qua click lại tìm bài mới thực sự là một cực hình đối với một thằng lười như mình. Để giải quyết cái sự khó chịu này, mình quyết định mang cái "IQ 40" của bản thân ra để build một cái crawler gom hết bài viết từ các nguồn yêu thích về một nơi đọc cho tiện. Kế hoạch nghe ngon lành cành đào phết đúng không anh em?
+Thế nhưng, nghĩ cảnh mỗi sáng phải mở hàng chục tab trình duyệt, click qua click lại tìm bài mới thì hơi ngại. Để giải quyết sự bất tiện này, mình quyết định viết một cái crawler để gom hết bài viết từ các nguồn yêu thích về một nơi đọc cho tiện. Kế hoạch nghe ngon lành cành đào phết đúng không anh em?
 
 Vừa bắt tay vào làm, trang đầu tiên mình chọn để thử nghiệm luôn là **OMG! Ubuntu!** (một blog cực kỳ nổi tiếng về Ubuntu). Để cho nhanh gọn lẹ, mình vác **Deno** ra code nhanh file `script.ts` để kéo thử HTML của trang về xem thế nào. Đoạn code cũng chả có gì phức tạp, chỉ đơn giản là tạo một request `fetch` kèm cái header `User-Agent` giả lập Chrome xịn xò:
 
@@ -118,13 +118,13 @@ const postRes = await fetch("https://www.omgubuntu.co.uk/__challenge", {
 console.log(postRes.status); // Kết quả nhận về: 400 Bad Request
 ```
 
-Lúc đó mình khá là hoang mang, vắt óc suy nghĩ và đưa ra 3 giả thuyết:
+Lúc đó, mình đặt ra 3 giả thuyết để kiểm tra:
 
 *   **Giả thuyết A (Mã hóa sai lời giải?):** Có khi nào mình tính toán hoặc encode sai kết quả? Mình cẩn thận chạy debug, kiểm tra lại thuật toán băm từng li từng tí. Nhưng rõ ràng chuỗi băm ra bắt đầu bằng đúng 4 chữ số `0000`, không sai đi đâu được.
 *   **Giả thuyết B (Thiếu các Header bảo mật?):** Có thể CDN chặn vì nghi ngờ do thiếu thông tin của trình duyệt. Thế là mình nảy số, bổ sung thêm các header như `Origin` và `Referer` trỏ về trang chủ của OMG! Ubuntu. Cơ mà gửi lại request thì vẫn ăn quả lỗi `400` như cũ.
-*   **Giả thuyết C (Có một bẫy thời gian!):** Chắc chắn còn một "Trùm Cuối" nào đó núp lùm ở đây. Có khả năng hệ thống thiết lập một cơ chế kiểm tra thời gian (time-lock) để ngăn chặn các máy tính giải PoW quá nhanh chăng?
+*   **Giả thuyết C (Có một bẫy thời gian!):** Chắc chắn còn một cơ chế kiểm tra nào đó núp lùm ở đây. Có khả năng hệ thống thiết lập một cơ chế kiểm tra thời gian (time-lock) để ngăn chặn các máy tính giải PoW quá nhanh chăng?
 
-### 🔓 Trùm cuối lộ diện: Phát hiện "Bẫy thời gian" (Time-lock)
+### 🔓 Phát hiện "Bẫy thời gian" (Time-lock)
 
 Hóa ra, giả thuyết C chính là câu trả lời! Để chắc chắn, mình quay lại đọc kỹ đoạn JavaScript của trang Challenge và chú ý đến một đoạn lệnh tính toán thời gian có sử dụng `setTimeout`. 
 
@@ -169,7 +169,7 @@ Với giải pháp bẫy thời gian được bổ sung, mình chạy thử nghi
 4. **Gửi POST xác thực:** Đủ 4 giây trôi qua, request POST mang theo lời giải được bắn lên `/__challenge`. Kết quả phản hồi: **200 OK**!
 5. **Cào dữ liệu thật:** Server trả về thêm cookie session đã xác thực. Mình đính kèm đống cookie này rồi gửi request tải lại trang chủ... Bùm! Dữ liệu HTML thật bự chà bá của OMG! Ubuntu! đã nằm gọn trong tay mình mà không còn một trở ngại nào nữa.
 
-Nhìn lại thì đây là một hành trình tư duy cực kỳ thú vị đối với một "thằng lười". Đi từ việc phát hiện lỗi bị chặn -> tò mò đọc payload -> nhờ vả AI dịch ngược thuật toán -> chạy thử lần đầu vấp ngã -> lùng sục tìm ra bẫy thời gian phụ -> và cuối cùng là bypass vượt rào thành công!
+Nhìn lại thì đây là một hành trình tư duy cực kỳ thú vị. Đi từ việc phát hiện lỗi bị chặn -> tò mò đọc payload -> nhờ vả AI dịch ngược thuật toán -> chạy thử lần đầu vấp ngã -> lùng sục tìm ra bẫy thời gian phụ -> và cuối cùng là bypass vượt rào thành công!
 
 ### 🛡️ Giải mã cơ chế phòng thủ: Tại sao OMG! Ubuntu lại dùng nó?
 
@@ -189,8 +189,8 @@ Cơ chế này chính là sự kết hợp giữa **Proof-of-Work (PoW) / Hashca
 
 ### 📝 Tổng kết
 
-Vậy là từ một buổi sáng lười biếng muốn viết bot cào tin cho tiện, mình đã vô tình chạm trán và vượt qua một hệ thống chống bot khá thông minh và thú vị của OMG! Ubuntu. Qua đó mới thấy, các hệ thống bảo mật hiện nay không chỉ đơn thuần dựa vào việc đối chiếu IP/UA tĩnh mà đã áp dụng Proof-of-Work kết hợp Time-lock rất tinh tế.
+Vậy là từ ý định viết bot cào tin cho tiện trong lúc rảnh rỗi, mình đã vô tình chạm trán và vượt qua một hệ thống chống bot khá thông minh và thú vị của OMG! Ubuntu. Qua đó mới thấy, các hệ thống bảo mật hiện nay không chỉ đơn thuần dựa vào việc đối chiếu IP/UA tĩnh mà đã áp dụng Proof-of-Work kết hợp Time-lock rất tinh tế.
 
-Tất nhiên, nếu lười giải PoW thì anh em vẫn có thể dùng cái User-Agent của Postman như mình phát hiện ở trên để lách luật cho nhanh, nhưng tự tay decode thuật toán và viết script bypass xịn xò thế này thì mới đúng chất dân lập trình chứ đúng không? 
+Tất nhiên, nếu ngại giải PoW thì anh em vẫn có thể dùng cái User-Agent của Postman như mình phát hiện ở trên để lách luật cho nhanh, nhưng tự tay decode thuật toán và viết script bypass thế này thì vẫn thú vị hơn nhiều chứ đúng không? 
 
 Cảm ơn mọi người đã theo dõi bài viết này. Hẹn gặp lại anh em ở những bài viết "vọc vạch" công nghệ thú vị lần sau! 🚀

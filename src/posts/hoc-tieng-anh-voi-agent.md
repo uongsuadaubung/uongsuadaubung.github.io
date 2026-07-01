@@ -142,7 +142,7 @@ Mọi thứ trở nên cực kỳ gọn gàng, sáng sủa và dễ mở rộng.
 
 ---
 
-## 🔄 Giai đoạn 6: Cú \"quay xe\" Trùm Cuối: Xóa béng Web Server!
+## 🔄 Giai đoạn 6: Cú "quay xe" bất ngờ: Xóa béng Web Server!
 
 Vào một buổi sáng đẹp trời, sau khi pha cốc cà phê sữa đá, mình ngồi nhìn lại kiến trúc hệ thống:
 - Con Agent chạy local ngay trên máy mình.

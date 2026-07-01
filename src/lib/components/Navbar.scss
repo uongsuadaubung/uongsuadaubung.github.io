@@ -70,6 +70,7 @@
 	font-family: var(--font-sans);
 	transition: color var(--transition-fast), background var(--transition-fast);
 	position: relative;
+	text-decoration: none;
 
 	&:hover {
 		color: var(--text-primary);
@@ -142,6 +143,8 @@
 	text-align: left;
 	cursor: pointer;
 	transition: color var(--transition-fast), background var(--transition-fast);
+	text-decoration: none;
+	display: block;
 
 	&:hover, &.active {
 		color: var(--accent-1);
