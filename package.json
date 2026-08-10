@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "node scripts/generate-sitemap.js",
     "build": "tsc -b && vite build",
+    "postbuild": "node scripts/prerender.js",
     "preview": "vite preview",
     "check-css": "bun run scripts/check-unused-css.ts"
   },

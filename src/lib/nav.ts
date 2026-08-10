@@ -24,45 +24,51 @@ function updateTitle(view: View) {
 	}
 }
 
-function parseHash(hash: string): View {
-	const path = hash.replace(/^#\/?/, '');
-	if (path === 'blog') return { id: 'blog' };
+export function viewToPath(view: View): string {
+	if (view.id === 'blog') return '/blog';
+	if (view.id === 'about') return '/about';
+	if (view.id === 'post') return `/post/${view.slug}`;
+	return '/';
+}
+
+function parseLocation(): View {
+	if (typeof window === 'undefined') return { id: 'home' };
+
+	// Legacy hash fallback migration (#/post/slug -> /post/slug)
+	if (window.location.hash && window.location.hash.length > 1) {
+		const hashPath = window.location.hash.replace(/^#\/?/, '');
+		window.history.replaceState(null, '', '/' + hashPath);
+	}
+
+	const path = window.location.pathname.replace(/^\/+|\/+$/g, '');
+	if (path === 'blog' || path === 'post') return { id: 'blog' };
 	if (path === 'about' || path === 'resume') return { id: 'about' };
 	if (path.startsWith('post/')) return { id: 'post', slug: path.slice(5) };
 	return { id: 'home' };
 }
 
-function viewToHash(view: View): string {
-	if (view.id === 'blog') return '#/blog';
-	if (view.id === 'about') return '#/about';
-	if (view.id === 'post') return `#/post/${view.slug}`;
-	return '#/';
-}
-
-const initialView: View =
-	typeof window !== 'undefined' ? parseHash(window.location.hash) : { id: 'home' };
-
+const initialView: View = parseLocation();
 const [currentView, setCurrentView] = createSignal<View>(initialView);
 updateTitle(initialView);
 
-let currentHash = typeof window !== 'undefined' ? (window.location.hash || '#/') : '#/';
+let currentPath = typeof window !== 'undefined' ? window.location.pathname : '/';
 const scrollPositions = new Map<string, number>();
 
 function navigate(view: View) {
 	if (typeof window !== 'undefined') {
-		const newHash = viewToHash(view);
-		if (currentHash === newHash) {
+		const newPath = viewToPath(view);
+		if (currentPath === newPath) {
 			window.scrollTo({ top: 0, behavior: 'smooth' });
 			return;
 		}
-		scrollPositions.set(currentHash, window.scrollY);
-		window.location.hash = newHash;
-		currentHash = newHash;
+		scrollPositions.set(currentPath, window.scrollY);
+		window.history.pushState(null, '', newPath);
+		currentPath = newPath;
 		setCurrentView(view);
 		updateTitle(view);
 		
 		setTimeout(() => {
-			const saved = scrollPositions.get(newHash);
+			const saved = scrollPositions.get(newPath);
 			if (saved !== undefined) {
 				window.scrollTo({ top: saved, behavior: 'instant' as ScrollBehavior });
 			} else {
@@ -75,26 +81,32 @@ function navigate(view: View) {
 	}
 }
 
-// Sync store when user presses Back/Forward
+// Sync store when user presses Back/Forward browser buttons
 if (typeof window !== 'undefined') {
-	window.addEventListener('hashchange', () => {
-		const newHash = window.location.hash || '#/';
-		if (currentHash === newHash) return;
+	const handlePopState = () => {
+		const newPath = window.location.pathname;
+		if (currentPath === newPath) return;
 
-		scrollPositions.set(currentHash, window.scrollY);
-		currentHash = newHash;
-		const view = parseHash(newHash);
+		scrollPositions.set(currentPath, window.scrollY);
+		currentPath = newPath;
+		const view = parseLocation();
 		setCurrentView(view);
 		updateTitle(view);
 		
 		setTimeout(() => {
-			const saved = scrollPositions.get(newHash);
+			const saved = scrollPositions.get(newPath);
 			if (saved !== undefined) {
 				window.scrollTo({ top: saved, behavior: 'instant' as ScrollBehavior });
 			} else {
 				window.scrollTo({ top: 0, behavior: 'smooth' });
 			}
 		}, 10);
+	};
+
+	window.addEventListener('popstate', handlePopState);
+	window.addEventListener('hashchange', () => {
+		const view = parseLocation();
+		navigate(view);
 	});
 }
 
