@@ -17,7 +17,7 @@ files.forEach(file => {
   const lastmod = dateMatch ? dateMatch[1] : '2026-08-10';
 
   postEntries.push({
-    url: `https://uongsuadaubung.github.io/post/${slug}/`,
+    url: `https://uongsuadaubung.github.io/blog/${slug}/`,
     lastmod,
     priority: '0.8'
   });

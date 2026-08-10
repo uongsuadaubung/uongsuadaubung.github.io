@@ -25,24 +25,26 @@ function updateTitle(view: View) {
 }
 
 export function viewToPath(view: View): string {
-	if (view.id === 'blog') return '/blog';
-	if (view.id === 'about') return '/about';
-	if (view.id === 'post') return `/post/${view.slug}`;
+	if (view.id === 'blog') return '/blog/';
+	if (view.id === 'about') return '/about/';
+	if (view.id === 'post') return `/blog/${view.slug}/`;
 	return '/';
 }
 
 function parseLocation(): View {
 	if (typeof window === 'undefined') return { id: 'home' };
 
-	// Legacy hash fallback migration (#/post/slug -> /post/slug)
+	// Legacy hash fallback migration (#/post/slug -> /blog/slug/)
 	if (window.location.hash && window.location.hash.length > 1) {
-		const hashPath = window.location.hash.replace(/^#\/?/, '');
-		window.history.replaceState(null, '', '/' + hashPath);
+		const hashPath = window.location.hash.replace(/^#\/?/, '').replace(/^post\//, '');
+		window.history.replaceState(null, '', '/blog/' + hashPath + '/');
 	}
 
 	const path = window.location.pathname.replace(/^\/+|\/+$/g, '');
-	if (path === 'blog' || path === 'post') return { id: 'blog' };
+	if (path === 'blog' || path === 'post' || path === 'blog/post') return { id: 'blog' };
 	if (path === 'about' || path === 'resume') return { id: 'about' };
+	if (path.startsWith('blog/post/')) return { id: 'post', slug: path.slice(10) };
+	if (path.startsWith('blog/')) return { id: 'post', slug: path.slice(5) };
 	if (path.startsWith('post/')) return { id: 'post', slug: path.slice(5) };
 	return { id: 'home' };
 }

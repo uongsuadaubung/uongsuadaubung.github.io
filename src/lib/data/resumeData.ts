@@ -370,105 +370,105 @@ export const resumeData: ResumeData = {
 		{
 			name: 'Gistwarden',
 			period: '08/2026',
-			link: '/post/gioi-thieu-gistwarden',
+			link: '/blog/gioi-thieu-gistwarden/',
 			tech: 'TypeScript · Bun · Solid JS · Passkeys',
 			desc: 'Trình quản lý mật khẩu & 2FA mã hóa cá nhân Zero-Knowledge hỗ trợ Local Vault ngoại tuyến và đồng bộ GitHub Gist.'
 		},
 		{
 			name: 'Cozy Feed',
 			period: '07/2026',
-			link: '/post/tu-lam-cozy-feed',
+			link: '/blog/tu-lam-cozy-feed/',
 			tech: 'TypeScript · Solid JS · Deno',
 			desc: 'Bộ cào và ứng dụng đọc tin tức RSS cá nhân tập trung, thiết kế tối giản, hiệu năng cao.'
 		},
 		{
 			name: 'PVZGE Cloud Sync Extension',
 			period: '05/2026',
-			link: '/post/tu-lam-browser-extension-pvzge-sync',
+			link: '/blog/tu-lam-browser-extension-pvzge-sync/',
 			tech: 'JavaScript · Chrome Extension API · Cloud Sync',
 			desc: 'Chrome Extension tự động hóa đồng bộ dữ liệu save game lên mây cho tựa game Plants vs. Zombies Gardenless Edition (PvZGE).'
 		},
 		{
 			name: 'Epic Games Free Claim Bot',
 			period: '05/2026',
-			link: '/post/tu-lam-he-thong-san-game-mien-phi-epic-games',
+			link: '/blog/tu-lam-he-thong-san-game-mien-phi-epic-games/',
 			tech: 'Deno · GitHub Actions · Telegram Bot',
 			desc: 'Hệ thống tự động săn game miễn phí trên Epic Games Store và gửi thông báo Telegram.'
 		},
 		{
 			name: 'MobileCity Phone Data Crawler',
 			period: '04/2026',
-			link: '/post/crawl-mobile-city-tim-dien-thoai',
+			link: '/blog/crawl-mobile-city-tim-dien-thoai/',
 			tech: 'Node.js · Cheerio · Web Scraping',
 			desc: 'Tool crawler tự động thu thập và tổng hợp bảng thông số kỹ thuật điện thoại từ MobileCity.'
 		},
 		{
 			name: 'WebRTC P2P Chat Application',
 			period: '04/2026',
-			link: '/post/chat-p2p-webrtc',
+			link: '/blog/chat-p2p-webrtc/',
 			tech: 'JavaScript · WebRTC · Svelte 5 · Peer-to-Peer',
 			desc: 'Ứng dụng nhắn tin trực tiếp ngang hàng bảo mật qua trình duyệt sử dụng WebRTC.'
 		},
 		{
 			name: 'Switch Games Manager',
 			period: '03/2026',
-			link: '/post/tu-lam-app-quan-ly-game-switch',
+			link: '/blog/tu-lam-app-quan-ly-game-switch/',
 			tech: 'TypeScript · Solid JS · Desktop App',
 			desc: 'Ứng dụng quản lý thư viện game Nintendo Switch cá nhân với giao diện trực quan, tự động cập nhật cover art & thông tin game.'
 		},
 		{
 			name: 'App "Hôm Nay Ăn Gì"',
 			period: '03/2026',
-			link: '/post/hom-nay-an-gi',
+			link: '/blog/hom-nay-an-gi/',
 			tech: 'JavaScript · Web App',
 			desc: 'Ứng dụng gợi ý thực đơn và chọn món ăn ngẫu nhiên dẹp bỏ cơn đau đầu mỗi tối.'
 		},
 		{
 			name: 'Website Đám Cưới Cá Nhân (Wedding Web)',
 			period: '02/2026',
-			link: '/post/my-wedding',
+			link: '/blog/my-wedding/',
 			tech: 'HTML5 · SCSS · Google Apps Script',
 			desc: 'Trang web thiệp cưới và kỷ niệm cá nhân tích hợp Google Apps Script phân luồng chia 2 họ.'
 		},
 		{
 			name: 'Chrome Extensions Suite',
 			period: '05/2025',
-			link: '/post/chrome-extension',
+			link: '/blog/chrome-extension/',
 			tech: 'JavaScript · Extension API',
 			desc: 'Bộ extension tiện ích duyệt web cá nhân.'
 		},
 		{
 			name: 'Slideshare Downloader',
 			period: '02/2025',
-			link: '/post/tu-lam-slideshare-downloader',
+			link: '/blog/tu-lam-slideshare-downloader/',
 			tech: 'JavaScript · Web Scraping',
 			desc: 'Công cụ hỗ trợ bóc tách và tải tài liệu/slide từ Slideshare nhanh chóng.'
 		},
 		{
 			name: 'Windows Minesweeper & Sudoku Memory Solvers',
 			period: '09/2023',
-			link: '/post/sudoku-solver',
+			link: '/blog/sudoku-solver/',
 			tech: 'C++ / C# · Reverse Engineering · Memory Reading · Algorithms',
 			desc: 'Bộ công cụ can thiệp bộ nhớ RAM game Windows (Minesweeper & Sudoku) bằng kỹ thuật Reverse Engineering và giải thuật tự động.'
 		},
 		{
 			name: 'Auto Game Tools (Pikachu & Kawai 2003)',
 			period: '08/2023',
-			link: '/post/auto-game-pikachupokemon-part-1',
+			link: '/blog/auto-game-pikachupokemon-part-1/',
 			tech: 'C# · Reverse Engineering · Memory Reading · WinAPI',
 			desc: 'Ứng dụng C# tự động hóa game Pikachu & Kawai 2003 bằng kỹ thuật Reverse Engineering, đọc bộ nhớ RAM của process và gọi WinAPI tự động click.'
 		},
 		{
 			name: 'Facebook Newsfeed Extension',
 			period: '10/2021',
-			link: '/post/tu-lam-facebook-extension',
+			link: '/blog/tu-lam-facebook-extension/',
 			tech: 'JavaScript · Extension API',
 			desc: 'Chrome Extension dọn dẹp và tối ưu Newsfeed Facebook.'
 		},
 		{
 			name: 'PVZ GOTY Memory Hack Tools',
 			period: '06/2020',
-			link: '/post/plants-vs-zombies-goty-edition-part-1',
+			link: '/blog/plants-vs-zombies-goty-edition-part-1/',
 			tech: 'C++ · Reverse Engineering · Memory Hacking',
 			desc: 'Bộ công cụ can thiệp bộ nhớ RAM game Plants vs. Zombies GOTY Edition bằng kỹ thuật Reverse Engineering C++.'
 		}

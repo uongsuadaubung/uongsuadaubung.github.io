@@ -63,12 +63,14 @@ files.forEach(file => {
 
   const title = titleMatch ? `${titleMatch[1]} — uongsuadaubung` : 'Blog — uongsuadaubung';
   const description = descMatch ? descMatch[1] : 'Bài viết trên blog uongsuadaubung';
-  const postUrl = `https://uongsuadaubung.github.io/post/${slug}/`;
+  const postUrl = `https://uongsuadaubung.github.io/blog/${slug}/`;
 
   // Strip frontmatter to get markdown body
   const bodyMarkdown = rawContent.replace(/^---[\s\S]*?---\s*/, '');
   const bodyHtml = `<h1>${titleMatch ? titleMatch[1] : ''}</h1>` + marked.parse(bodyMarkdown);
 
+  createStaticRoute(`blog/${slug}`, title, description, postUrl, bodyHtml);
+  createStaticRoute(`blog/post/${slug}`, title, description, postUrl, bodyHtml);
   createStaticRoute(`post/${slug}`, title, description, postUrl, bodyHtml);
 });
 
