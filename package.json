@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "check-css": "bun run scripts/check-unused-css.ts"
   },
   "dependencies": {
     "@solidjs/router": "^0.16.1",
@@ -19,6 +20,7 @@
   "devDependencies": {
     "@types/node": "^24.12.3",
     "@types/three": "^0.184.1",
+    "bun-types": "^1.2.0",
     "typescript": "~6.0.2",
     "vite": "^8.0.12",
     "vite-plugin-solid": "^2.11.12"

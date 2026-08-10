@@ -1,3 +1,6 @@
+import { readdir, readFile, stat } from "node:fs/promises";
+import { join } from "node:path";
+
 // Cấu hình các thư mục cần quét
 const TARGET_DIRS = [
 	"./src/lib/components",
@@ -13,8 +16,9 @@ const IGNORED_CLASSES = new Set([
 async function checkDirectory(dirPath: string) {
 	const files: string[] = [];
 	try {
-		for await (const entry of Deno.readDir(dirPath)) {
-			if (entry.isFile && entry.name.endsWith(".scss")) {
+		const entries = await readdir(dirPath, { withFileTypes: true });
+		for (const entry of entries) {
+			if (entry.isFile() && entry.name.endsWith(".scss")) {
 				files.push(entry.name);
 			}
 		}
@@ -26,20 +30,20 @@ async function checkDirectory(dirPath: string) {
 		const baseName = scssFile.replace(".scss", "");
 		const tsxFile = `${baseName}.tsx`;
 		
-		const scssPath = `${dirPath}/${scssFile}`;
-		const tsxPath = `${dirPath}/${tsxFile}`;
+		const scssPath = join(dirPath, scssFile);
+		const tsxPath = join(dirPath, tsxFile);
 
 		// Kiểm tra xem có file TSX tương ứng không
 		try {
-			await Deno.stat(tsxPath);
+			await stat(tsxPath);
 		} catch {
 			// Không có file TSX tương ứng, bỏ qua
 			continue;
 		}
 
 		// Đọc nội dung cả 2 file
-		const scssContent = await Deno.readTextFile(scssPath);
-		const tsxContent = await Deno.readTextFile(tsxPath);
+		const scssContent = await readFile(scssPath, "utf-8");
+		const tsxContent = await readFile(tsxPath, "utf-8");
 
 		// Regex trích xuất các class trong file SCSS (bắt đầu bằng dấu chấm và một ký tự hợp lệ cho tên class)
 		// Tránh các pseudo-class như :hover, :active, các biến SASS, hoặc các số thập phân dạng .5s, .8rem
@@ -83,7 +87,7 @@ async function main() {
 	
 	// Ghi đè console.log để theo dõi xem có class thừa nào không
 	const originalLog = console.log;
-	console.log = function(...args) {
+	console.log = function(...args: unknown[]) {
 		if (args[0] && typeof args[0] === "string" && args[0].includes("[!] File:")) {
 			hasUnused = true;
 		}

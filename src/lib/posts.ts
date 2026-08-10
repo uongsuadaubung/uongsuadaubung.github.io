@@ -74,12 +74,29 @@ function parseFrontMatter(rawMarkdown: string): { metadata: Record<string, any>;
 	return { metadata, content };
 }
 
+function extractRawContent(moduleExport: unknown): string {
+	if (typeof moduleExport === 'string') {
+		return moduleExport;
+	}
+	if (
+		typeof moduleExport === 'object' &&
+		moduleExport !== null &&
+		'default' in moduleExport
+	) {
+		const val = Reflect.get(moduleExport, 'default');
+		if (typeof val === 'string') {
+			return val;
+		}
+	}
+	return '';
+}
+
 export async function getPosts(): Promise<Post[]> {
 	const posts: Post[] = [];
 
 	for (const path in modules) {
 		try {
-			const rawContent = (modules[path] as { default: string }).default;
+			const rawContent = extractRawContent(modules[path]);
 			const slug = path.split('/').pop()?.replace('.md', '') ?? '';
 			const { metadata, content } = parseFrontMatter(rawContent);
 
@@ -110,7 +127,7 @@ export async function getPostBySlug(slug: string): Promise<PostDetail | null> {
 	if (!(path in modules)) return null;
 
 	try {
-		const rawContent = (modules[path] as { default: string }).default;
+		const rawContent = extractRawContent(modules[path]);
 		const { metadata, content } = parseFrontMatter(rawContent);
 		const htmlContent = await marked.parse(content);
 
