@@ -4,7 +4,8 @@ export type View =
 	| { id: 'home' }
 	| { id: 'blog' }
 	| { id: 'post'; slug: string }
-	| { id: 'about' };
+	| { id: 'about' }
+	| { id: 'apps' };
 
 function updateTitle(view: View) {
 	if (typeof document === 'undefined') return;
@@ -18,6 +19,9 @@ function updateTitle(view: View) {
 		case 'about':
 			document.title = 'Về mình & Portfolio — Hà Mạnh Kiên';
 			break;
+		case 'apps':
+			document.title = 'Hệ sinh thái Apps & Ứng dụng — uongsuadaubung';
+			break;
 		case 'post':
 			// Post view will update title with actual post title
 			break;
@@ -27,6 +31,7 @@ function updateTitle(view: View) {
 export function viewToPath(view: View): string {
 	if (view.id === 'blog') return '/blog/';
 	if (view.id === 'about') return '/about/';
+	if (view.id === 'apps') return '/apps/';
 	if (view.id === 'post') return `/blog/${view.slug}/`;
 	return '/';
 }
@@ -43,6 +48,7 @@ function parseLocation(): View {
 	const path = window.location.pathname.replace(/^\/+|\/+$/g, '');
 	if (path === 'blog' || path === 'post' || path === 'blog/post') return { id: 'blog' };
 	if (path === 'about' || path === 'resume') return { id: 'about' };
+	if (path === 'apps' || path === 'ecosystem' || path === 'projects') return { id: 'apps' };
 	if (path.startsWith('blog/post/')) return { id: 'post', slug: path.slice(10) };
 	if (path.startsWith('blog/')) return { id: 'post', slug: path.slice(5) };
 	if (path.startsWith('post/')) return { id: 'post', slug: path.slice(5) };
@@ -117,6 +123,7 @@ export { currentView };
 export const nav = {
 	home: () => navigate({ id: 'home' }),
 	blog: () => navigate({ id: 'blog' }),
+	apps: () => navigate({ id: 'apps' }),
 	post: (slug: string) => navigate({ id: 'post', slug }),
 	about: () => navigate({ id: 'about' })
 };

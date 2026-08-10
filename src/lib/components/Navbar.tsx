@@ -9,13 +9,11 @@ export default function Navbar() {
 	const navLinks = [
 		{ id: 'home', label: 'Home', external: false, url: '' },
 		{ id: 'blog', label: 'Blog', external: false, url: '' },
-		{ id: 'cozy', label: 'Cozy', external: true, url: '/cozy/' },
-		{ id: 'gistwarden', label: 'Gistwarden', external: true, url: '/gistwarden/' },
-		{ id: 'switchgames', label: 'Switch Games', external: true, url: '/switch-games/' },
+		{ id: 'apps', label: 'Apps', external: false, url: '' },
 		{ id: 'about', label: 'Về mình', external: false, url: '' }
 	] as const;
 
-	function go(id: 'home' | 'blog' | 'about') {
+	function go(id: 'home' | 'blog' | 'about' | 'apps') {
 		nav[id]();
 		setMobileOpen(false);
 	}

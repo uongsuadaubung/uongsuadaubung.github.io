@@ -1,0 +1,167 @@
+.ecosystem-page {
+  .page-header {
+    padding: var(--space-16, 4rem) 0 var(--space-10, 2.5rem);
+    border-bottom: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+    margin-bottom: var(--space-10, 2.5rem);
+    background: linear-gradient(to bottom, var(--bg-surface, rgba(255, 255, 255, 0.02)), transparent);
+
+    .header-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: var(--radius-full, 9999px);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      background: var(--tag-bg, rgba(99, 102, 241, 0.12));
+      color: var(--accent-1, #6366f1);
+      margin-bottom: 12px;
+      border: 1px solid var(--tag-border, rgba(99, 102, 241, 0.25));
+    }
+
+    h1 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      letter-spacing: -0.03em;
+      margin-bottom: 8px;
+      color: var(--text-heading, #f8fafc);
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .subtitle {
+      color: var(--text-secondary, #cbd5e1);
+      font-size: 1.05rem;
+      max-width: 760px;
+      margin: 0;
+      line-height: 1.6;
+      text-align: left;
+    }
+  }
+
+  .ecosystem-layout {
+    padding-bottom: var(--space-20, 5rem);
+  }
+
+  .apps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+    align-items: stretch;
+  }
+
+  .app-card {
+    background: var(--bg-card, rgba(255, 255, 255, 0.03));
+    border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+    border-radius: var(--radius-lg, 16px);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-sizing: border-box;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+
+    &:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent-1, #6366f1);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+    }
+
+    .card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+
+      .app-icon {
+        font-size: 2.2rem;
+        line-height: 1;
+      }
+
+      .app-badge {
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 4px 10px;
+        border-radius: 12px;
+        background: var(--tag-bg, rgba(99, 102, 241, 0.1));
+        color: var(--accent-1, #6366f1);
+        border: 1px solid var(--tag-border, rgba(99, 102, 241, 0.2));
+      }
+    }
+
+    .app-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-heading, #f8fafc);
+      margin-bottom: 6px;
+    }
+
+    .app-tech {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--accent-1, #6366f1);
+      margin-bottom: 12px;
+      line-height: 1.4;
+      min-height: 2.4em;
+    }
+
+    .app-desc {
+      font-size: 0.9rem;
+      color: var(--text-secondary, #cbd5e1);
+      line-height: 1.6;
+      flex: 1 1 auto;
+      margin-bottom: 24px;
+    }
+
+    .card-footer {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      width: 100%;
+      margin-top: auto;
+
+      .btn-live, .btn-blog {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 42px;
+        width: 100%;
+        border-radius: var(--radius-base, 10px);
+        font-size: 0.85rem;
+        font-weight: 600;
+        box-sizing: border-box;
+        text-decoration: none;
+        transition: all 0.2s ease;
+      }
+
+      .btn-live {
+        background: var(--accent-1, #6366f1);
+        color: #ffffff;
+
+        &:hover {
+          opacity: 0.9;
+          transform: scale(1.02);
+        }
+      }
+
+      .btn-blog {
+        background: var(--bg-elevated, rgba(255, 255, 255, 0.05));
+        border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
+        color: var(--text-heading, #f8fafc);
+        cursor: pointer;
+
+        &:hover {
+          background: var(--tag-bg, rgba(255, 255, 255, 0.12));
+          border-color: var(--accent-1, #6366f1);
+          color: var(--accent-1, #6366f1);
+          transform: scale(1.02);
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .ecosystem-page .apps-grid {
+    grid-template-columns: 1fr;
+  }
+}

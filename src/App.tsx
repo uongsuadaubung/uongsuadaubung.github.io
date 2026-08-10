@@ -5,6 +5,7 @@ import HomeView from './lib/views/HomeView';
 import BlogView from './lib/views/BlogView';
 import PostView from './lib/views/PostView';
 import AboutView from './lib/views/AboutView';
+import EcosystemView from './lib/views/EcosystemView';
 
 export default function App() {
 	return (
@@ -18,6 +19,8 @@ export default function App() {
 							return <HomeView />;
 						case 'blog':
 							return <BlogView />;
+						case 'apps':
+							return <EcosystemView />;
 						case 'post':
 							return <PostView slug={view.slug} />;
 						case 'about':

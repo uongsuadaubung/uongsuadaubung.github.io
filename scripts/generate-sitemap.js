@@ -31,9 +31,12 @@ const staticPages = [
   { url: 'https://uongsuadaubung.github.io/', lastmod: latestPostDate, priority: '1.0' },
   { url: 'https://uongsuadaubung.github.io/about/', lastmod: latestPostDate, priority: '0.9' },
   { url: 'https://uongsuadaubung.github.io/blog/', lastmod: latestPostDate, priority: '0.9' },
+  { url: 'https://uongsuadaubung.github.io/apps/', lastmod: latestPostDate, priority: '0.9' },
   { url: 'https://uongsuadaubung.github.io/gistwarden/', lastmod: '2026-08-01', priority: '0.8' },
   { url: 'https://uongsuadaubung.github.io/cozy/', lastmod: '2026-07-15', priority: '0.8' },
   { url: 'https://uongsuadaubung.github.io/switch-games/', lastmod: '2026-03-20', priority: '0.8' },
+  { url: 'https://uongsuadaubung.github.io/mobile-city/', lastmod: '2026-04-23', priority: '0.8' },
+  { url: 'https://uongsuadaubung.github.io/chat/', lastmod: '2026-04-10', priority: '0.8' },
   { url: 'https://uongsuadaubung.github.io/hom-nay-an-gi/', lastmod: '2026-03-13', priority: '0.8' }
 ];
 

@@ -50,6 +50,8 @@ function createStaticRoute(routePath, title, description, url, bodyHtml = '') {
 // 1. Prerender static pages
 createStaticRoute('about', 'Về mình & Portfolio — Hà Mạnh Kiên', 'Trang thông tin cá nhân, kinh nghiệm làm việc và các dự án nổi bật của Hà Mạnh Kiên (uongsuadaubung).', 'https://uongsuadaubung.github.io/about/');
 createStaticRoute('blog', 'Blog — uongsuadaubung', 'Danh sách các bài viết chia sẻ về lập trình, kinh nghiệm làm nghề và tự động hóa của Hà Mạnh Kiên.', 'https://uongsuadaubung.github.io/blog/');
+createStaticRoute('apps', 'Hệ sinh thái Apps & Ứng dụng — uongsuadaubung', 'Tổng hợp các ứng dụng web tĩnh, công cụ tự động hóa, extension và sản phẩm phần mềm do Hà Mạnh Kiên (uongsuadaubung) phát triển.', 'https://uongsuadaubung.github.io/apps/');
+createStaticRoute('ecosystem', 'Hệ sinh thái Apps & Ứng dụng — uongsuadaubung', 'Tổng hợp các ứng dụng web tĩnh, công cụ tự động hóa, extension và sản phẩm phần mềm do Hà Mạnh Kiên (uongsuadaubung) phát triển.', 'https://uongsuadaubung.github.io/apps/');
 createStaticRoute('post', 'Blog — uongsuadaubung', 'Danh sách bài viết blog cá nhân.', 'https://uongsuadaubung.github.io/blog/');
 
 // 2. Prerender all Markdown posts with full HTML body inlined!
