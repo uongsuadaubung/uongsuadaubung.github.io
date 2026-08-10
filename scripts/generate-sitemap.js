@@ -6,17 +6,6 @@ const postsDir = path.join(rootDir, 'src/posts');
 const outputFile = path.join(rootDir, 'public/sitemap.xml');
 
 const files = fs.readdirSync(postsDir);
-
-const staticPages = [
-  { url: 'https://uongsuadaubung.github.io/', lastmod: '2026-08-10', priority: '1.0' },
-  { url: 'https://uongsuadaubung.github.io/about', lastmod: '2026-08-10', priority: '0.9' },
-  { url: 'https://uongsuadaubung.github.io/blog', lastmod: '2026-08-10', priority: '0.9' },
-  { url: 'https://uongsuadaubung.github.io/gistwarden/', lastmod: '2026-08-01', priority: '0.8' },
-  { url: 'https://uongsuadaubung.github.io/cozy/', lastmod: '2026-07-15', priority: '0.8' },
-  { url: 'https://uongsuadaubung.github.io/switchgames/', lastmod: '2026-03-20', priority: '0.8' },
-  { url: 'https://uongsuadaubung.github.io/hom-nay-an-gi/', lastmod: '2026-03-13', priority: '0.8' }
-];
-
 const postEntries = [];
 
 files.forEach(file => {
@@ -36,6 +25,17 @@ files.forEach(file => {
 
 // Sort posts by lastmod descending
 postEntries.sort((a, b) => b.lastmod.localeCompare(a.lastmod));
+const latestPostDate = postEntries.length > 0 ? postEntries[0].lastmod : '2026-08-10';
+
+const staticPages = [
+  { url: 'https://uongsuadaubung.github.io/', lastmod: latestPostDate, priority: '1.0' },
+  { url: 'https://uongsuadaubung.github.io/about', lastmod: latestPostDate, priority: '0.9' },
+  { url: 'https://uongsuadaubung.github.io/blog', lastmod: latestPostDate, priority: '0.9' },
+  { url: 'https://uongsuadaubung.github.io/gistwarden/', lastmod: '2026-08-01', priority: '0.8' },
+  { url: 'https://uongsuadaubung.github.io/cozy/', lastmod: '2026-07-15', priority: '0.8' },
+  { url: 'https://uongsuadaubung.github.io/switchgames/', lastmod: '2026-03-20', priority: '0.8' },
+  { url: 'https://uongsuadaubung.github.io/hom-nay-an-gi/', lastmod: '2026-03-13', priority: '0.8' }
+];
 
 const allEntries = [...staticPages, ...postEntries];
 
@@ -50,4 +50,4 @@ ${allEntries.map(entry => `  <url>
 </urlset>`;
 
 fs.writeFileSync(outputFile, sitemapXml, 'utf-8');
-console.log(`✅ Generated clean sitemap.xml with ${allEntries.length} entries & authentic lastmod dates!`);
+console.log(`✅ Generated clean sitemap.xml with ${allEntries.length} entries & dynamic lastmod dates!`);
