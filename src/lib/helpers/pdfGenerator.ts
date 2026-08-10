@@ -169,7 +169,7 @@ export function generateCvPdf() {
 	document.body.appendChild(element);
 
 	const opt = {
-		margin: [8, 8, 8, 8],
+		margin: 8,
 		filename: 'Ha-Manh-Kien-Resume-Full.pdf',
 		image: { type: 'jpeg', quality: 0.98 },
 		html2canvas: { scale: 2, useCORS: true, logging: false },
