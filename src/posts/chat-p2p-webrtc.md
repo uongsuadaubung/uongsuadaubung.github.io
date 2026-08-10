@@ -1,7 +1,7 @@
 ---
 title: "Làm cái app chat P2P với WebRTC và Svelte 5"
 date: "2026-04-18"
-tags: ["WebRTC", "Svelte 5", "P2P", "Chat"]
+tags: ["Rust & Backend","Web Dev"]
 description: "Chia sẻ về cách mình làm một cái app chat trực tiếp giữa hai trình duyệt, không cần server lưu tin nhắn, dùng Svelte 5 cho mượt."
 published: true
 ---

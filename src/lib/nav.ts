@@ -4,15 +4,31 @@ export type View =
 	| { id: 'home' }
 	| { id: 'blog' }
 	| { id: 'post'; slug: string }
-	| { id: 'about' }
-	| { id: 'resume' };
+	| { id: 'about' };
+
+function updateTitle(view: View) {
+	if (typeof document === 'undefined') return;
+	switch (view.id) {
+		case 'home':
+			document.title = 'uongsuadaubung — Personal Blog & Portfolio';
+			break;
+		case 'blog':
+			document.title = 'Blog — uongsuadaubung';
+			break;
+		case 'about':
+			document.title = 'Về mình & Portfolio — Hà Mạnh Kiên';
+			break;
+		case 'post':
+			// Post view will update title with actual post title
+			break;
+	}
+}
 
 function parseHash(hash: string): View {
 	const path = hash.replace(/^#\/?/, '');
 	if (path === 'blog') return { id: 'blog' };
-	if (path === 'about') return { id: 'about' };
+	if (path === 'about' || path === 'resume') return { id: 'about' };
 	if (path.startsWith('post/')) return { id: 'post', slug: path.slice(5) };
-	if (path === 'resume') return { id: 'resume' };
 	return { id: 'home' };
 }
 
@@ -20,7 +36,6 @@ function viewToHash(view: View): string {
 	if (view.id === 'blog') return '#/blog';
 	if (view.id === 'about') return '#/about';
 	if (view.id === 'post') return `#/post/${view.slug}`;
-	if (view.id === 'resume') return '#/resume';
 	return '#/';
 }
 
@@ -28,6 +43,7 @@ const initialView: View =
 	typeof window !== 'undefined' ? parseHash(window.location.hash) : { id: 'home' };
 
 const [currentView, setCurrentView] = createSignal<View>(initialView);
+updateTitle(initialView);
 
 let currentHash = typeof window !== 'undefined' ? (window.location.hash || '#/') : '#/';
 const scrollPositions = new Map<string, number>();
@@ -43,6 +59,7 @@ function navigate(view: View) {
 		window.location.hash = newHash;
 		currentHash = newHash;
 		setCurrentView(view);
+		updateTitle(view);
 		
 		setTimeout(() => {
 			const saved = scrollPositions.get(newHash);
@@ -54,6 +71,7 @@ function navigate(view: View) {
 		}, 10);
 	} else {
 		setCurrentView(view);
+		updateTitle(view);
 	}
 }
 
@@ -65,7 +83,9 @@ if (typeof window !== 'undefined') {
 
 		scrollPositions.set(currentHash, window.scrollY);
 		currentHash = newHash;
-		setCurrentView(parseHash(newHash));
+		const view = parseHash(newHash);
+		setCurrentView(view);
+		updateTitle(view);
 		
 		setTimeout(() => {
 			const saved = scrollPositions.get(newHash);
@@ -84,6 +104,5 @@ export const nav = {
 	home: () => navigate({ id: 'home' }),
 	blog: () => navigate({ id: 'blog' }),
 	post: (slug: string) => navigate({ id: 'post', slug }),
-	about: () => navigate({ id: 'about' }),
-	resume: () => navigate({ id: 'resume' })
+	about: () => navigate({ id: 'about' })
 };

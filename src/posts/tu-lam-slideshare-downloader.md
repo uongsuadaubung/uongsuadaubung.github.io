@@ -1,7 +1,7 @@
 ---
 title: "Tự code tool tải tài liệu Slideshare và đóng gói thành Web App"
 date: "2025-02-19"
-tags: ["Lập Trình", "Tool & Extension", "Trải Nghiệm"]
+tags: ["Tool & Projects"]
 description: "Hành trình từ một script chống cháy tải PDF giúp người nhà, cho đến lúc vã mồ hôi hột đóng gói thành một trang Web hoàn chỉnh chạy đa luồng."
 published: true
 ---

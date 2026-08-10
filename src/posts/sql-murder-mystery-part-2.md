@@ -1,7 +1,7 @@
 ---
 title: "Tập tành làm thám tử với SQL Murder Mystery - Part 2: Truy tìm kẻ đứng sau chủ mưu"
 date: "2023-07-30"
-tags: ["Hack Game", "Lập Trình"]
+tags: ["Tool & Projects"]
 description: "Hành trình giăng bẫy bắt kẻ đứng sau chủ mưu trong SQL Murder Mystery. Vận dụng kĩ năng Join đa bảng cực gắt chỉ trong 1 nốt nhạc."
 published: true
 ---

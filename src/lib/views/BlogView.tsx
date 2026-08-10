@@ -9,14 +9,17 @@ export default function BlogView() {
 	const [search, setSearch] = createSignal('');
 	const [activeTag, setActiveTag] = createSignal('');
 
+	const categories = [
+		{ name: 'Game & Auto', label: '🎮 Game & Auto' },
+		{ name: 'Tool & Projects', label: '🛠️ Tool & Projects' },
+		{ name: 'Rust & Backend', label: '🦀 Rust & Backend' },
+		{ name: 'Web Dev', label: '🌐 Web Dev' },
+		{ name: 'Chuyện nghề & Chia sẻ', label: '📝 Chuyện nghề & Chia sẻ' }
+	];
+
 	onMount(async () => {
 		const all = await getPosts();
 		setPosts(all);
-	});
-
-	const allTags = createMemo(() => {
-		const tags = posts().flatMap((p) => p.tags);
-		return [...new Set(tags)].sort();
 	});
 
 	const filtered = createMemo(() => {
@@ -61,26 +64,25 @@ export default function BlogView() {
 							onInput={(e) => setSearch(e.currentTarget.value)}
 						/>
 					</div>
-					<Show when={allTags().length > 0}>
-						<div class="tag-filter">
-							<button
-								class={`tag-btn ${activeTag() === '' ? 'active' : ''}`}
-								onClick={() => setActiveTag('')}
-							>
-								Tất cả
-							</button>
-							<For each={allTags()}>
-								{(tag) => (
-									<button
-										class={`tag-btn ${activeTag() === tag ? 'active' : ''}`}
-										onClick={() => setActiveTag(activeTag() === tag ? '' : tag)}
-									>
-										#{tag}
-									</button>
-								)}
-							</For>
-						</div>
-					</Show>
+					
+					<div class="tag-filter">
+						<button
+							class={`tag-btn ${activeTag() === '' ? 'active' : ''}`}
+							onClick={() => setActiveTag('')}
+						>
+							✨ Tất cả
+						</button>
+						<For each={categories}>
+							{(cat) => (
+								<button
+									class={`tag-btn ${activeTag() === cat.name ? 'active' : ''}`}
+									onClick={() => setActiveTag(activeTag() === cat.name ? '' : cat.name)}
+								>
+									{cat.label}
+								</button>
+							)}
+						</For>
+					</div>
 				</div>
 
 				<Show

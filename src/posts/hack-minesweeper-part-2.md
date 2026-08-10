@@ -1,7 +1,7 @@
 ---
 title: "Hack Minesweeper - part 2"
 date: "2020-06-06"
-tags: ["Hack Game"]
+tags: ["Game & Auto"]
 description: "Hướng dẫn đọc bộ nhớ game Minesweeper bằng C# và hiển thị map bom ra console."
 published: true
 ---

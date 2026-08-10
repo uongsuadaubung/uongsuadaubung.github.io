@@ -8,7 +8,7 @@ import './HomeView.scss';
 export default function HomeView() {
 	const [recentPosts, setRecentPosts] = createSignal<Post[]>([]);
 
-	const heroTags = ['Solid JS', 'TypeScript', 'SCSS', 'Web Dev', 'Open Source'];
+	const heroTags = ['Full Stack', 'TypeScript', 'Rust', 'Reverse Engineering', 'Side Projects'];
 
 	onMount(async () => {
 		const all = await getPosts();

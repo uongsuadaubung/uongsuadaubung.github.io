@@ -10,8 +10,9 @@
     "check-css": "bun run scripts/check-unused-css.ts"
   },
   "dependencies": {
-    "@solidjs/router": "^0.16.1",
     "highlight.js": "^11.11.1",
+    "html2pdf.js": "^0.14.0",
+    "jspdf": "^4.2.1",
     "marked": "^18.0.4",
     "sass": "^1.100.0",
     "solid-js": "^1.9.12",

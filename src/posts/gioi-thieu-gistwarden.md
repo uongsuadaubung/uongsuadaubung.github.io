@@ -1,7 +1,7 @@
 ---
 title: "Gistwarden - Trình quản lý mật khẩu mã hóa cá nhân"
 date: "2026-08-10"
-tags: ["Lập Trình", "Dự Án Cá Nhân", "Security", "SolidJS", "Bun"]
+tags: ["Tool & Projects"]
 description: "Hành trình xây dựng Gistwarden - Trình quản lý mật khẩu mã hóa client-side Zero-Knowledge kết hợp Passkeys FIDO2, mã 2FA TOTP, hỗ trợ Local Vault ngoại tuyến và lưu trữ trên GitHub Gist."
 published: true
 ---

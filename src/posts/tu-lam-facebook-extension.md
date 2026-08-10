@@ -1,7 +1,7 @@
 ---
 title: "Viết Chrome Extension dọn dẹp Newsfeed Facebook"
 date: "2021-10-23"
-tags: ["Lập Trình", "Tool & Extension", "Trải Nghiệm"]
+tags: ["Tool & Projects"]
 description: "Chán cảnh mở Facebook lên toàn tin gợi ý và quảng cáo, mình quyết định tự viết một chiếc extension để dọn dẹp và tối ưu hóa không gian hiển thị."
 published: true
 ---

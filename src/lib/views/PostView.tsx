@@ -22,6 +22,9 @@ export default function PostView(props: Props) {
 		const result = await getPostBySlug(props.slug);
 		if (result) {
 			setPost(result);
+			if (typeof document !== 'undefined') {
+				document.title = `${result.title} — uongsuadaubung`;
+			}
 		} else {
 			setNotFound(true);
 		}

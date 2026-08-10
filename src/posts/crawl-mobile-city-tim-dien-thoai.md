@@ -1,7 +1,7 @@
 ---
 title: "Vợ cho tiền mua điện thoại, mình dành 2 ngày viết crawler để rồi nghe 3 tiếng: 'hết hàng rồi'"
 date: 2026-04-23
-tags: ["crawl", "typescript", "svelte", "bun", "side-project"]
+tags: ["Web Dev"]
 description: "Câu chuyện về một chiếc điện thoại cũ, một người vợ tốt bụng, một đêm viết code và một cái kết... không ai ngờ tới."
 published: true
 ---

@@ -1,7 +1,7 @@
 ---
 title: "Hack Plants Vs Zombies GOTY Edition - part 1"
 date: "2020-06-09"
-tags: ["Hack Game"]
+tags: ["Game & Auto"]
 description: "Plants Vs. Zombies từ trước đến nay vẫn luôn là tượng đài của thể loại phòng thủ tháp được rất nhiều người chơi yêu thích. Hướng dẫn viết tool hack trên Winform."
 published: true
 ---

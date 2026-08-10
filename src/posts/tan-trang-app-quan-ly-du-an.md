@@ -1,7 +1,7 @@
 ---
 title: "Dọn dẹp tàn dư: Tân trang ứng dụng quản lý dự án nội bộ"
 date: "2026-07-10"
-tags: ["Lập Trình", "UI/UX", "Backend", "Web"]
+tags: ["Tool & Projects"]
 description: "Một ngày đẹp trời, sếp giao cho mình nhiệm vụ tân trang lại giao diện ứng dụng quản lý dự án nội bộ mà người cũ để lại. Không chỉ thay áo mới cho UI, mình còn tiện tay đập đi xây lại phần phân trang ở Backend để cải thiện hiệu năng và UX."
 published: true
 ---

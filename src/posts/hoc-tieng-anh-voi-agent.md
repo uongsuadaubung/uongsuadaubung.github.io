@@ -1,7 +1,7 @@
 ---
 title: "Hành trình tự làm AI English Tutor"
 date: "2026-06-03"
-tags: ["Lập Trình", "AI Agent", "SQLite", "Drizzle ORM", "Hono", "Deno"]
+tags: ["Chuyện nghề & Chia sẻ"]
 description: "Kể về lúc rảnh rỗi tự nhiên nghĩ đến việc học tiếng Anh với AI Agent. Từ việc lưu trữ thô sơ bằng file Markdown, chuyển qua SQLite, dùng Hono làm web server rồi lại có cú quay xe cực khét khi xóa béng server đi để chuyển sang CLI thuần."
 published: true
 ---

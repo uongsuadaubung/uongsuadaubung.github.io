@@ -1,7 +1,7 @@
 ---
 title: "Vượt rào Sophos bằng Bun Proxy siêu đơn giản"
 date: "2026-05-11"
-tags: ["Bun", "Proxy", "Sophos", "Bypass", "Trick"]
+tags: ["Rust & Backend"]
 description: "Công ty cài Sophos chặn đa số web, nhưng mình phát hiện ra một lỗ hổng và đã tự code một con proxy bằng Bun để lách luật thành công."
 published: true
 ---

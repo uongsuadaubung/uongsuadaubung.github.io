@@ -1,7 +1,7 @@
 ---
 title: "Chrome extension"
 date: "2025-05-14"
-tags: ["Lập Trình"]
+tags: ["Tool & Projects"]
 description: "Hành trình tự làm một extension nhỏ từ ý tưởng cực tà đạo, vượt qua vô vàn rắc rối bảo mật Manifest V3 để hoàn thiện phiên bản đầu tiên."
 published: true
 ---

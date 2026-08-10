@@ -1,7 +1,7 @@
 ---
 title: "Tự làm Chrome Extension đồng bộ save game lên mây cho Plants vs. Zombies Gardenless Edition (PvZGE)"
 date: "2026-05-27"
-tags: ["Lập Trình", "Dự Án Cá Nhân", "Chrome Extension", "SolidJS", "Deno"]
+tags: ["Tool & Projects","Game & Auto"]
 description: "Hành trình giải cứu save game PvZ Gardenless Edition khỏi kiếp bay màu bằng cách tự chế Chrome Extension đồng bộ GitHub Gist và tự nhặt tài nguyên cực kỳ nhàn nhã."
 published: true
 ---

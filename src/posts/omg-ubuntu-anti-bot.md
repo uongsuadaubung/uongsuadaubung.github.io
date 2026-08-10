@@ -1,7 +1,7 @@
 ---
 title: "Viết crawler tin công nghệ và phát hiện thú vị về cơ chế chống bot của OMG! Ubuntu"
 date: 2026-06-29
-tags: ["crawl", "anti-bot", "security", "side-project"]
+tags: ["Rust & Backend","Tool & Projects"]
 description: "Muốn đọc tin tức nhanh chóng mà không cần mở quá nhiều tab, mình quyết định viết một crawler gom tin về một nơi và vô tình đụng độ một cơ chế chống bot khá dị của OMG! Ubuntu."
 published: true
 ---

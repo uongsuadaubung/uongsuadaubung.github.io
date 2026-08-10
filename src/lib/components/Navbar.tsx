@@ -11,11 +11,10 @@ export default function Navbar() {
 		{ id: 'blog', label: 'Blog', external: false, url: '' },
 		{ id: 'cozy', label: 'Cozy', external: true, url: '/cozy/' },
 		{ id: 'gistwarden', label: 'Gistwarden', external: true, url: '/gistwarden/' },
-		{ id: 'about', label: 'About', external: false, url: '' },
-		{ id: 'resume', label: 'Resume', external: false, url: '' }
+		{ id: 'about', label: 'Về mình', external: false, url: '' }
 	] as const;
 
-	function go(id: 'home' | 'blog' | 'about' | 'resume') {
+	function go(id: 'home' | 'blog' | 'about') {
 		nav[id]();
 		setMobileOpen(false);
 	}

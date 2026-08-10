@@ -5,7 +5,6 @@ import HomeView from './lib/views/HomeView';
 import BlogView from './lib/views/BlogView';
 import PostView from './lib/views/PostView';
 import AboutView from './lib/views/AboutView';
-import ResumeView from './lib/views/ResumeView';
 
 export default function App() {
 	return (
@@ -23,8 +22,6 @@ export default function App() {
 							return <PostView slug={view.slug} />;
 						case 'about':
 							return <AboutView />;
-						case 'resume':
-							return <ResumeView />;
 						default:
 							return <HomeView />;
 					}

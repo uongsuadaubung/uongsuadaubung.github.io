@@ -1,7 +1,7 @@
 ---
 title: "Tự code thiệp cưới xịn xò: Trận chiến Google Apps Script và Deploy chia 2 họ"
 date: "2026-02-24"
-tags: ["Lập Trình", "Trải Nghiệm", "Chuyện Nghề"]
+tags: ["Chuyện nghề & Chia sẻ"]
 description: "Cứ tưởng tự viết cái thiệp cưới ném lên mạng là nhanh gọn lẹ, ai ngờ đâm đầu vào mới thấy muôn vàn rắc rối từ vụ vượt rào CORS của Google đến bài toán tách Web nhà trai - nhà gái."
 published: true
 ---

@@ -1,7 +1,7 @@
 ---
 title: "Hôm nay ăn gì: Ứng dụng dẹp bỏ cơn đau đầu mỗi tối"
 date: "2026-03-13"
-tags: ["Lập Trình", "Tool & Extension", "Trải Nghiệm"]
+tags: ["Tool & Projects", "Web Dev"]
 description: "Phát triển app Random món ăn để khỏi phải đau đầu suy nghĩ bữa tối. Tưởng dễ mà cũng tốn kha khá công sức xử lý đủ thứ từ logic vòng quay đến lỗi CORS."
 published: true
 ---

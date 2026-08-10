@@ -1,7 +1,7 @@
 ---
 title: "Nghiên cứu chuyên sâu về thiết kế hệ thống và tối ưu hóa hiệu năng qua Idiomatic Rust"
 date: "2026-06-23"
-tags: ["Lập Trình", "Rust"]
+tags: ["Rust & Backend"]
 description: "Phân tích chuyên sâu về lập trình Idiomatic trong Rust, cơ chế tối ưu hóa vector không chỉ mục (indexless vector access), và thay thế mô hình thiết kế truyền thống."
 published: true
 ---

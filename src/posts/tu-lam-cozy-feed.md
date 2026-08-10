@@ -1,7 +1,7 @@
 ---
 title: "Cozy Feed: Bộ cào và đọc tin tức tập trung"
 date: "2026-07-01"
-tags: ["Lập Trình", "Dự Án Cá Nhân", "Deno", "Crawler"]
+tags: ["Tool & Projects"]
 description: "Trong lúc rảnh rỗi ở công ty, mình ngẫu hứng muốn làm một cái gì đó mới mới nên đã nghĩ đến việc viết một con crawler để tự động gom tin tức từ các trang ưa thích về một mối."
 published: true
 ---

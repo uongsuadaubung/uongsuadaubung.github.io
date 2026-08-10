@@ -1,7 +1,7 @@
 ---
 title: "Săn game miễn phí Epic Games Store tự động với Deno, GitHub Actions và Telegram"
 date: "2026-05-27"
-tags: ["Lập Trình", "Dự Án Cá Nhân", "Deno", "Automation"]
+tags: ["Tool & Projects","Game & Auto"]
 description: "Hành trình đảo ngược API ẩn của Epic Games Store, viết script chạy bằng Deno và thiết lập GitHub Actions tự động hóa săn game miễn phí gửi qua Telegram Bot mỗi tuần."
 published: true
 ---

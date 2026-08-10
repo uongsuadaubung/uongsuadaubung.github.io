@@ -1,7 +1,7 @@
 ---
 title: "Tập tành làm thám tử với SQL Murder Mystery - Part 1: Truy tìm hung thủ"
 date: "2023-07-20"
-tags: ["Hack Game", "Lập Trình"]
+tags: ["Tool & Projects"]
 description: "Trải nghiệm phá án giết người bằng SQL cực cuốn. Hóa thân thành thám tử xịn xò dùng não to để truy vết hung thủ từ những manh mối nhỏ nhất."
 published: true
 ---

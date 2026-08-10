@@ -1,7 +1,7 @@
 ---
 title: "Xin chào thế giới — Blog của mình chính thức bắt đầu từ đây"
 date: "2020-06-04"
-tags: ["Lập Trình", "Trải Nghiệm", "Chuyện Nghề"]
+tags: ["Chuyện nghề & Chia sẻ"]
 description: "Sau vài năm đi học thì mình mới chợt nhận ra là mình sống khá nhạt nhẽo, cho nên mình quyết định sẽ dọn nhà làm trang web riêng để thử viết lách linh tinh về nhiều thứ."
 published: true
 ---

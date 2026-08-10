@@ -1,7 +1,7 @@
 ---
 title: "Khi Sophos chặn luôn cả localhost và cách mình vượt rào để chơi game"
 date: "2026-06-22"
-tags: ["Sophos", "Bypass", "Localhost", "Base64", "Cocos Creator", "Docker"]
+tags: ["Tool & Projects", "Game & Auto"]
 description: "Game chạy Docker ở localhost ngon lành mà vẫn bị Sophos Endpoint chặn file bin, mình quyết định đổi biểu diễn dữ liệu sang Base64 để vượt mặt DPI."
 published: true
 ---

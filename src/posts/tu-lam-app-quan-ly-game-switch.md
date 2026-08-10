@@ -1,7 +1,7 @@
 ---
 title: "Hành trình tự làm app quản lý Game Switch: Từ một ý tưởng nhỏ đến ứng dụng hoàn chỉnh"
 date: "2026-03-20"
-tags: ["Lập Trình", "Tauri", "SvelteKit", "Rust", "GitHub Actions"]
+tags: ["Tool & Projects","Game & Auto"]
 description: "Bài viết chia sẻ lại quá trình phát triển ứng dụng Switch Games Manager, bao gồm những khó khăn gặp phải, quá trình thay đổi kiến trúc và cách tích hợp GitHub Actions để tự động hóa quy trình xử lý dữ liệu."
 published: true
 ---
