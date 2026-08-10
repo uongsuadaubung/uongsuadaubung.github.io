@@ -17,7 +17,7 @@ files.forEach(file => {
   const lastmod = dateMatch ? dateMatch[1] : '2026-08-10';
 
   postEntries.push({
-    url: `https://uongsuadaubung.github.io/post/${slug}`,
+    url: `https://uongsuadaubung.github.io/post/${slug}/`,
     lastmod,
     priority: '0.8'
   });
@@ -29,8 +29,8 @@ const latestPostDate = postEntries.length > 0 ? postEntries[0].lastmod : '2026-0
 
 const staticPages = [
   { url: 'https://uongsuadaubung.github.io/', lastmod: latestPostDate, priority: '1.0' },
-  { url: 'https://uongsuadaubung.github.io/about', lastmod: latestPostDate, priority: '0.9' },
-  { url: 'https://uongsuadaubung.github.io/blog', lastmod: latestPostDate, priority: '0.9' },
+  { url: 'https://uongsuadaubung.github.io/about/', lastmod: latestPostDate, priority: '0.9' },
+  { url: 'https://uongsuadaubung.github.io/blog/', lastmod: latestPostDate, priority: '0.9' },
   { url: 'https://uongsuadaubung.github.io/gistwarden/', lastmod: '2026-08-01', priority: '0.8' },
   { url: 'https://uongsuadaubung.github.io/cozy/', lastmod: '2026-07-15', priority: '0.8' },
   { url: 'https://uongsuadaubung.github.io/switchgames/', lastmod: '2026-03-20', priority: '0.8' },

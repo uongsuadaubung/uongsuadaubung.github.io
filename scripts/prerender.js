@@ -48,9 +48,9 @@ function createStaticRoute(routePath, title, description, url, bodyHtml = '') {
 }
 
 // 1. Prerender static pages
-createStaticRoute('about', 'Về mình & Portfolio — Hà Mạnh Kiên', 'Trang thông tin cá nhân, kinh nghiệm làm việc và các dự án nổi bật của Hà Mạnh Kiên (uongsuadaubung).', 'https://uongsuadaubung.github.io/about');
-createStaticRoute('blog', 'Blog — uongsuadaubung', 'Danh sách các bài viết chia sẻ về lập trình, kinh nghiệm làm nghề và tự động hóa của Hà Mạnh Kiên.', 'https://uongsuadaubung.github.io/blog');
-createStaticRoute('post', 'Blog — uongsuadaubung', 'Danh sách bài viết blog cá nhân.', 'https://uongsuadaubung.github.io/blog');
+createStaticRoute('about', 'Về mình & Portfolio — Hà Mạnh Kiên', 'Trang thông tin cá nhân, kinh nghiệm làm việc và các dự án nổi bật của Hà Mạnh Kiên (uongsuadaubung).', 'https://uongsuadaubung.github.io/about/');
+createStaticRoute('blog', 'Blog — uongsuadaubung', 'Danh sách các bài viết chia sẻ về lập trình, kinh nghiệm làm nghề và tự động hóa của Hà Mạnh Kiên.', 'https://uongsuadaubung.github.io/blog/');
+createStaticRoute('post', 'Blog — uongsuadaubung', 'Danh sách bài viết blog cá nhân.', 'https://uongsuadaubung.github.io/blog/');
 
 // 2. Prerender all Markdown posts with full HTML body inlined!
 files.forEach(file => {
@@ -63,7 +63,7 @@ files.forEach(file => {
 
   const title = titleMatch ? `${titleMatch[1]} — uongsuadaubung` : 'Blog — uongsuadaubung';
   const description = descMatch ? descMatch[1] : 'Bài viết trên blog uongsuadaubung';
-  const postUrl = `https://uongsuadaubung.github.io/post/${slug}`;
+  const postUrl = `https://uongsuadaubung.github.io/post/${slug}/`;
 
   // Strip frontmatter to get markdown body
   const bodyMarkdown = rawContent.replace(/^---[\s\S]*?---\s*/, '');
