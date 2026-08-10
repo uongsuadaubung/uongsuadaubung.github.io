@@ -35,6 +35,7 @@ function createStaticRoute(routePath, title, description, url, bodyHtml = '') {
 
   if (url) {
     html = html.replace(/<meta property="og:url" content=".*?" \/>/gi, `<meta property="og:url" content="${url}" />`);
+    html = html.replace('</head>', `  <link rel="canonical" href="${url}" />\n  </head>`);
   }
 
   if (bodyHtml) {
