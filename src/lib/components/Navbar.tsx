@@ -11,6 +11,7 @@ export default function Navbar() {
 		{ id: 'blog', label: 'Blog', external: false, url: '' },
 		{ id: 'cozy', label: 'Cozy', external: true, url: '/cozy/' },
 		{ id: 'gistwarden', label: 'Gistwarden', external: true, url: '/gistwarden/' },
+		{ id: 'switchgames', label: 'Switch Games', external: true, url: '/switchgames/' },
 		{ id: 'about', label: 'Về mình', external: false, url: '' }
 	] as const;
 
