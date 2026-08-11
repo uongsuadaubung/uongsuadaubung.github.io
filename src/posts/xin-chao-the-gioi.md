@@ -6,8 +6,6 @@ description: "Sau vài năm đi học thì mình mới chợt nhận ra là mìn
 published: true
 ---
 
-# Xin chào thế giới 👋
-
 ![Hello World](/images/hello-world/image-01.png)
 
 Chuyện là sau vài năm đi học mài mòn ghế nhà trường, mình chợt nhận ra cuộc sống của bản thân có vẻ hơi nhạt nhẽo... Thế là vào một ngày đẹp trời, mình đi đến một quyết định táo bạo: sẽ thử viết lách linh tinh về những dự án, những góc khuất trong ngành và đủ các thể loại code mà mình cày cuốc được. Biết đâu những dòng chữ lởm chởm này lại phần nào gợi cảm hứng được cho các bạn sinh viên Công nghệ thông tin, hoặc các em cấp 3 đang có đam mê táy máy với máy tính chẳng hạn.

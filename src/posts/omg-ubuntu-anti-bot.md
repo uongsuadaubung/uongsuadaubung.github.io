@@ -6,8 +6,6 @@ description: "Muốn đọc tin tức nhanh chóng mà không cần mở quá nh
 published: true
 ---
 
-# Viết crawler tin công nghệ và phát hiện thú vị về cơ chế chống bot của OMG! Ubuntu
-
 Mỗi sáng thức dậy, thói quen khó bỏ của mình là nhâm nhi tách cà phê và lướt qua hàng tá trang tin công nghệ để xem thế giới hôm nay có drama hay ho gì mới không. Từ mấy trang tin tức quốc tế, diễn đàn cho đến mấy blog chuyên biệt về Linux, mã nguồn mở... trang nào mình cũng muốn ngó qua một chút để cập nhật xu hướng.
 
 Thế nhưng, nghĩ cảnh mỗi sáng phải mở hàng chục tab trình duyệt, click qua click lại tìm bài mới thì hơi ngại. Để giải quyết sự bất tiện này, mình quyết định viết một cái crawler để gom hết bài viết từ các nguồn yêu thích về một nơi đọc cho tiện. Kế hoạch nghe ngon lành cành đào phết đúng không anh em?

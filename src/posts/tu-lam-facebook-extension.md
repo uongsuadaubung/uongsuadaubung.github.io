@@ -2,11 +2,13 @@
 title: "Viết Chrome Extension dọn dẹp Newsfeed Facebook"
 date: "2021-10-23"
 tags: ["Tool & Projects"]
-description: "Chán cảnh mở Facebook lên toàn tin gợi ý và quảng cáo, mình quyết định tự viết một chiếc extension để dọn dẹp và tối ưu hóa không gian hiển thị."
+description: "Chrome Extension dọn dẹp và tối ưu Newsfeed Facebook."
 published: true
+appName: "Facebook Newsfeed Extension"
+appPeriod: "10/2021"
+techStack: ["JavaScript", "Extension API"]
+showOnResume: true
 ---
-
-# Viết Chrome Extension dọn dẹp Newsfeed Facebook
 
 Những năm gần đây mình bắt đầu cảm thấy hơi phiền mỗi khi truy cập `facebook.com`. Mở màn hình lên, thay vì được xem cập nhật của bạn bè người thân, giao diện hiển thị khá nhiều phần "Gợi ý cho bạn", "Sponsor", rồi cả các đoạn Reels từ những trang không theo dõi.
 

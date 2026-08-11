@@ -6,8 +6,6 @@ description: "Trải nghiệm phá án giết người bằng SQL cực cuốn. 
 published: true
 ---
 
-# Tập tành làm thám tử với SQL Murder Mystery - Part 1: Truy tìm hung thủ
-
 Đợt này tự dưng lướt mạng thấy anh em IT đồn thổi cái game [SQL Murder Mystery](https://mystery.knightlab.com/) cuốn lắm. Game này cho mình đóng vai thám tử, đi phá một vụ án mạng nhưng thay vì dùng kính lúp soi dấu vân tay thì mình dùng... lệnh SQL. Thấy cũng hay hay nên mình quyết định thử dùng IQ 40 của mình để phá án xem sao.
 
 Câu chuyện bắt đầu bằng một thông tin úp mở: *Vào ngày 15 tháng 1 năm 2018, đã xảy ra một vụ giết người ở Thành phố SQL.* 

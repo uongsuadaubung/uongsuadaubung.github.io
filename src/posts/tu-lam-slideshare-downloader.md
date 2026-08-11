@@ -2,11 +2,13 @@
 title: "Tự code tool tải tài liệu Slideshare và đóng gói thành Web App"
 date: "2025-02-19"
 tags: ["Tool & Projects"]
-description: "Hành trình từ một script chống cháy tải PDF giúp người nhà, cho đến lúc vã mồ hôi hột đóng gói thành một trang Web hoàn chỉnh chạy đa luồng."
+description: "Công cụ hỗ trợ bóc tách và tải tài liệu/slide từ Slideshare nhanh chóng."
 published: true
+appName: "Slideshare Downloader"
+appPeriod: "02/2025"
+techStack: ["JavaScript", "Web Scraping"]
+showOnResume: true
 ---
-
-# Tự code tool tải tài liệu Slideshare và đóng gói thành Web App
 
 Chuyện là hôm nọ, đang mổ cò hì hục fix bug thì tự dưng bà chị gái nhắn tin nhờ tải hộ cái tài liệu trên Slideshare. Chị bảo lướt thấy hay quá mà lại ngại đăng ký tài khoản lằng nhằng, nhờ mình tải hộ file PDF về xem cho tiện. Mình lẩm bẩm trong miệng đoạn lên Google gõ 'Slideshare downloader' xem có rổ web tự động nào không.
 

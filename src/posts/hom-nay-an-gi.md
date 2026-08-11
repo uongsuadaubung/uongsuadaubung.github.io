@@ -2,11 +2,17 @@
 title: "Hôm nay ăn gì: Ứng dụng dẹp bỏ cơn đau đầu mỗi tối"
 date: "2026-03-13"
 tags: ["Tool & Projects", "Web Dev"]
-description: "Phát triển app Random món ăn để khỏi phải đau đầu suy nghĩ bữa tối. Tưởng dễ mà cũng tốn kha khá công sức xử lý đủ thứ từ logic vòng quay đến lỗi CORS."
+description: "Ứng dụng gợi ý thực đơn ngẫu nhiên dẹp bỏ nỗi lo 'Hôm nay ăn gì?' cho các bữa ăn hàng ngày với hiệu ứng xoay chọn món ăn trực quan."
 published: true
+isApp: true
+appName: "Hôm Nay Ăn Gì"
+appIcon: "🍕"
+appBadge: "🟢 Sub-App Live"
+appPeriod: "03/2026"
+liveUrl: "/hom-nay-an-gi/"
+techStack: ["JavaScript", "HTML5", "SCSS", "Randomizer"]
+showOnResume: true
 ---
-
-# Hôm nay ăn gì: Ứng dụng dẹp bỏ cơn đau đầu mỗi tối
 
 Không biết các bạn thế nào, chứ mình thấy cứ tầm 5 - 6 giờ chiều là y như rằng có một câu hỏi kinh điển vang lên: "Tối nay ăn gì?". Cứ nghĩ mãi, list đi list lại quanh quẩn cũng chỉ có luộc, kho, chiên... nghĩ thôi cũng thấy mệt. Đỉnh điểm là có những hôm đói meo nhưng hai anh em cứ ngồi nhìn nhau đùn đẩy vì lười suy nghĩ.
 

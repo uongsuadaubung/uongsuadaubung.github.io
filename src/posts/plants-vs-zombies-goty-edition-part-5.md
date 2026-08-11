@@ -6,8 +6,6 @@ description: "Phần 5: Tổng hợp lại thành tool hoàn chỉnh viết bằ
 published: true
 ---
 
-# Hack Plants Vs Zombies GOTY Edition - part 5
-
 ![Plants vs Zombies GOTY Edition](/images/plants-vs-zombies-goty-edition-part-5/image-01.jpg)
 
 Lạy chúa đến phần cuối rồi, mình lười viết kinh khủng nhưng vì hôm nay là ngày chủ nhật và trời đang mưa to vl, thời tiết rất mát mẻ nên mình ngồi viết nốt, ở phần 2, 3 và 4 mình đã tìm được địa chỉ quan trọng để dùng cho phần cuối này đó là viết tools, có lẽ sau series PvZ này mình sẽ chả làm hướng dẫn viết tool nữa vì cái chính nó vẫn nằm ở CE có tìm được địa chỉ ô nhớ hay không thôi, mà nếu còn làm tiếp thì thì mình đang nghĩ tới thứ làm auto gì đó chứ không phải hack như này.

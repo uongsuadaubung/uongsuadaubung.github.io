@@ -2,8 +2,16 @@
 title: "Làm cái app chat P2P với WebRTC và Svelte 5"
 date: "2026-04-18"
 tags: ["Rust & Backend","Web Dev"]
-description: "Chia sẻ về cách mình làm một cái app chat trực tiếp giữa hai trình duyệt, không cần server lưu tin nhắn, dùng Svelte 5 cho mượt."
+description: "Ứng dụng nhắn tin trực tiếp ngang hàng bảo mật qua trình duyệt sử dụng WebRTC, mã hóa P2P, gọi video và chia sẻ màn hình không lưu vết server."
 published: true
+isApp: true
+appName: "WebRTC P2P Chat Application"
+appIcon: "💬"
+appBadge: "🟢 Sub-App Live"
+appPeriod: "04/2026"
+liveUrl: "/chat/"
+techStack: ["JavaScript", "WebRTC", "Svelte 5", "IndexedDB"]
+showOnResume: true
 ---
 
 ![App Chat P2P](/images/chat-p2p/hero.png)

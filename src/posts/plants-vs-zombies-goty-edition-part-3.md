@@ -6,8 +6,6 @@ description: "Tiếp tục với series phá hoại game PvZ, ở phần trướ
 published: true
 ---
 
-# Hack Plants Vs Zombies GOTY Edition - part 3
-
 ![Plants vs Zombies GOTY Edition](/images/plants-vs-zombies-goty-edition-part-3/image-01.jpg)
 
 Tiếp tục với series phá hoại game PvZ, ở phần trước mình đã tìm được địa chỉ pointer của mặt trời, xu và hồi phục nhanh cho cây. Trong phần này thì mình nghĩ là viết nhanh một bài để hướng dẫn hack one hit, cũng chả khó lắm đâu, quan trọng là phân tích logic một xíuuuuuu là được, chủ yếu là đọc assembly thôi, à mà nếu chưa đọc phần 2 thì [link ở đây nhé](./plants-vs-zombies-goty-edition-part-2).

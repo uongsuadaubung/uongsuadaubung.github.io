@@ -29,10 +29,38 @@ export interface Post {
 	description: string;
 	readingTime: string;
 	published: boolean;
+	isApp?: boolean;
+	appName?: string;
+	appIcon?: string;
+	appBadge?: string;
+	appPeriod?: string;
+	liveUrl?: string;
+	techStack?: string[];
+	showOnResume?: boolean;
 }
 
 export interface PostDetail extends Post {
 	content: string;
+}
+
+export interface LiveAppItem {
+	id: string;
+	name: string;
+	badge: string;
+	period: string;
+	tech: string;
+	desc: string;
+	liveUrl: string;
+	blogSlug: string;
+	icon: string;
+}
+
+export interface DynamicSideProject {
+	name: string;
+	period: string;
+	link: string;
+	tech: string;
+	desc: string;
 }
 
 // Vite glob import of raw markdown files
@@ -57,13 +85,13 @@ function parseFrontMatter(rawMarkdown: string): { metadata: Record<string, any>;
 				val = val.slice(1, -1);
 			}
 
-			if (key === 'tags') {
+			if (key === 'tags' || key === 'techStack') {
 				try {
 					metadata[key] = JSON.parse(val.replace(/'/g, '"'));
 				} catch {
 					metadata[key] = val.split(',').map(t => t.trim().replace(/[\[\]"']/g, ''));
 				}
-			} else if (key === 'published') {
+			} else if (key === 'published' || key === 'isApp' || key === 'showOnResume') {
 				metadata[key] = val === 'true';
 			} else {
 				metadata[key] = val;
@@ -111,7 +139,15 @@ export async function getPosts(): Promise<Post[]> {
 					tags: Array.isArray(metadata.tags) ? metadata.tags : [],
 					description: metadata.description ?? '',
 					readingTime: `${minutes} phút đọc`,
-					published: true
+					published: true,
+					isApp: metadata.isApp === true,
+					appName: metadata.appName,
+					appIcon: metadata.appIcon,
+					appBadge: metadata.appBadge,
+					appPeriod: metadata.appPeriod,
+					liveUrl: metadata.liveUrl,
+					techStack: Array.isArray(metadata.techStack) ? metadata.techStack : [],
+					showOnResume: metadata.showOnResume === true
 				});
 			}
 		} catch (e) {
@@ -122,6 +158,36 @@ export async function getPosts(): Promise<Post[]> {
 	return posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
 
+export async function getEcosystemApps(): Promise<LiveAppItem[]> {
+	const posts = await getPosts();
+	return posts
+		.filter(p => p.isApp)
+		.map(p => ({
+			id: p.slug,
+			name: p.appName || p.title,
+			badge: p.appBadge || '🟢 Sub-App Live',
+			period: p.appPeriod || p.date,
+			tech: p.techStack?.join(' · ') || '',
+			desc: p.description,
+			liveUrl: p.liveUrl || `/${p.slug}/`,
+			blogSlug: p.slug,
+			icon: p.appIcon || '🚀'
+		}));
+}
+
+export async function getResumeSideProjects(): Promise<DynamicSideProject[]> {
+	const posts = await getPosts();
+	return posts
+		.filter(p => p.showOnResume)
+		.map(p => ({
+			name: p.appName || p.title,
+			period: p.appPeriod || p.date,
+			link: p.liveUrl ? p.liveUrl : `/blog/${p.slug}/`,
+			tech: p.techStack?.join(' · ') || '',
+			desc: p.description
+		}));
+}
+
 export async function getPostBySlug(slug: string): Promise<PostDetail | null> {
 	const path = `/src/posts/${slug}.md`;
 	if (!(path in modules)) return null;
@@ -129,7 +195,10 @@ export async function getPostBySlug(slug: string): Promise<PostDetail | null> {
 	try {
 		const rawContent = extractRawContent(modules[path]);
 		const { metadata, content } = parseFrontMatter(rawContent);
-		const htmlContent = await marked.parse(content);
+
+		// Tự động loại bỏ thẻ # H1 ở đầu trang nếu có để không bị lặp 2 header H1 với PostView
+		const cleanBody = content.replace(/^\s*#\s+[^\r\n]+(?:\r?\n)*/, '');
+		const htmlContent = await marked.parse(cleanBody);
 
 		const wordCount = content.replace(/<[^>]+>/g, '').split(/\s+/).length;
 		const minutes = Math.max(1, Math.round(wordCount / 200));
@@ -142,6 +211,14 @@ export async function getPostBySlug(slug: string): Promise<PostDetail | null> {
 			description: metadata.description ?? '',
 			readingTime: `${minutes} phút đọc`,
 			published: true,
+			isApp: metadata.isApp === true,
+			appName: metadata.appName,
+			appIcon: metadata.appIcon,
+			appBadge: metadata.appBadge,
+			appPeriod: metadata.appPeriod,
+			liveUrl: metadata.liveUrl,
+			techStack: Array.isArray(metadata.techStack) ? metadata.techStack : [],
+			showOnResume: metadata.showOnResume === true,
 			content: htmlContent
 		};
 	} catch (e) {

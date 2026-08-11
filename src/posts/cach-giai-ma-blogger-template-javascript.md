@@ -6,8 +6,6 @@ description: "Chỉ cần search trên google là có thể tìm thấy hàng ng
 published: true
 ---
 
-# Cách giải mã blogger template JavaScript
-
 ![Blogger template JS](/images/cach-giai-ma-blogger-template-javascript/image-01.jpg)
 
 Chỉ cần search trên google là có thể tìm thấy hàng nghìn cái template cho blogger, mình cũng hay thay đổi template suốt ấy chứ, khổ nỗi tất cả mọi cái mình dùng đều nó đều có 1 dạng footer được đánh dấu chủ quyền kiểu như thế này

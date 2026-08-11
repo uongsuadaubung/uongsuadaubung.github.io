@@ -2,8 +2,16 @@
 title: "Hành trình tự làm app quản lý Game Switch: Từ một ý tưởng nhỏ đến ứng dụng hoàn chỉnh"
 date: "2026-03-20"
 tags: ["Tool & Projects","Game & Auto"]
-description: "Bài viết chia sẻ lại quá trình phát triển ứng dụng Switch Games Manager, bao gồm những khó khăn gặp phải, quá trình thay đổi kiến trúc và cách tích hợp GitHub Actions để tự động hóa quy trình xử lý dữ liệu."
+description: "Ứng dụng quản lý thư viện game Nintendo Switch cá nhân với giao diện thẻ trực quan, tự động tải cover art và lọc danh sách game mượt mà."
 published: true
+isApp: true
+appName: "Switch Games Manager"
+appIcon: "🎮"
+appBadge: "🟢 Sub-App Live"
+appPeriod: "03/2026"
+liveUrl: "/switch-games/"
+techStack: ["TypeScript", "Solid JS", "Web App", "Canvas"]
+showOnResume: true
 ---
 
 Thời gian gần đây, mình có nhu cầu tải và cài đặt game cho máy Nintendo Switch từ một kho lưu trữ Google Drive của cửa hàng cung cấp. Mặc dù số lượng game rất lớn, nhưng điểm hạn chế là giao diện danh sách rất khó nhìn và không hỗ trợ tìm kiếm hay bộ lọc linh hoạt. Đặc biệt, mình không có cách nào để theo dõi các **cập nhật mới** hay tìm nhanh các tựa game có **Việt Hoá**.

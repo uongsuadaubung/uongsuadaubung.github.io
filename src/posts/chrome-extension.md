@@ -2,8 +2,12 @@
 title: "Chrome extension"
 date: "2025-05-14"
 tags: ["Tool & Projects"]
-description: "Hành trình tự làm một extension nhỏ từ ý tưởng cực tà đạo, vượt qua vô vàn rắc rối bảo mật Manifest V3 để hoàn thiện phiên bản đầu tiên."
+description: "Bộ extension tiện ích duyệt web cá nhân vượt qua vô vàn rắc rối bảo mật Manifest V3 để hoàn thiện."
 published: true
+appName: "Chrome Extensions Suite"
+appPeriod: "05/2025"
+techStack: ["JavaScript", "Extension API"]
+showOnResume: true
 ---
 
 ![minh-hoa](/images/chrome-extension/image-01.png)

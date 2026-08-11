@@ -6,8 +6,6 @@ description: "Phần 4: Hướng dẫn các bạn cách làm auto nhặt mặt t
 published: true
 ---
 
-# Hack Plants Vs Zombies GOTY Edition - part 4
-
 ![Plants vs Zombies GOTY Edition](/images/plants-vs-zombies-goty-edition-part-4/image-01.jpg)
 
 Sang phần 4 mình sẽ hướng dẫn các bạn cách làm auto nhặt mặt trời, chơi game mục đích giải trí thui nhưng mà tại hack làm mình thấy chán game dần đều rồi, nên cố viết nốt cái series này xong là chuyển sang game mới, hoặc dừng luôn vì ban đầu mục đích mình tạo blog này là muốn chia sẻ về lập trình là chính chứ không phải hack game.

@@ -2,11 +2,13 @@
 title: "Săn game miễn phí Epic Games Store tự động với Deno, GitHub Actions và Telegram"
 date: "2026-05-27"
 tags: ["Tool & Projects","Game & Auto"]
-description: "Hành trình đảo ngược API ẩn của Epic Games Store, viết script chạy bằng Deno và thiết lập GitHub Actions tự động hóa săn game miễn phí gửi qua Telegram Bot mỗi tuần."
+description: "Hệ thống tự động săn game miễn phí trên Epic Games Store và gửi thông báo Telegram."
 published: true
+appName: "Epic Games Free Claim Bot"
+appPeriod: "05/2026"
+techStack: ["Deno", "GitHub Actions", "Telegram Bot"]
+showOnResume: true
 ---
-
-# Săn game Epic miễn phí: Việc gì phải mở Launcher? 🎮
 
 Chắc hẳn ai trong chúng ta cũng đều có một thói quen rất "game thủ": **Chăm chỉ nhận game miễn phí trên Epic Games Store nhưng cả năm chẳng mở launcher lên chơi một lần nào.** 
 

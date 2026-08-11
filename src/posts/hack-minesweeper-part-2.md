@@ -6,8 +6,6 @@ description: "Hướng dẫn đọc bộ nhớ game Minesweeper bằng C# và hi
 published: true
 ---
 
-# Hack Minesweeper - part 2
-
 Nếu chưa xem phần 1 thì có thể xem lại tại [đây](https://uongsuadaubung.blogspot.com/2020/06/hack-minesweeper-part-1.html).
 Mình sẽ sử dụng C# để code, mình cũng có đọc ở đâu đó trên vài trang nước ngoài thấy nhiều người nói là để viết mấy cái tool hack này nọ thì nên viết bằng C++ và mình cũng có tìm hiểu qua C++ nhưng thấy nó khó vãi, hoặc do mình tiếp xúc với C# nhiều hơn và sớm hơn nên quen hơn. Nói sơ sơ qua thì công việc cũng chỉ là đọc ghi giá trị từ địa chỉ ô nhớ trong game thui.
 

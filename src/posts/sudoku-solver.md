@@ -2,11 +2,13 @@
 title: "Sudoku Solver"
 date: "2023-09-08"
 tags: ["Game & Auto"]
-description: "Vài năm trước mình có tìm hiểu về thuật toán Backtracking và chả hiểu cái quần què gì hết luôn, tự nhiên thời gian gần đ..."
+description: "Bộ công cụ can thiệp bộ nhớ RAM game Windows (Minesweeper & Sudoku) bằng kỹ thuật Reverse Engineering và giải thuật tự động."
 published: true
+appName: "Windows Minesweeper & Sudoku Memory Solvers"
+appPeriod: "09/2023"
+techStack: ["C++", "C#", "Reverse Engineering", "Memory Reading", "Algorithms"]
+showOnResume: true
 ---
-
-# Sudoku Solver
 
 ![Sudoku header](/images/sudoku-solver/image-01.png)
 

@@ -4,7 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "predev": "bun run scripts/check-markdown.ts",
     "dev": "vite",
+    "check-md": "bun run scripts/check-markdown.ts",
     "prebuild": "node scripts/generate-sitemap.js",
     "build": "tsc -b && vite build",
     "postbuild": "node scripts/prerender.js",

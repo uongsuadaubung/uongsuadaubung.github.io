@@ -6,8 +6,6 @@ description: "Phân tích chuyên sâu về lập trình Idiomatic trong Rust, c
 published: true
 ---
 
-# Nghiên Cứu Chuyên Sâu Về Thiết Kế Hệ Thống Và Tối Ưu Hóa Hiệu Năng Qua Idiomatic Rust
-
 ## Tóm Tắt (Abstract)
 Nghiên cứu này trình bày một cách hệ thống các nguyên lý thiết kế và tối ưu hóa mã nguồn trong ngôn ngữ Rust thông qua khái niệm **Idiomatic Rust**. Nội dung tập trung phân tích sâu vào hành vi tối ưu hóa của trình biên dịch đối với việc truy cập bộ sưu tập không chỉ mục (Indexless Vector Access), đồng thời khảo sát 19 mẫu thiết kế Idiomatic phổ biến giúp thay thế các tư duy lập trình hướng đối tượng (OOP), lập trình mệnh lệnh (Imperative), lập trình bất đồng bộ (Async) và song song (Concurrency) truyền thống. Thông qua việc phân tích mã nguồn đối chiếu và cơ chế hoạt động của hạ tầng LLVM (như tối ưu hóa SCEV và tự động hóa vector hóa SIMD), nghiên cứu chứng minh rằng việc áp dụng Idiomatic Rust là điều kiện tiên quyết để đạt được sự cân bằng tối ưu giữa độ an toàn bộ nhớ tĩnh và hiệu năng vận hành ở cấp độ hệ thống.
 

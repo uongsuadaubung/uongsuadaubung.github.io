@@ -1,9 +1,17 @@
 ---
 title: "Vợ cho tiền mua điện thoại, mình dành 2 ngày viết crawler để rồi nghe 3 tiếng: 'hết hàng rồi'"
-date: 2026-04-23
+date: "2026-04-23"
 tags: ["Web Dev"]
-description: "Câu chuyện về một chiếc điện thoại cũ, một người vợ tốt bụng, một đêm viết code và một cái kết... không ai ngờ tới."
+description: "Ứng dụng lọc và tìm kiếm điện thoại xách tay MobileCity với bộ lọc cấu hình đa chiều thông minh, tìm kiếm máy theo chipset, RAM và mức giá."
 published: true
+isApp: true
+appName: "MobileCity Phone Specs Filter"
+appIcon: "📱"
+appBadge: "🟢 Sub-App Live"
+appPeriod: "04/2026"
+liveUrl: "/mobile-city/"
+techStack: ["Svelte 5", "Node.js Crawler", "Faceted Filtering"]
+showOnResume: true
 ---
 
 Chiếc điện thoại của mình đã cũ lắm rồi. Không phải kiểu "cũ nhưng vẫn ngon", mà kiểu cũ thật sự — màn hình bị burn-in một góc, pin tụt từ 80% xuống 20% trong vòng 2 tiếng, camera thì thôi khỏi nói, chụp ảnh ban đêm trông như bức tranh impressionism của Monet nhưng phiên bản xấu hơn nhiều.

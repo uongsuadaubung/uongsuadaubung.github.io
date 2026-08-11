@@ -6,8 +6,6 @@ description: "Hướng dẫn viết hack game Minesweeper. Hướng dẫn làm g
 published: true
 ---
 
-# Hack Minesweeper - part 1
-
 Cái game này chắc chả xa lạ gì với mọi người rồi đúng không, mình bắt đầu chơi từ thời nó còn ở trên Windows XP hồi đó mình còn lớp 7 lớp 8 gì đó tầm khoảng năm 2010. Éc éc, 10 năm rồi đó, nếu có ai hỏi tại sao lại là game này mà không phải game gì ghê gớm hơn thì bài học đầu tiên mà, làm những thứ đơn giản trước đã.
 
 Phần đầu này mình sẽ hướng dẫn sơ sơ cách để hack và tìm địa chỉ của các ô nhớ, sang đến phần sau sẽ là code.

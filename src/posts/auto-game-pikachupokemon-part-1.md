@@ -2,11 +2,13 @@
 title: "Auto game Pikachu/Pokemon - Part 1"
 date: "2023-08-31"
 tags: ["Game & Auto"]
-description: "Nhìn vào hai hình này chắc là biết game gì luôn đúng không nếu không nghe qua thì cũng phải nhìn thấy vì mình nghĩ nó huyền thoại cmnr..."
+description: "Ứng dụng C# tự động hóa game Pikachu & Kawai 2003 bằng kỹ thuật Reverse Engineering, đọc bộ nhớ RAM của process và gọi WinAPI tự động click."
 published: true
+appName: "Auto Game Tools (Pikachu & Kawai 2003)"
+appPeriod: "08/2023"
+techStack: ["C#", "Reverse Engineering", "Memory Reading", "WinAPI"]
+showOnResume: true
 ---
-
-# Auto game Pikachu/Pokemon - Part 1
 
 ![Pikachu Gameplay](/images/auto-game-pikachupokemon-part-1/image-01.png)
 

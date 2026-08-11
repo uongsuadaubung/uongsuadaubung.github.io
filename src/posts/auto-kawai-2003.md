@@ -6,8 +6,6 @@ description: "Do hôm trước tải một cái thư mục mấy game cũ về t
 published: true
 ---
 
-# Auto Kawai 2003
-
 ![Hình minh họa](/images/auto-kawai-2003/image-01.png)
 
 Do hôm trước tải một cái thư mục mấy game cũ về thì bao gồm cả game pikachu ở phần trước mình làm auto và cả game này nên là có ý tưởng làm auto cho cả game này và 2 game còn lại khác, nào ngờ mình nhận ra nó cùng một nhà phát triển, chỉ là giống kiểu "bình cũ rượu mới" thôi ý, những điểm giống và khác so với game Pikachu hôm trước là:

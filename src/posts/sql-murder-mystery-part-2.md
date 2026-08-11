@@ -6,8 +6,6 @@ description: "Hành trình giăng bẫy bắt kẻ đứng sau chủ mưu trong 
 published: true
 ---
 
-# Tập tành làm thám tử với SQL Murder Mystery - Part 2: Truy tìm kẻ đứng sau chủ mưu
-
 Tiếp nối phần trước còn đang dang dở. Sau khi tóm được thằng bé sát thủ đâm thuê chém mướn Jeremy Bowers ở Part 1, hệ thống nó gáy kháy mình là phía sau còn có chủ mưu rùng rợn hơn. Lần này, game nó còn xúi "Nếu tự tin kĩ năng SQL thì dùng không quá 2 câu lệnh thôi". 
 
 IQ 40 của con dân chả sợ thách thức ba cái trò này, triển luôn hý hửng lôi cổ thằng Jeremy Bowers (id: 67318) ra hỏi cung.

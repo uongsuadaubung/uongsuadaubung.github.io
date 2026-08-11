@@ -6,8 +6,6 @@ description: "Phần 1 không có quan trọng lắm vì nó chỉ mang tính ch
 published: true
 ---
 
-# Hack Plants Vs Zombies GOTY Edition - part 2
-
 ![Plants vs Zombies GOTY Edition](/images/plants-vs-zombies-goty-edition-part-2/image-01.jpg)
 
 Phần 1 không có quan trọng lắm vì nó chỉ mang tính chất giới thiệu và viết lại class MyMemory để code tối ưu hơn nên nếu muốn xem lại thì ấn vào [link này nhé](plants-vs-zombies-goty-edition-part-1).

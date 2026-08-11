@@ -2,11 +2,17 @@
 title: "Cozy Feed: Bộ cào và đọc tin tức tập trung"
 date: "2026-07-01"
 tags: ["Tool & Projects"]
-description: "Trong lúc rảnh rỗi ở công ty, mình ngẫu hứng muốn làm một cái gì đó mới mới nên đã nghĩ đến việc viết một con crawler để tự động gom tin tức từ các trang ưa thích về một mối."
+description: "Ứng dụng đọc và cào tin tức RSS cá nhân tập trung, thiết kế giao diện tối giản Cozy, không quảng cáo, tối ưu hiệu năng tải tin tức."
 published: true
+isApp: true
+appName: "Cozy Feed"
+appIcon: "📰"
+appBadge: "🟢 Sub-App Live"
+appPeriod: "07/2026"
+liveUrl: "/cozy/"
+techStack: ["TypeScript", "Solid JS", "Deno", "RSS Parser"]
+showOnResume: true
 ---
-
-# Cozy Feed: Bộ cào và đọc tin tức tập trung ☕
 
 Chuyện là dạo này trên công ty việc của mình cũng hòm hòm, task tủng được dẹp gọn gàng sạch sẽ nên đâm ra có kha khá thời gian rảnh rỗi ngồi chơi xơi nước. Vì muốn tìm cái gì đó mới mới để làm trong lúc rảnh cho đỡ chán, mình chợt nghĩ ngay đến việc viết một con crawler cào dữ liệu.
 

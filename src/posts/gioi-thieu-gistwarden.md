@@ -2,8 +2,16 @@
 title: "Gistwarden - Trình quản lý mật khẩu mã hóa cá nhân"
 date: "2026-08-10"
 tags: ["Tool & Projects"]
-description: "Hành trình xây dựng Gistwarden - Trình quản lý mật khẩu mã hóa client-side Zero-Knowledge kết hợp Passkeys FIDO2, mã 2FA TOTP, hỗ trợ Local Vault ngoại tuyến và lưu trữ trên GitHub Gist."
+description: "Trình quản lý mật khẩu & mã 2FA TOTP bảo mật client-side theo triết lý Zero-Knowledge. Hỗ trợ Local Vault ngoại tuyến và đồng bộ mã hóa qua GitHub Gist."
 published: true
+isApp: true
+appName: "Gistwarden"
+appIcon: "🛡️"
+appBadge: "🟢 Sub-App Live"
+appPeriod: "08/2026"
+liveUrl: "/gistwarden/"
+techStack: ["TypeScript", "Bun", "Solid JS", "Passkeys", "GitHub Gist"]
+showOnResume: true
 ---
 
 Trong thời đại số hiện nay, việc quản lý hàng trăm tài khoản với các mật khẩu khác nhau cùng các mã xác thực hai yếu tố (2FA / TOTP) là một bài toán nhức nhối với bất kỳ ai. Mặc dù có nhiều giải pháp cloud thương mại như Bitwarden, 1Password hay LastPass, nhưng việc giao toàn bộ dữ liệu nhạy cảm cho các server bên thứ ba luôn tiềm ẩn những nỗi lo về quyền riêng tư, rò rỉ dữ liệu hoặc chi phí duy trì hàng tháng.

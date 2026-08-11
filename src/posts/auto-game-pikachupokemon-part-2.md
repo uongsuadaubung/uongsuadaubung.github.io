@@ -6,8 +6,6 @@ description: "Phần này sẽ nặng về code hơn tí, đầu tiên là mình
 published: true
 ---
 
-# Auto game Pikachu/Pokemon - Part 2
-
 ![Hình minh hoạ](/images/auto-game-pikachupokemon-part-2/image-01.png)
 
 Phần này sẽ nặng về code hơn tí, đầu tiên là mình sẽ tạo một mảng 2 chiều có row = 11 và col = 18 để mình lưu các con pokemon lại, nhưng sẽ lưu vào index bắt đầu từ 1,1 đến 9,16 các cạnh viền sẽ để trống để cho thuật toán tìm đường chạy qua các ô số 0 để tìm đến cái con pokemon còn lại :D, trông nó sẽ kiểu như thế này:

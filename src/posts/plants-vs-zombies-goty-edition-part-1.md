@@ -2,11 +2,13 @@
 title: "Hack Plants Vs Zombies GOTY Edition - part 1"
 date: "2020-06-09"
 tags: ["Game & Auto"]
-description: "Plants Vs. Zombies từ trước đến nay vẫn luôn là tượng đài của thể loại phòng thủ tháp được rất nhiều người chơi yêu thích. Hướng dẫn viết tool hack trên Winform."
+description: "Bộ công cụ can thiệp bộ nhớ RAM game Plants vs. Zombies GOTY Edition bằng kỹ thuật Reverse Engineering C++."
 published: true
+appName: "PVZ GOTY Memory Hack Tools"
+appPeriod: "06/2020"
+techStack: ["C++", "Reverse Engineering", "Memory Hacking"]
+showOnResume: true
 ---
-
-# Hack Plants Vs Zombies GOTY Edition - part 1
 
 ![Plants vs Zombies GOTY Edition](/images/plants-vs-zombies-goty-edition-part-1/image-01.jpg)
 

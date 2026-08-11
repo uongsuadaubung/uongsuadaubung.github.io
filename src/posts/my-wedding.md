@@ -1,12 +1,14 @@
 ---
-title: "Tự code thiệp cưới xịn xò: Trận chiến Google Apps Script và Deploy chia 2 họ"
+title: "Tự làm thiệp cưới cá nhân: Google Apps Script và bài toán chia 2 họ"
 date: "2026-02-24"
 tags: ["Chuyện nghề & Chia sẻ"]
-description: "Cứ tưởng tự viết cái thiệp cưới ném lên mạng là nhanh gọn lẹ, ai ngờ đâm đầu vào mới thấy muôn vàn rắc rối từ vụ vượt rào CORS của Google đến bài toán tách Web nhà trai - nhà gái."
+description: "Trang web thiệp cưới và kỷ niệm cá nhân tích hợp Google Apps Script phân luồng chia 2 họ."
 published: true
+appName: "Website Đám Cưới Cá Nhân (Wedding Web)"
+appPeriod: "02/2026"
+techStack: ["HTML5", "SCSS", "Google Apps Script"]
+showOnResume: true
 ---
-
-# Tự code thiệp cưới xịn xò: Trận chiến Google Apps Script và Deploy chia 2 họ
 
 Chuyện là ngày trọng đại chuẩn bị đến, vợ chồng mình ngồi lướt chán chê các mẫu thiệp cưới số trên mạng. Nhìn thì đẹp thật đấy, nhưng dùng mấy nền tảng dựng sẵn (builder) cứ có cảm giác rập khuôn thế nào ấy, lại còn hay dính quảng cáo hay giới hạn băng thông. 
 
