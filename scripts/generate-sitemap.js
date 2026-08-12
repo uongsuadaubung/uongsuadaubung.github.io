@@ -18,8 +18,7 @@ files.forEach(file => {
 
   postEntries.push({
     url: `https://uongsuadaubung.github.io/blog/${slug}/`,
-    lastmod,
-    priority: '0.8'
+    lastmod
   });
 });
 
@@ -28,16 +27,16 @@ postEntries.sort((a, b) => b.lastmod.localeCompare(a.lastmod));
 const latestPostDate = postEntries.length > 0 ? postEntries[0].lastmod : '2026-08-10';
 
 const staticPages = [
-  { url: 'https://uongsuadaubung.github.io/', lastmod: latestPostDate, priority: '1.0' },
-  { url: 'https://uongsuadaubung.github.io/about/', lastmod: latestPostDate, priority: '0.9' },
-  { url: 'https://uongsuadaubung.github.io/blog/', lastmod: latestPostDate, priority: '0.9' },
-  { url: 'https://uongsuadaubung.github.io/apps/', lastmod: latestPostDate, priority: '0.9' },
-  { url: 'https://uongsuadaubung.github.io/gistwarden/', lastmod: '2026-08-01', priority: '0.8' },
-  { url: 'https://uongsuadaubung.github.io/cozy/', lastmod: '2026-07-15', priority: '0.8' },
-  { url: 'https://uongsuadaubung.github.io/switch-games/', lastmod: '2026-03-20', priority: '0.8' },
-  { url: 'https://uongsuadaubung.github.io/mobile-city/', lastmod: '2026-04-23', priority: '0.8' },
-  { url: 'https://uongsuadaubung.github.io/chat/', lastmod: '2026-04-10', priority: '0.8' },
-  { url: 'https://uongsuadaubung.github.io/hom-nay-an-gi/', lastmod: '2026-03-13', priority: '0.8' }
+  { url: 'https://uongsuadaubung.github.io/', lastmod: latestPostDate },
+  { url: 'https://uongsuadaubung.github.io/about/', lastmod: latestPostDate },
+  { url: 'https://uongsuadaubung.github.io/blog/', lastmod: latestPostDate },
+  { url: 'https://uongsuadaubung.github.io/apps/', lastmod: latestPostDate },
+  { url: 'https://uongsuadaubung.github.io/gistwarden/', lastmod: '2026-08-01' },
+  { url: 'https://uongsuadaubung.github.io/cozy/', lastmod: '2026-07-15' },
+  { url: 'https://uongsuadaubung.github.io/switch-games/', lastmod: '2026-03-20' },
+  { url: 'https://uongsuadaubung.github.io/mobile-city/', lastmod: '2026-04-23' },
+  { url: 'https://uongsuadaubung.github.io/chat/', lastmod: '2026-04-10' },
+  { url: 'https://uongsuadaubung.github.io/hom-nay-an-gi/', lastmod: '2026-03-13' }
 ];
 
 const allEntries = [...staticPages, ...postEntries];
@@ -47,10 +46,10 @@ const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
 ${allEntries.map(entry => `  <url>
     <loc>${entry.url}</loc>
     <lastmod>${entry.lastmod}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>${entry.priority}</priority>
   </url>`).join('\n')}
-</urlset>`;
+</urlset>
+`;
 
 fs.writeFileSync(outputFile, sitemapXml, 'utf-8');
 console.log(`✅ Generated clean sitemap.xml with ${allEntries.length} entries & dynamic lastmod dates!`);
+

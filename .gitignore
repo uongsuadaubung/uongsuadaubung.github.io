@@ -25,3 +25,7 @@ dist-ssr
 
 # Agent files
 .agents/
+
+# Generated files
+public/sitemap.xml
+
