@@ -7,7 +7,6 @@ published: true
 isApp: true
 appName: "Gistwarden"
 appIcon: "🛡️"
-appBadge: "🟢 Sub-App Live"
 appPeriod: "08/2026"
 liveUrl: "/gistwarden/"
 techStack: ["TypeScript", "Bun", "Solid JS", "Passkeys", "GitHub Gist"]

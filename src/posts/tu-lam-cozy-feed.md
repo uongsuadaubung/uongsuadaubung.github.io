@@ -7,7 +7,6 @@ published: true
 isApp: true
 appName: "Cozy Feed"
 appIcon: "📰"
-appBadge: "🟢 Sub-App Live"
 appPeriod: "07/2026"
 liveUrl: "/cozy/"
 techStack: ["TypeScript", "Solid JS", "Deno", "RSS Parser"]

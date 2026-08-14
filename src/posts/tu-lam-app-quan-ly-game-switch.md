@@ -7,7 +7,6 @@ published: true
 isApp: true
 appName: "Switch Games Manager"
 appIcon: "🎮"
-appBadge: "🟢 Sub-App Live"
 appPeriod: "03/2026"
 liveUrl: "/switch-games/"
 techStack: ["TypeScript", "Solid JS", "Web App", "Canvas"]

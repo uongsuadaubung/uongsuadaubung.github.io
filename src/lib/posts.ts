@@ -165,7 +165,7 @@ export async function getEcosystemApps(): Promise<LiveAppItem[]> {
 		.map(p => ({
 			id: p.slug,
 			name: p.appName || p.title,
-			badge: p.appBadge || '🟢 Sub-App Live',
+			badge: p.appBadge || '',
 			period: p.appPeriod || p.date,
 			tech: p.techStack?.join(' · ') || '',
 			desc: p.description,

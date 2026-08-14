@@ -7,7 +7,6 @@ published: true
 isApp: true
 appName: "WebRTC P2P Chat Application"
 appIcon: "💬"
-appBadge: "🟢 Sub-App Live"
 appPeriod: "04/2026"
 liveUrl: "/chat/"
 techStack: ["JavaScript", "WebRTC", "Svelte 5", "IndexedDB"]

@@ -7,7 +7,6 @@ published: true
 isApp: true
 appName: "Hôm Nay Ăn Gì"
 appIcon: "🍕"
-appBadge: "🟢 Sub-App Live"
 appPeriod: "03/2026"
 liveUrl: "/hom-nay-an-gi/"
 techStack: ["JavaScript", "HTML5", "SCSS", "Randomizer"]

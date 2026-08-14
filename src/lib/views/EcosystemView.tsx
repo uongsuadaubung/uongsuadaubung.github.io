@@ -25,7 +25,7 @@ export default function EcosystemView() {
               <div class="app-card">
                 <div class="card-top">
                   <span class="app-icon">{app.icon}</span>
-                  <span class="app-badge">{app.badge}</span>
+                  {app.badge && <span class="app-badge">{app.badge}</span>}
                 </div>
 
                 <h3 class="app-title">{app.name}</h3>

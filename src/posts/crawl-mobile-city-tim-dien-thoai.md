@@ -7,7 +7,6 @@ published: true
 isApp: true
 appName: "MobileCity Phone Specs Filter"
 appIcon: "📱"
-appBadge: "🟢 Sub-App Live"
 appPeriod: "04/2026"
 liveUrl: "/mobile-city/"
 techStack: ["Svelte 5", "Node.js Crawler", "Faceted Filtering"]
