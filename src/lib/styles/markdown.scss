@@ -129,7 +129,7 @@
 			background: var(--bg-elevated);
 			color: var(--text-heading);
 			font-weight: 600;
-			text-align: left;
+			text-align: center;
 			padding: var(--space-3) var(--space-4);
 			border-bottom: 2px solid var(--border);
 		}
@@ -137,6 +137,13 @@
 		td {
 			padding: var(--space-3) var(--space-4);
 			border-bottom: 1px solid var(--border-subtle);
+			vertical-align: middle;
+			text-align: center;
+
+			img {
+				margin: var(--space-2) auto;
+				max-width: 100%;
+			}
 		}
 
 		tr:last-child td {
@@ -146,6 +153,39 @@
 		tr:hover td {
 			background: var(--bg-hover);
 			transition: background var(--transition-fast);
+		}
+	}
+
+	// ─── Image Compare Grid ──────────────────────────────────────
+	.image-compare {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: var(--space-4);
+		margin: var(--space-6) 0 var(--space-2);
+
+		@media (max-width: 640px) {
+			grid-template-columns: 1fr;
+		}
+
+		.image-item {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			text-align: center;
+
+			.image-title {
+				font-size: 0.9rem;
+				font-weight: 600;
+				color: var(--text-secondary);
+				margin-bottom: var(--space-2);
+			}
+
+			img {
+				margin: 0;
+				width: 100%;
+				max-width: 340px;
+				object-fit: contain;
+			}
 		}
 	}
 
