@@ -76,4 +76,6 @@ files.forEach(file => {
   createStaticRoute(`post/${slug}`, title, description, postUrl, bodyHtml);
 });
 
+
 console.log(`🚀 SSG Prerender với nội dung HTML tĩnh hoàn tất! Đã sinh ${prerenderCount} file index.html tĩnh (HTTP 200 OK + Full Static HTML Body) cho tất cả bài viết!`);
+
