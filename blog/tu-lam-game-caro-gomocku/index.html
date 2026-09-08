@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Single Page Apps for GitHub Pages Redirect Decoder -->
+    <script type="text/javascript">
+      (function(l) {
+        if (l.search[1] === '/' ) {
+          var decoded = l.search.slice(1).split('&').map(function(s) { 
+            return s.replace(/~and~/g, '&')
+          }).join('?');
+          window.history.replaceState(null, null,
+              l.pathname.slice(0, -1) + decoded + l.hash
+          );
+        }
+      }(window.location))
+    </script>
+    <meta name="author" content="Hà Mạnh Kiên (uongsuadaubung)" />
+    <meta name="description" content="Hành trình xây dựng game cờ Carô (Gomoku) chạy trên trình duyệt bằng SolidJS, tích hợp AI đa luồng không giật lag, 6 chế độ chơi và hệ thống nhận diện sự kiện cà khịa cực kỳ đa dạng." />
+    <meta property="og:title" content="Tự làm game cờ Carô GoMockU: Khi AI vừa đánh cờ vừa cà khịa — uongsuadaubung" />
+    <meta property="og:description" content="Hành trình xây dựng game cờ Carô (Gomoku) chạy trên trình duyệt bằng SolidJS, tích hợp AI đa luồng không giật lag, 6 chế độ chơi và hệ thống nhận diện sự kiện cà khịa cực kỳ đa dạng." />
+    <meta property="og:type" content="website" />
+    <title>Tự làm game cờ Carô GoMockU: Khi AI vừa đánh cờ vừa cà khịa — uongsuadaubung</title>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Hà Mạnh Kiên",
+      "alternateName": "uongsuadaubung",
+      "jobTitle": "Full Stack Web Developer",
+      "email": "k97.dev@gmail.com",
+      "telephone": "+84868931497",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Hà Nội",
+        "addressCountry": "VN"
+      },
+      "alumniOf": {
+        "@type": "EducationalOrganization",
+        "name": "Đại học Mở Hà Nội"
+      },
+      "sameAs": [
+        "https://github.com/uongsuadaubung"
+      ]
+    }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DrYRquR4.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DaAWQ7E0.css">
+    <link rel="canonical" href="https://uongsuadaubung.github.io/blog/tu-lam-game-caro-gomocku/" />
+  </head>
+  <body>
+    <div id="root"><article class="markdown-body" style="max-width:800px;margin:40px auto;padding:0 20px;font-family:sans-serif;line-height:1.6;"><h1>Tự làm game cờ Carô GoMockU: Khi AI vừa đánh cờ vừa cà khịa</h1><p>Cờ Carô (Gomoku) chắc chắn là trò chơi quốc dân gắn liền với tuổi thơ của hầu hết anh em lập trình từ những ngày còn ngồi xé vở ô ly cắn bút thách đấu đứa bàn bên. Dạo này công việc trên công ty cũng hòm hòm, rảnh rỗi ngứa tay muốn làm một cái gì đó vừa mang tính hoài niệm vừa có chút gia vị thuật toán cho vui. </p>
+<p>Lên mạng dạo một vòng thử mấy con bot cờ Carô có sẵn thì thấy đa phần một là đánh quá máy móc khô khan, hai là giao diện cũ kỹ từ thập kỷ trước. Quan trọng nhất là mỗi lần thắng hay thua, con bot cứ trơ trơ ra chả có cảm xúc gì. Thế là mình nảy ra ý tưởng: <em>Sao không tự viết một con game cờ Carô hiện đại, mượt mà, có thuật toán giải cờ bài bản và quan trọng nhất là con bot phải biết... &quot;gáy bẩn&quot; và cà khịa mỗi khi đối thủ đi nước sai?</em></p>
+<p>Thế là dự án <strong>GoMockU</strong> ra đời.</p>
+<pre><code>            Go               +         Mock         +         U (You)
+(Vừa là cờ, vừa là đi nước cờ)      (Cà khịa, chọc ngoáy)        (Chính là bạn)
+─────────────────────────────────────────────────────────────────────────────
+          👉 Thông điệp: &quot;Bạn hạ một quân cờ, Bot cà khịa bạn một câu!&quot;
+</code></pre>
+<hr>
+<h2>🧭 Khám phá 6 chế độ chơi tại Menu chính</h2>
+<p>Khi thiết kế menu chính cho GoMockU, mình không muốn nhồi nhét một danh sách nút bấm đơn điệu. Toàn bộ trải nghiệm được phân bổ thành 2 khu vực rõ ràng: <strong>Đấu Trường Thi Đấu</strong> và <strong>Học Tập &amp; Kỳ Viện</strong>, tương ứng với 6 chế độ chơi riêng biệt:</p>
+<hr>
+<h3>⚔️ Khu vực 1: Đấu Trường Thi Đấu</h3>
+<p>Khu vực này dành riêng cho việc so tài kỹ năng và thử thách bản lĩnh thi đấu trực tiếp với các cấp độ AI:</p>
+<p><img src="/images/tu-lam-game-caro-gomocku/image-01.png" alt="Đấu Trường Thi Đấu trong GoMockU"></p>
+<h4>1. 🏆 Chiến Dịch Leo Cấp (Campaign Mode) — Thập Nhị Đại Tông Sư</h4>
+<p>Chế độ cốt lõi cho anh em thích cảm giác leo rank bậc thang. Bạn sẽ bắt đầu từ con số 0 và leo qua 12 tầng tháp để đối đầu với 12 nhân cách Bot:</p>
+<ul>
+<li><strong>Cấp 1 – Bé Tập Chơi</strong>: Đánh cờ ngây ngô, chọn ô ngẫu nhiên, hay tự thua nhưng độ tự tin thì thừa.</li>
+<li><strong>Cấp 3 – Kỳ Thủ Phố</strong>: Lối đánh cờ vỉa hè đầy biến hóa, chuyên dùng đòn tâm lý châm chọc đối thủ.</li>
+<li><strong>Cấp 6 – Kiện Tướng Trẻ</strong>: Bắt đầu thành thạo các đòn bẫy kép 4-3, phản công rất rát nếu bạn sơ hở.</li>
+<li><strong>Cấp 12 – Độc Cô Cầu Bại</strong>: Đỉnh cao AI với Minimax duyệt sâu 6–8 tầng, tích hợp bộ giải sát cục VCF/VCT vét cạn mọi nhánh đe dọa.</li>
+</ul>
+<p>Đánh thắng cấp hiện tại thì hệ thống mới mở khóa đối thủ tiếp theo. Cảm giác vượt qua từng cấp rồi nghe bot đổi giọng từ khinh khỉnh sang cay cú khá là giải trí.</p>
+<h4>2. ⚡ Cờ Chớp Thử Thách (Blitz Challenge) — Áp lực nghẹt thở từng giây</h4>
+<p>Nơi thử thách phản xạ và trực giác chiến thuật dưới áp lực thời gian:</p>
+<ul>
+<li><strong>Giới hạn thời gian siêu gắt</strong>: Chọn giữa <strong>5 giây</strong> <em>(Khắc nghiệt)</em>, <strong>10 giây</strong> <em>(Tiêu chuẩn)</em> hoặc <strong>15 giây</strong> <em>(Dễ thở)</em> cho mỗi nước đi.</li>
+<li><strong>Luật Sinh Tử (Sudden Death)</strong>: Thắng một ván sẽ ngay lập tức bước sang cấp độ Bot cao hơn. Nhưng chỉ cần <strong>thua 1 ván hoặc để cháy giờ</strong>, chuỗi sinh tử lập tức bị bẻ gãy và bạn phải quay về vạch xuất phát Cấp 1!</li>
+<li><strong>Cấm hoàn toàn nút Đi Lại (No Undo)</strong>: Hạ cờ là không rút lại được. Khi đồng hồ đếm ngược dưới 3 giây, âm thanh tích tắc dồn dập vang lên bảo đảm tim đập thình thịch.</li>
+</ul>
+<h4>3. ⚔️ Đấu Tùy Chọn (Custom Match) — Phòng tập tự do</h4>
+<ul>
+<li>Tự do chọn bất kỳ cấp độ Bot nào bạn đã mở khóa được từ Chiến Dịch.</li>
+<li>Cho phép chọn cầm <strong>Quân Đen</strong> (đi trước nắm tiên thủ) hoặc <strong>Quân Trắng</strong> (đi sau tập phản công hóa giải sức ép).</li>
+<li>Có đầy đủ các công cụ hỗ trợ như đổi bên, đi lại (Undo) và xem lại lịch sử các nước cờ để mổ xẻ nước đi sai lầm.</li>
+</ul>
+<hr>
+<h3>🎓 Khu vực 2: Học Tập &amp; Kỳ Viện</h3>
+<p>Nếu không muốn chỉ cắm đầu vào đánh cờ mà muốn nghiên cứu bài bản, khu vực này sẽ biến game thành một học viện cờ thu nhỏ:</p>
+<p><img src="/images/tu-lam-game-caro-gomocku/image-02.png" alt="Học Tập &amp; Kỳ Viện trong GoMockU"></p>
+<h4>4. 📘 Kỳ Viện Bách Khoa &amp; Bàn Cờ Sandbox (Master Guide &amp; Sandbox)</h4>
+<ul>
+<li><strong>Giáo trình 8 Chương &amp; 28 Bài học tương tác</strong>: Đi từ những khái niệm căn bản như điểm tâm bàn cờ (Tengen H8), cự ly liên kết quân, cho đến 26 thế khai cuộc Renju chuẩn quốc tế (<em>Hoa Nguyệt, Phố Nguyệt, Khâu Nguyệt...</em>), nghệ thuật bẫy đôi (4-3, 3-3, 4-4), quản lý nhịp độ &amp; nước chờ, kỹ thuật sát cục dồn ép VCF/VCT, nghệ thuật phòng thủ phản kích và chuyên đề luật cấm Renju.</li>
+<li><strong>Bàn cờ Sandbox &amp; Radar Chiến Thuật (Tactical Radar)</strong>: Đi kèm với giáo trình là phòng giả lập tương tác. Hệ thống sẽ vẽ trực quan bản đồ nhiệt (Heatmap) kiểm soát ô cờ và các trục đe dọa theo thời gian thực để bạn thử nghiệm các kịch bản <em>&quot;Nước này đi vào đây thì thế trận biến đổi ra sao?&quot;</em>.</li>
+</ul>
+<h4>5. 🎓 Học Viện Gomo (Tutor Coaching Mode) — Gia sư 1-1 theo sát từng nước</h4>
+<p>Tính năng đóng vai trò như một người thầy dạy cờ ngồi bên cạnh bạn trong suốt ván đấu:</p>
+<ul>
+<li><strong>Trước khi đi</strong>: Gia sư tính toán ở luồng ngầm để tìm ra <em>&quot;Nước cờ vàng&quot;</em> tối ưu nhất, đồng thời phát báo động đỏ nếu đối thủ đang rình rập một đòn kết liễu.</li>
+<li><strong>Sau khi hạ quân</strong>: Ngay khi bạn đặt quân xuống, Gia sư sẽ đối chiếu và xếp hạng chất lượng nước đi (<em>Brilliant, Great, Good, Inaccuracy, Blunder</em>) kèm lời giải thích tại sao nước cờ đó hay hoặc dở.</li>
+<li><strong>Không lo giật lag UI</strong>: Toàn bộ thuật toán phân tích của Gia sư chạy ngầm trên luồng riêng, giữ cho giao diện luôn mượt mà 60 FPS.</li>
+</ul>
+<h4>6. 🧩 Giải Đố Thế Cờ (Tactical Puzzles) — Sát cục tạo sinh ngẫu nhiên</h4>
+<p>Thay vì tải về một danh sách vài chục bài tập tĩnh giải vài lần là nhớ hết đáp án, mình xây dựng hệ thống cờ thế theo dạng <strong>Tạo sinh thủ tục (Procedural Kernel Generator)</strong>:</p>
+<ul>
+<li><strong>Kho hạt giống chiến thuật 1⭐ đến 7⭐</strong>: Chứa các cấu trúc sát cục lõi kinh điển như VCF (chuỗi ép nước 4 liên hoàn), VCT (chuỗi phối hợp nước 3 mở và nước 4), đòn móc chữ L, đòn Z-Cascade hay Thất Tinh Bắc Đẩu.</li>
+<li><strong>Biến đổi không gian &amp; Nhiễu giao tranh</strong>: Thuật toán lấy ngẫu nhiên một hạt giống, áp dụng các phép biến đổi xoay góc, lật gương và rải thêm nhiều mẫu giao tranh trung cuộc ngẫu nhiên. Sinh ra <strong>hàng triệu thế cờ độc nhất vô nhị</strong> nhưng vẫn đảm bảo có lời giải chặt chẽ 100%.</li>
+</ul>
+<hr>
+<h2>🎭 Hệ thống nhận diện sự kiện cà khịa đa dạng &amp; Bắt thóp tâm lý người chơi</h2>
+<p>Điểm làm nên linh hồn và sự hài hước của GoMockU chính là hệ thống Bot Persona được lập trình để <strong>nhận diện hàng loạt hành vi và tình huống đa dạng</strong> trong và ngoài bàn cờ, kết hợp cùng kho câu thoại tiếng Việt phong phú đậm chất &quot;gáy bẩn&quot;:</p>
+<p><img src="/images/tu-lam-game-caro-gomocku/image-03.png" alt="Giao diện bàn cờ và Bot cà khịa thời gian thực"></p>
+<p>Hệ thống cảm xúc của Bot được phân chia thành <strong>nhiều sắc thái biểu cảm</strong> như <em>Khinh bỉ (😒), Cười khẩy (😏), Mặt hề (🤡), Kính lúp bắt thóp (🧐), Ngáp ngủ (🥱), Ác quỷ (😈), Hoảng loạn (😱)...</em> tương ứng với 4 nhóm tình huống chính:</p>
+<h3>1. ⚔️ Nhóm Diễn Biến Trận Đấu</h3>
+<p>Bot theo dõi sát sao từng nước đi trên bàn cờ để châm chọc kỹ năng của bạn:</p>
+<ul>
+<li><strong>Chặn ngáo &amp; Tự bóp</strong>: Bỏ sót nước 4 mở của Bot, chặn sai đầu của nước 3 mở, hoặc tự đặt quân chặn mất đường phát triển của chính mình.</li>
+<li><strong>Đòn thế kỳ dị</strong>: Nhận diện khi người chơi xếp cờ hình tam giác cụm bo góc như chơi Cờ Vây, xếp cờ hình chữ T vuông góc, hoặc dạt quân ra tít góc bàn cờ cách xa cụm giao tranh chính (&quot;đi đảo hoang&quot;).</li>
+<li><strong>Thua nước định mệnh</strong>: Thua cuộc đúng ở nước cờ thứ 13, thua chớp nhoáng dưới 60 giây, hoặc cày cuốc đến hơn 100 quân mà vẫn bị Bot bẻ gãy thế trận.</li>
+</ul>
+<h3>2. ⏳ Nhóm Trạng Thái Chờ &amp; Treo Máy</h3>
+<ul>
+<li><strong>Ngồi ngắm đường thua</strong>: Vừa bị Bot kết liễu xong mà ngồi thừ người ra ngắm đường 5 quân phát sáng quá lâu.</li>
+<li><strong>Ngâm cờ câu giờ</strong>: Suy nghĩ quá lâu khi đến lượt đi hoặc ngâm một nước cờ cả buổi là Bot sẽ ngáp ngắn ngáp dài chê bạn đánh rùa bò.</li>
+</ul>
+<h3>3. 💬 Nhóm Bắt Bài Tương Tác &amp; Tâm Lý</h3>
+<p>Đây là phần thú vị nhất khi Bot bắt bài các thói quen vô thức của người chơi qua chuột và bàn phím:</p>
+<ul>
+<li><strong>Lắc chuột hoảng loạn</strong>: Khi bạn bí nước và lắc chuột lia lịa qua lại trên màn hình $\rightarrow$ Bot cười nhạo sự bấn loạn của bạn ngay.</li>
+<li><strong>Do dự bấm Undo</strong>: Rê chuột hover vào nút Đi Lại quá 2 giây rồi lại rụt tay về không dám bấm.</li>
+<li><strong>Bắt quả tang mở F12</strong>: Bấm phím mở DevTools để soi code $\rightarrow$ Bot lập tức cảnh cáo không được gian lận!</li>
+<li><strong>Bắt bài phím tắt &amp; chụp màn hình</strong>: Nhận diện khi người chơi bấm tổ hợp phím Undo, ấn phím chụp màn hình, hay quét chuột bôi đen giao diện xung quanh bàn cờ để tìm manh mối.</li>
+<li><strong>Đập phím &amp; Chọc Bot</strong>: Bấm phím Space liên hồi khi sốt ruột hoặc click spam liên tục vào mặt Avatar Bot sẽ khiến nó nổi đóa mắng lại.</li>
+</ul>
+<h3>4. ⚙️ Nhóm Ngữ Cảnh Thời Gian Thực &amp; Hệ Thống</h3>
+<p>Bot nắm rõ cả thời gian thực tế bên ngoài đời thực của bạn để &quot;nói trúng tim đen&quot;:</p>
+<ul>
+<li><strong>Theo khung giờ</strong>: Chơi sáng thứ Hai đầu tuần, chiều thứ Sáu chuẩn bị tan sở, đầu giờ chiều căng da bụng chùng da mắt, hoặc cú đêm 3 giờ sáng.</li>
+<li><strong>Đổi theme cầu may</strong>: Đang thua liên tiếp 3 ván mà cuống cuồng đổi giao diện bàn cờ từ Wood sang Cyber/Jade để giải đen $\rightarrow$ Bot nhảy vào châm chọc ngay: <em>&quot;Đổi theme cũng chả đổi được vận mệnh thua đâu sếp!&quot;</em>.</li>
+<li><strong>Tắt loa trốn tránh</strong>: Người chơi bấm tắt âm thanh để đỡ nghe Bot gáy thì Bot sẽ làm biểu cảm suýt im lặng (🤫).</li>
+</ul>
+<hr>
+<h2>🧠 Hậu trường kỹ thuật &amp; Động cơ AI</h2>
+<p>Về mặt công nghệ, GoMockU được xây dựng trên bộ tech stack khá gọn gàng:</p>
+<table>
+<thead>
+<tr>
+<th align="left">Thành phần</th>
+<th align="left">Công nghệ sử dụng</th>
+<th align="left">Mục đích</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>Giao diện</strong></td>
+<td align="left">SolidJS + Tailwind CSS v4</td>
+<td align="left">Render siêu nhanh, Fine-grained reactivity không tốn chi phí Virtual DOM</td>
+</tr>
+<tr>
+<td align="left"><strong>Runtime &amp; Build</strong></td>
+<td align="left">Bun + Vite v8</td>
+<td align="left">Tốc độ cài package và build ứng dụng cực nhanh</td>
+</tr>
+<tr>
+<td align="left"><strong>Động cơ AI</strong></td>
+<td align="left">Minimax + Alpha-Beta + Zobrist Table</td>
+<td align="left">Tìm kiếm sâu nước cờ tối ưu, lưu bảng băm 150.000 trạng thái với phép XOR $O(1)$</td>
+</tr>
+<tr>
+<td align="left"><strong>Đa luồng</strong></td>
+<td align="left">Web Workers</td>
+<td align="left">Đẩy toàn bộ tính toán nặng sang background thread</td>
+</tr>
+<tr>
+<td align="left"><strong>Âm thanh</strong></td>
+<td align="left">Procedural Web Audio API</td>
+<td align="left">Tự tổng hợp sóng âm cho tiếng cờ, đồng hồ... không cần tải file MP3</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>🎯 Lời kết</h2>
+<p>GoMockU là một dự án cá nhân mang lại cho mình rất nhiều niềm vui khi làm, từ việc tối ưu từng mili-giây cho thuật toán Minimax, viết bộ sinh map cờ thế ngẫu nhiên đến việc thiết kế hàng loạt sự kiện tương tác phong phú để biến con bot thành một &quot;đại kình địch&quot; độc mồm thực sự.</p>
+<p>Nếu bạn muốn ôn lại kỷ niệm tuổi thơ với cờ Carô hoặc thử sức leo tháp với những con bot &quot;gáy bẩn&quot;, hãy ghé qua chơi thử nhé!</p>
+</article></div>
+  </body>
+</html>

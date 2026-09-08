@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Single Page Apps for GitHub Pages Redirect Decoder -->
+    <script type="text/javascript">
+      (function(l) {
+        if (l.search[1] === '/' ) {
+          var decoded = l.search.slice(1).split('&').map(function(s) { 
+            return s.replace(/~and~/g, '&')
+          }).join('?');
+          window.history.replaceState(null, null,
+              l.pathname.slice(0, -1) + decoded + l.hash
+          );
+        }
+      }(window.location))
+    </script>
+    <meta name="author" content="Hà Mạnh Kiên (uongsuadaubung)" />
+    <meta name="description" content="Ứng dụng nhắn tin trực tiếp ngang hàng bảo mật qua trình duyệt sử dụng WebRTC, mã hóa P2P, gọi video và chia sẻ màn hình không lưu vết server." />
+    <meta property="og:title" content="Làm cái app chat P2P với WebRTC và Svelte 5 — uongsuadaubung" />
+    <meta property="og:description" content="Ứng dụng nhắn tin trực tiếp ngang hàng bảo mật qua trình duyệt sử dụng WebRTC, mã hóa P2P, gọi video và chia sẻ màn hình không lưu vết server." />
+    <meta property="og:type" content="website" />
+    <title>Làm cái app chat P2P với WebRTC và Svelte 5 — uongsuadaubung</title>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Hà Mạnh Kiên",
+      "alternateName": "uongsuadaubung",
+      "jobTitle": "Full Stack Web Developer",
+      "email": "k97.dev@gmail.com",
+      "telephone": "+84868931497",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Hà Nội",
+        "addressCountry": "VN"
+      },
+      "alumniOf": {
+        "@type": "EducationalOrganization",
+        "name": "Đại học Mở Hà Nội"
+      },
+      "sameAs": [
+        "https://github.com/uongsuadaubung"
+      ]
+    }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DrYRquR4.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DaAWQ7E0.css">
+    <link rel="canonical" href="https://uongsuadaubung.github.io/blog/chat-p2p-webrtc/" />
+  </head>
+  <body>
+    <div id="root"><article class="markdown-body" style="max-width:800px;margin:40px auto;padding:0 20px;font-family:sans-serif;line-height:1.6;"><h1>Làm cái app chat P2P với WebRTC và Svelte 5</h1><p><img src="/images/chat-p2p/hero.png" alt="App Chat P2P"></p>
+<p>Chào mọi người, dạo này mình có ngồi vọc làm một cái app chat P2P (kiểu chat trực tiếp giữa 2 máy với nhau mà không qua server trung gian). Ý tưởng là để tin nhắn riêng tư hơn, không ai đọc trộm được vì nó chẳng lưu ở đâu ngoài máy mình và máy người kia. </p>
+<p>Tiện thể mình dùng luôn Svelte 5 xem nó có gì hay ho. Sau đây là mấy cái mình thấy đáng chú ý trong lúc làm.</p>
+<h3>1. Gửi tin nhắn sao cho không bị lỗi (Atomic Transactions)</h3>
+<p>Trong môi trường chat trực tiếp (WebRTC), mạng đôi khi nó chập chờn. Nếu bạn đang sửa tin nhắn hay thả icon mà mạng rớt phát là coi như máy mình một kiểu, máy kia một kiểu.</p>
+<p>Để giải quyết, mình làm một cái bộ quản lý hành động. Khi bạn bấm nút:</p>
+<ol>
+<li>Máy sẽ lưu lại trạng thái cũ.</li>
+<li>Hiện kết quả lên màn hình luôn cho nhanh (Optimistic).</li>
+<li>Lưu vào một cái &quot;hàng chờ&quot; ở máy mình (IndexedDB).</li>
+<li>Gửi đi. Nếu gửi lỗi, nó sẽ tự động trả lại trạng thái cũ và đợi lúc nào có mạng thì tự gửi lại sau.</li>
+</ol>
+<pre><code class="language-typescript">// Ví dụ đoạn code xử lý trả lại trạng thái cũ nếu lỗi
+private rollbackUIState(action: AtomicAction, originalState: OriginalState): void {
+    const m = ctx.messages;
+    const roomMsgs = m[action.roomId] || [];
+    const idx = roomMsgs.findIndex((m) =&gt; m.id === action.messageId);
+
+    if (idx === -1) return;
+
+    const updated = [...roomMsgs];
+    // Trả lại nội dung cũ nếu không gửi được
+    switch (action.type) {
+        case &#39;edit&#39;:
+            updated[idx] = { ...updated[idx], text: (originalState as any).text };
+            break;
+    }
+    ctx.messages = { ...m, [action.roomId]: updated };
+}
+</code></pre>
+<h3>2. Gửi file lớn mà không bị đứng máy</h3>
+<p>Gửi file qua WebRTC nếu cứ tống cả cục vào là trình duyệt nó đơ luôn. Mình phải chia nhỏ file ra từng mẩu (chunk) tầm 16KB hay 32KB gì đó rồi gửi dần.</p>
+<p>Cái khó là phải biết lúc nào thì nên gửi tiếp, lúc nào nên dừng lại chờ bên kia nhận xong (Backpressure). Mình dùng cái hàm <code>onbufferedamountlow</code> của trình duyệt. Đại loại là khi nào bộ đệm của trình duyệt nó vơi đi thì mình mới nhồi thêm mẩu tiếp theo vào. </p>
+<pre><code class="language-typescript">// Chờ cho bộ đệm vơi bớt rồi mới gửi tiếp
+export function waitForBufferDrain(targetPeers: Set&lt;string&gt;): Promise&lt;void&gt; {
+  return new Promise((resolve) =&gt; {
+    ch.onbufferedamountlow = () =&gt; {
+      ch.onbufferedamountlow = null;
+      resolve();
+    };
+    // Đợi tối đa 0.5s nếu không thấy báo gì thì cũng cứ chạy tiếp
+    setTimeout(resolve, 500);
+  });
+}
+</code></pre>
+<h3>3. Svelte 5 dùng khá là sướng</h3>
+<p>Svelte 5 có mấy cái &quot;Rune&quot; mới như <code>$state</code> giúp quản lý dữ liệu rất nhàn. Mình tạo một cái file chứa toàn bộ dữ liệu chung của app, chỗ nào cần thì gọi ra dùng, dữ liệu thay đổi là giao diện tự cập nhật theo, không cần phải dùng mấy cái Store loằng ngoằng như bản cũ.</p>
+<h3>4. Nhấn F5 vẫn không mất tin nhắn</h3>
+<p>Vì không có server lưu tin nhắn nên mình dùng luôn cái database trong trình duyệt (IndexedDB) để lưu lịch sử. </p>
+<ul>
+<li>Mỗi lần có tin nhắn mới là mình lưu vào máy luôn.</li>
+<li>Khi bạn nhấn F5 hoặc load lại trang, app sẽ đọc từ máy ra hiển thị lại.</li>
+<li>Khi kết nối lại với bạn bè, hai bên sẽ hỏi nhau: &quot;Ông có thiếu tin nhắn nào không?&quot; để gửi bù cho nhau.</li>
+</ul>
+<h3>5. Một vài cái râu ria khác</h3>
+<p>Mình cũng làm thêm mấy cái hiệu ứng trong suốt (Glassmorphism) nhìn cho nó hiện đại tí, rồi cả gọi video, chia sẻ màn hình nữa. Nói chung là làm cái này học được khá nhiều về cách mạng hoạt động.</p>
+<h3>6. Demo giao diện</h3>
+<p>Đây là giao diện thực tế của app khi chạy:</p>
+<p><img src="/images/chat-p2p/demo.png" alt="Demo app chat"></p>
+<h3>Trải nghiệm thử</h3>
+<p>Các bạn có thể vào đây để nghịch thử nhé: <a href="https://uongsuadaubung.github.io/chat/">https://uongsuadaubung.github.io/chat/</a></p>
+<p>Cảm ơn các bạn đã đọc bài chia sẻ ngắn gọn này của mình!</p>
+</article></div>
+  </body>
+</html>

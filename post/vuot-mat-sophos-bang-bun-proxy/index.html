@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Single Page Apps for GitHub Pages Redirect Decoder -->
+    <script type="text/javascript">
+      (function(l) {
+        if (l.search[1] === '/' ) {
+          var decoded = l.search.slice(1).split('&').map(function(s) { 
+            return s.replace(/~and~/g, '&')
+          }).join('?');
+          window.history.replaceState(null, null,
+              l.pathname.slice(0, -1) + decoded + l.hash
+          );
+        }
+      }(window.location))
+    </script>
+    <meta name="author" content="Hà Mạnh Kiên (uongsuadaubung)" />
+    <meta name="description" content="Công ty cài Sophos chặn đa số web, nhưng mình phát hiện ra một lỗ hổng và đã tự code một con proxy bằng Bun để lách luật thành công." />
+    <meta property="og:title" content="Vượt rào Sophos bằng Bun Proxy siêu đơn giản — uongsuadaubung" />
+    <meta property="og:description" content="Công ty cài Sophos chặn đa số web, nhưng mình phát hiện ra một lỗ hổng và đã tự code một con proxy bằng Bun để lách luật thành công." />
+    <meta property="og:type" content="website" />
+    <title>Vượt rào Sophos bằng Bun Proxy siêu đơn giản — uongsuadaubung</title>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Hà Mạnh Kiên",
+      "alternateName": "uongsuadaubung",
+      "jobTitle": "Full Stack Web Developer",
+      "email": "k97.dev@gmail.com",
+      "telephone": "+84868931497",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Hà Nội",
+        "addressCountry": "VN"
+      },
+      "alumniOf": {
+        "@type": "EducationalOrganization",
+        "name": "Đại học Mở Hà Nội"
+      },
+      "sameAs": [
+        "https://github.com/uongsuadaubung"
+      ]
+    }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DrYRquR4.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DaAWQ7E0.css">
+    <link rel="canonical" href="https://uongsuadaubung.github.io/blog/vuot-mat-sophos-bang-bun-proxy/" />
+  </head>
+  <body>
+    <div id="root"><article class="markdown-body" style="max-width:800px;margin:40px auto;padding:0 20px;font-family:sans-serif;line-height:1.6;"><h1>Vượt rào Sophos bằng Bun Proxy siêu đơn giản</h1><p>Chào anh em, công ty mình vốn có cài đặt phần mềm diệt virus kiêm quản lý mạng <strong>Sophos</strong> lên toàn bộ laptop của nhân viên từ lâu. Hậu quả là đa số các trang web giải trí, báo mạng đều bị block thẳng tay.</p>
+<p><img src="/images/vuot-mat-sophos-bang-bun-proxy/vnexpress.png" alt="Bị chặn truy cập VnExpress">
+<img src="/images/vuot-mat-sophos-bang-bun-proxy/mobilecity.png" alt="Bị chặn truy cập MobileCity"></p>
+<p>Tuy nhiên, với bản tính tò mò của một dev, mình đã phát hiện ra một điều khá thú vị và quyết định tự code một cái proxy để vượt mặt nó.</p>
+<h3>1. Phát hiện &quot;lỗ hổng&quot; của Sophos</h3>
+<p>Khi test thử các tool dev (như <code>curl</code> hay Postman) gửi request đến các trang bị chặn (trừ các trang bị chặn cứng ở mức hệ thống như Facebook, Tiktok...), mình thấy <strong>hoàn toàn bình thường!</strong> Sophos dường như chỉ bắt các request đi từ trình duyệt web (chắc thông qua extension hoặc filter HTTP traffic của trình duyệt). </p>
+<p>Vậy ý tưởng lóe lên: <strong>Tại sao không biến localhost thành một cái trạm trung chuyển (Proxy)?</strong> Mọi request từ trình duyệt sẽ đi qua <code>http://localhost</code>, từ đó proxy server sẽ dùng quyền của một &quot;tool dev&quot; để lấy nội dung web về và trả lại cho trình duyệt. Sophos thấy trình duyệt gọi vào <code>localhost</code> nên sẽ nhắm mắt cho qua!</p>
+<h3>2. Triển khai nhanh bằng Bun và Unblocker</h3>
+<p>Để làm cái này nhanh gọn lẹ, mình dùng <strong>Bun</strong> – runtime Javascript đang rất hot hiện nay, kết hợp với thư viện <code>unblocker</code>. Mã nguồn cực kỳ đơn giản:</p>
+<pre><code class="language-typescript">import http from &quot;http&quot;;
+import Unblocker from &quot;unblocker&quot;;
+
+const PORT = 3000;
+
+// Khởi tạo Unblocker với prefix /proxy/
+const unblocker = new Unblocker({
+    prefix: &quot;/proxy/&quot;,
+    requestMiddleware: [
+        (data: any) =&gt; {
+            // Giả lập trình duyệt xịn để không bị web chặn ngược
+            delete data.headers[&quot;accept-encoding&quot;];
+            data.headers[&quot;user-agent&quot;] = &quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36&quot;;
+        }
+    ]
+});
+
+const server = http.createServer((req, res) =&gt; {
+    if (req.url?.startsWith(&quot;/proxy/&quot;)) {
+        // Strip các header bảo mật có thể ngăn iFrame hoặc Script chạy
+        const _writeHead = res.writeHead;
+        res.writeHead = function(statusCode: number, ...args: any[]) {
+            res.removeHeader(&#39;content-security-policy&#39;);
+            res.removeHeader(&#39;x-frame-options&#39;);
+            return _writeHead.apply(this, [statusCode, ...args] as any);
+        };
+
+        return unblocker(req, res, (err) =&gt; {
+            if (err) console.error(&quot;Lỗi:&quot;, err.message);
+        });
+    }
+    
+    // ... các code xử lý tĩnh khác
+});
+
+server.listen(PORT, () =&gt; {
+    console.log(`Proxy server running at http://localhost:${PORT}`);
+});
+</code></pre>
+<p><img src="/images/vuot-mat-sophos-bang-bun-proxy/start.png" alt="Khởi chạy server"></p>
+<p>Chỉ với đoạn code nhỏ này, mình có thể truy cập <code>http://localhost:3000/proxy/https://trang-web-bi-chan.com</code> một cách vô tư.</p>
+<p><img src="/images/vuot-mat-sophos-bang-bun-proxy/vnexpress%20proxy.png" alt="Truy cập VnExpress qua Proxy"></p>
+<h3>3. Vấn đề khi build file thực thi (Bundle) với Bun</h3>
+<p>Vì muốn build ra một file <code>.exe</code> duy nhất để copy sang máy đồng nghiệp cho tiện, mình dùng lệnh compile của Bun. Tuy nhiên, thư viện <code>unblocker</code> lại sử dụng <code>fs.readFileSync</code> để đọc một số file config tĩnh (như <code>types.json</code> hay <code>effective_tld_names.dat</code>). Khi bundle thành 1 file, các file tĩnh này không đi kèm, dẫn đến lỗi crash app.</p>
+<p><strong>Cách khắc phục:</strong> Mình đã viết một file <code>patch-fs.ts</code> để ghi đè (override) lại hàm <code>fs.readFileSync</code> mặc định của Node.js/Bun.</p>
+<pre><code class="language-typescript">import fs from &quot;fs&quot;;
+import { embeddedTldDat, embeddedMimeTypes } from &quot;./embedded-dist.ts&quot;;
+
+const originalReadFileSync = fs.readFileSync;
+
+(fs as any).readFileSync = function (path: any, options: any) {
+    if (typeof path === &quot;string&quot;) {
+        // Nếu unblocker đòi đọc file TLD, trả về data đã nhúng thẳng vào code
+        if (path.includes(&quot;effective_tld_names.dat&quot;) &amp;&amp; embeddedTldDat) {
+            return embeddedTldDat;
+        }
+        if (path.includes(&quot;types.json&quot;) &amp;&amp; embeddedMimeTypes) {
+            return embeddedMimeTypes;
+        }
+    }
+    return originalReadFileSync.apply(this, arguments as any);
+};
+</code></pre>
+<p>Sau đó chỉ cần import <code>patch-fs.ts</code> lên ngay đầu file <code>server.ts</code> là xong. Toàn bộ proxy giờ đã được đóng gói thành một file thực thi duy nhất, chạy độc lập không cần cài đặt Node.js hay Bun trên máy người dùng.</p>
+<h3>4. Một chút tạt ngang với Rust</h3>
+<p>Nói thêm một chút, ban đầu mình tính dùng <strong>Rust</strong> để code con proxy này cho ngầu, đồng thời tối ưu hiệu năng và tốn ít RAM nhất có thể. Về cơ bản thì cái proxy Rust vẫn chạy, request vẫn qua mặt được Sophos và trả về file HTML ngon ơ. </p>
+<p>Tuy nhiên, có một vấn đề &quot;khoai&quot; là khi trình duyệt load các file tĩnh như JS hay CSS bị proxy trả về, đôi lúc nó lại không load được hoặc bị lỗi CORS, sai đường dẫn tương đối (relative path), khiến giao diện trang web trông khá nát và hụt đi một nửa tính năng. Việc ngồi bóc tách và rewrite lại toàn bộ đường dẫn của JS/CSS bằng Rust thủ công tốn quá nhiều thời gian và công sức. </p>
+<p>Do đó, mình quyết định &quot;quay xe&quot; sang dùng Bun kết hợp với thư viện <code>unblocker</code>. Thư viện này đã xử lý sẵn mọi case khó nhằn về DOM và rewrite URL, vừa nhanh vừa ổn định.</p>
+<h3>5. Kết quả</h3>
+<p>Thành công mỹ mãn! Sophos hoàn toàn &quot;mù&quot; trước các luồng truy cập qua localhost. Giờ thì mình có thể thoải mái đọc báo mạng trong giờ nghỉ giải lao mà không bị chặn phiền phức nữa (tất nhiên là Facebook và TikTok bị chặn từ tầng router thì proxy này không cứu được rồi).</p>
+<p><img src="/images/vuot-mat-sophos-bang-bun-proxy/mobilecity%20proxy.png" alt="Truy cập MobileCity qua Proxy"></p>
+<p>Nếu anh em thấy hứng thú, có thể tham khảo toàn bộ source code của mình trên Github nhé. Anh em cũng có thể clone về nghịch thử.</p>
+<p><em>Lưu ý: Bài viết chỉ mang tính chất nghiên cứu kỹ thuật mạng và chia sẻ kiến thức lập trình. Hãy tuân thủ nội quy công ty nhé!</em></p>
+</article></div>
+  </body>
+</html>

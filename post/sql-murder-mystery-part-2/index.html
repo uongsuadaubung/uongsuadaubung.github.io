@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Single Page Apps for GitHub Pages Redirect Decoder -->
+    <script type="text/javascript">
+      (function(l) {
+        if (l.search[1] === '/' ) {
+          var decoded = l.search.slice(1).split('&').map(function(s) { 
+            return s.replace(/~and~/g, '&')
+          }).join('?');
+          window.history.replaceState(null, null,
+              l.pathname.slice(0, -1) + decoded + l.hash
+          );
+        }
+      }(window.location))
+    </script>
+    <meta name="author" content="Hà Mạnh Kiên (uongsuadaubung)" />
+    <meta name="description" content="Hành trình giăng bẫy bắt kẻ đứng sau chủ mưu trong SQL Murder Mystery. Vận dụng kĩ năng Join đa bảng cực gắt chỉ trong 1 nốt nhạc." />
+    <meta property="og:title" content="Tập tành làm thám tử với SQL Murder Mystery - Part 2: Truy tìm kẻ đứng sau chủ mưu — uongsuadaubung" />
+    <meta property="og:description" content="Hành trình giăng bẫy bắt kẻ đứng sau chủ mưu trong SQL Murder Mystery. Vận dụng kĩ năng Join đa bảng cực gắt chỉ trong 1 nốt nhạc." />
+    <meta property="og:type" content="website" />
+    <title>Tập tành làm thám tử với SQL Murder Mystery - Part 2: Truy tìm kẻ đứng sau chủ mưu — uongsuadaubung</title>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Hà Mạnh Kiên",
+      "alternateName": "uongsuadaubung",
+      "jobTitle": "Full Stack Web Developer",
+      "email": "k97.dev@gmail.com",
+      "telephone": "+84868931497",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Hà Nội",
+        "addressCountry": "VN"
+      },
+      "alumniOf": {
+        "@type": "EducationalOrganization",
+        "name": "Đại học Mở Hà Nội"
+      },
+      "sameAs": [
+        "https://github.com/uongsuadaubung"
+      ]
+    }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DrYRquR4.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DaAWQ7E0.css">
+    <link rel="canonical" href="https://uongsuadaubung.github.io/blog/sql-murder-mystery-part-2/" />
+  </head>
+  <body>
+    <div id="root"><article class="markdown-body" style="max-width:800px;margin:40px auto;padding:0 20px;font-family:sans-serif;line-height:1.6;"><h1>Tập tành làm thám tử với SQL Murder Mystery - Part 2: Truy tìm kẻ đứng sau chủ mưu</h1><p>Tiếp nối phần trước còn đang dang dở. Sau khi tóm được thằng bé sát thủ đâm thuê chém mướn Jeremy Bowers ở Part 1, hệ thống nó gáy kháy mình là phía sau còn có chủ mưu rùng rợn hơn. Lần này, game nó còn xúi &quot;Nếu tự tin kĩ năng SQL thì dùng không quá 2 câu lệnh thôi&quot;. </p>
+<p>IQ 40 của con dân chả sợ thách thức ba cái trò này, triển luôn hý hửng lôi cổ thằng Jeremy Bowers (id: 67318) ra hỏi cung.</p>
+<h2>1. Mò cung khẩu sát thủ</h2>
+<p>Mình moi cái <code>transcript</code> của hắn từ bảng <code>interview</code>:</p>
+<pre><code class="language-sql">select * from interview where person_id = 67318;
+</code></pre>
+<p>Kết quả lấy được lời khai cực xịn:</p>
+<blockquote>
+<p>Tôi đã được một phụ nữ nhiều tiền thuê. Không biết tên bả là gì nhưng bả cao tầm 5&#39;5&quot; (65&quot;) hoặc 5&#39;7&quot; (67&quot;). Tóc đỏ và lái một chiếc Tesla Model S. Tôi biết bả từng đi tham gia sự kiện SQL Symphony Concert tới tận 3 lần vào tháng 12 năm 2017.</p>
+</blockquote>
+<h2>2. Câu truy vấn giải quyết mọi vấn đề</h2>
+<p>Vậy là tốn cmn mất 1 câu lệnh gõ tay rồi. Giờ chỉ còn dùng 1 cú lệnh duy nhất để moi ra thủ phạm này thôi. Rà lại các thông tin:</p>
+<ul>
+<li>Là nữ (<code>gender = &#39;female&#39;</code>)</li>
+<li>Lái Tesla Model S (<code>car_make = &#39;Tesla&#39; and car_model = &#39;Model S&#39;</code>)</li>
+<li>Tóc đỏ (<code>hair_color = &#39;red&#39;</code>)</li>
+<li>Cao cỡ 65 - 67 inches, thu nhập cao. Dữ kiện này có thể chả cần dùng vì Tesla đỏ chắc cả thành phố có vài mống.</li>
+<li>Đi sự kiện tên là &#39;SQL Symphony Concert&#39;</li>
+</ul>
+<p>Để tóm cổ bà sếp ngầm này, mình phải thực hiện join... hẳn 4 cái bảng với nhau bạo lực vãi chưởng: <code>person</code> để lấy họ tên, <code>drivers_license</code> để lọc xe/tóc, <code>facebook_event_checkin</code> để check sự kiện và ngó qua luôn <code>income</code> xem cho ngầu.</p>
+<pre><code class="language-sql">select p.id, p.name, dl.gender, p.license_id, i.annual_income, dl.age, dl.height, dl.hair_color, dl.car_make, dl.car_model
+from person p 
+left join drivers_license dl on p.license_id = dl.id
+left join income i on p.ssn = i.ssn
+left join facebook_event_checkin fec on p.id = fec.person_id
+where dl.car_make = &#39;Tesla&#39; 
+  and dl.car_model = &#39;Model S&#39; 
+  and dl.gender = &#39;female&#39; 
+  and dl.hair_color = &#39;red&#39;
+  and fec.event_name = &#39;SQL Symphony Concert&#39;;
+</code></pre>
+<p>Hit Enter, màn hình chớp cái hiển thị đúng 3 dòng trả về giống y sì đúc rập khuôn, chứng tỏ bả check-in 3 lần sự kiện là chuẩn cơm mẹ nấu rồi. Tên bả là <strong>Miranda Priestly</strong> (income tới tận $310k lận, quá đã).</p>
+<h2>3. Tổng kết án</h2>
+<p>Chốt kèo gõ cái tên nộp lên phòng xử án:</p>
+<pre><code class="language-sql">INSERT INTO solution VALUES (1, &#39;Miranda Priestly&#39;);
+SELECT value FROM solution;
+</code></pre>
+<p>Kết quả:</p>
+<blockquote>
+<p>Xin chúc mừng! Bạn đã tìm ra bộ óc đứng sau vụ án! Mọi người suy tôn bạn là thám tử SQL vĩ đại nhất... Mở sâm banh thôi!</p>
+</blockquote>
+<p>Xong game! Phá án ez với kĩ thuật join chắp vá =)). Mấy cái này nhìn dài chứ code thực tế cũng tàm tạm, làm nhiều nó quen tay tự nảy số ý mà. Bạn nào mới học thì lên chơi cái này công nhận cuốn phết. Hẹn mọi người ở một seri game dev dị hợm khác nhé! :v</p>
+</article></div>
+  </body>
+</html>

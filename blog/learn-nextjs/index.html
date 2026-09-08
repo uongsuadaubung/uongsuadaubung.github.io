@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Single Page Apps for GitHub Pages Redirect Decoder -->
+    <script type="text/javascript">
+      (function(l) {
+        if (l.search[1] === '/' ) {
+          var decoded = l.search.slice(1).split('&').map(function(s) { 
+            return s.replace(/~and~/g, '&')
+          }).join('?');
+          window.history.replaceState(null, null,
+              l.pathname.slice(0, -1) + decoded + l.hash
+          );
+        }
+      }(window.location))
+    </script>
+    <meta name="author" content="Hà Mạnh Kiên (uongsuadaubung)" />
+    <meta name="description" content="Kế hoạch có chút thay đổi, vì hiện tại mình đang làm việc trên công ty khá bận và còn kèm thêm cả dự án với người anh nữa nên chả thể..." />
+    <meta property="og:title" content="Nextjs — uongsuadaubung" />
+    <meta property="og:description" content="Kế hoạch có chút thay đổi, vì hiện tại mình đang làm việc trên công ty khá bận và còn kèm thêm cả dự án với người anh nữa nên chả thể..." />
+    <meta property="og:type" content="website" />
+    <title>Nextjs — uongsuadaubung</title>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Hà Mạnh Kiên",
+      "alternateName": "uongsuadaubung",
+      "jobTitle": "Full Stack Web Developer",
+      "email": "k97.dev@gmail.com",
+      "telephone": "+84868931497",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Hà Nội",
+        "addressCountry": "VN"
+      },
+      "alumniOf": {
+        "@type": "EducationalOrganization",
+        "name": "Đại học Mở Hà Nội"
+      },
+      "sameAs": [
+        "https://github.com/uongsuadaubung"
+      ]
+    }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DrYRquR4.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DaAWQ7E0.css">
+    <link rel="canonical" href="https://uongsuadaubung.github.io/blog/learn-nextjs/" />
+  </head>
+  <body>
+    <div id="root"><article class="markdown-body" style="max-width:800px;margin:40px auto;padding:0 20px;font-family:sans-serif;line-height:1.6;"><h1>Nextjs</h1><p><img src="/images/learn-nextjs/image-01.png" alt="minh-hoa"></p>
+<p>Kế hoạch có chút thay đổi, vì hiện tại mình đang làm việc trên công ty khá bận và còn kèm thêm cả dự án với người anh nữa nên chả thể làm cái series này theo cái mình nghĩ được, nhưng mà vẫn sẽ tiếp tục tìm hiểu và thay đổi mấy cái mình không ưa ở cái dự án công ty mình đang làm.</p>
+<p>Thiệt ra thì front-end dự án công ty đang làm bằng Nextjs và cũng thật sự thì mình không được làm từ đầu mà công ty thuê mấy ông Ấn Độ làm, có 1 cái vấn đề mà mình thấy không ưng cho lắm là lộ hết cả đống api ra trông không được bảo mật cho lắm, cho nên trong bài này mình sẽ thử cách không gọi api gốc xem có khó triển khai hơn không.</p>
+<p>Hiện tại project công ty đang gọi api ở phía client</p>
+<pre><code class="language-javascript">useEffect(() =&gt; {
+  async function fetchPosts() {
+    let res = await fetch(&#39;https://api.vercel.app/blog&#39;)
+    let data = await res.json()
+    setPosts(data)
+  }
+  fetchPosts()
+}, [])
+</code></pre>
+<p>điều mình mong muốn là không lộ domain của api tránh nhỡ ai đó xấu tính DDOS sập backend chẳng hạn </p>
+<pre><code class="language-javascript">useEffect(() =&gt; {
+  async function fetchPosts() {
+    let res = await fetch(&#39;/api/blog&#39;)
+    let data = await res.json()
+    setPosts(data)
+  }
+  fetchPosts()
+}, [])
+</code></pre>
+<p>mình sẽ lấy ví dụ bằng json placeholder với api <code>https://jsonplaceholder.typicode.com/posts</code></p>
+<p>Trong Nextjs tại phần docs ở Routing &gt; Route Handlers thì ta hoàn toàn có thể làm được như này</p>
+<p>tạo một file route.ts tại đường dẫn <code>app/api/posts/route.ts</code></p>
+<pre><code class="language-javascript">import {NextResponse} from &quot;next/server&quot;;
+import postsService from &quot;../../../../services/postsService&quot;;
+
+export async function GET(request: Request) {
+    const {searchParams} = new URL(request.url);
+    const userId = searchParams.get(&#39;userId&#39;) || undefined;
+    const page = searchParams.get(&#39;page&#39;) || undefined;
+    const limit = searchParams.get(&quot;limit&quot;) || undefined;
+    const data = await postsService.getPosts({userId, page, limit});
+    return NextResponse.json({data: data});
+}
+</code></pre>
+<p>và đây là nội dung file postsService</p>
+<pre><code class="language-javascript">import axios from &quot;axios&quot;;
+import {PostModel} from &quot;../models/PostModel&quot;;
+
+type GetPostProps ={
+    userId?: string | string[],
+    page?: string | string[],
+    limit?: string | string[]
+}
+
+
+const getPosts = async ({userId, page, limit}: GetPostProps) =&gt; {
+    return await axios.get(&quot;https://jsonplaceholder.typicode.com/posts&quot;, {
+        params: {
+            userId: userId,
+            _page: page,
+            _limit: limit
+        }
+    }).then(res =&gt; res.data) as PostModel[];
+}
+
+const postsService = {getPosts}
+
+export default postsService;
+</code></pre>
+<p>Chỉ có như vậy thôi, giờ việc gọi api sẽ là </p>
+<pre><code class="language-javascript">const getPosts = async ({page, limit}: {page: string, limit: string}) =&gt; {
+  return await axios.get(&quot;/api/posts&quot;, {params: {page, limit}}).then(res =&gt; res.data.data)
+}
+</code></pre>
+<p>Kết quả sẽ thay đổi như sau:</p>
+<p><img src="/images/learn-nextjs/image-02.png" alt="minh-hoa">
+bị lộ api gốc</p>
+<p>thành</p>
+<p><img src="/images/learn-nextjs/image-03.png" alt="minh-hoa"></p>
+<p>Nó sẽ đem lại kết quả tương đương nhưng lại bảo mật hơn nếu muốn giấu các thông tin nhạy cảm kiểu như domain, API KEY, hoặc đơn giản hơn và hay dùng có lẽ là từ frontend gọi api khác domain sẽ bị CORS thì làm như này sẽ được</p>
+</article></div>
+  </body>
+</html>

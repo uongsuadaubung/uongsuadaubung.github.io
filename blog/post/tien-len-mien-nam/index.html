@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Single Page Apps for GitHub Pages Redirect Decoder -->
+    <script type="text/javascript">
+      (function(l) {
+        if (l.search[1] === '/' ) {
+          var decoded = l.search.slice(1).split('&').map(function(s) { 
+            return s.replace(/~and~/g, '&')
+          }).join('?');
+          window.history.replaceState(null, null,
+              l.pathname.slice(0, -1) + decoded + l.hash
+          );
+        }
+      }(window.location))
+    </script>
+    <meta name="author" content="Hà Mạnh Kiên (uongsuadaubung)" />
+    <meta name="description" content="Hành trình xây dựng game Tiến Lên Miền Nam trên Web với đầy đủ luật chơi dân gian, chế độ đấu hạng Elo và trải nghiệm mượt mà không quảng cáo." />
+    <meta property="og:title" content="Tiến Lên Miền Nam: Game bài dân gian trên nền Web — uongsuadaubung" />
+    <meta property="og:description" content="Hành trình xây dựng game Tiến Lên Miền Nam trên Web với đầy đủ luật chơi dân gian, chế độ đấu hạng Elo và trải nghiệm mượt mà không quảng cáo." />
+    <meta property="og:type" content="website" />
+    <title>Tiến Lên Miền Nam: Game bài dân gian trên nền Web — uongsuadaubung</title>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Hà Mạnh Kiên",
+      "alternateName": "uongsuadaubung",
+      "jobTitle": "Full Stack Web Developer",
+      "email": "k97.dev@gmail.com",
+      "telephone": "+84868931497",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Hà Nội",
+        "addressCountry": "VN"
+      },
+      "alumniOf": {
+        "@type": "EducationalOrganization",
+        "name": "Đại học Mở Hà Nội"
+      },
+      "sameAs": [
+        "https://github.com/uongsuadaubung"
+      ]
+    }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DrYRquR4.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DaAWQ7E0.css">
+    <link rel="canonical" href="https://uongsuadaubung.github.io/blog/tien-len-mien-nam/" />
+  </head>
+  <body>
+    <div id="root"><article class="markdown-body" style="max-width:800px;margin:40px auto;padding:0 20px;font-family:sans-serif;line-height:1.6;"><h1>Tiến Lên Miền Nam: Game bài dân gian trên nền Web</h1><p>Nhắc đến bộ bài Tây 52 lá ở Việt Nam thì chắc chắn Tiến Lên Miền Nam là bộ môn &quot;quốc dân&quot; số 1 không cần bàn cãi. Từ những ngày Tết sum vầy bên khay mứt hạt dưa cho đến những buổi tụ tập trà đá vỉa hè cùng bạn bè, chỉ cần xòe bộ bài ra là không khí rôm rả hẳn lên. </p>
+<p>Nhưng ngặt nỗi ngày thường muốn làm vài ván giải trí nhanh trên điện thoại hay laptop thì mở mấy cổng game online lên lại thấy hơi phiền: hết banner quảng cáo nhấp nháy khắp 4 góc màn hình, lại đến popup nạp thẻ giục giã liên hồi. Đã thế bot máy trong mấy app đó thường đánh kiểu ngẫu nhiên, ngây ngô chẳng có tí chiến thuật hay cảm xúc nào.</p>
+<p>Dạo này công việc trên công ty cũng hòm hòm, task tủng được dọn dẹp gọn gàng nên mình ngứa tay muốn dựng một con game Tiến Lên Miền Nam chạy thẳng trên trình duyệt Web: bật lên là chiến ngay, không cần cài đặt, không quảng cáo, giao diện sạch sẽ và hiệu năng mượt mà 60 FPS.</p>
+<p>Cơ mà nếu chỉ code chia bài rồi người với máy đánh qua lại thì hơi đơn điệu. Đã làm thì mình muốn đầu tư thêm phần đối thủ máy với nhiều cấp độ khác nhau, phân chia theo từng bậc xếp hạng và phong cách rõ ràng để người chơi có cảm giác thử thách thực sự.</p>
+<hr>
+<h2>🃏 1. Bộ luật Tiến Lên Miền Nam &quot;chuẩn cơm mẹ nấu&quot;</h2>
+<p>Luật chơi Tiến Lên Miền Nam thoạt nghe qua thì ai cũng tưởng đơn giản, nhưng khi thực sự xắn tay áo vào code chuẩn hóa từng trường hợp mới thấy sự phong phú của nó:</p>
+<ul>
+<li><strong>Tổ hợp bài đầy đủ</strong>: Đánh lẻ, Đôi, Sám cô, Sảnh (từ 3 đến 12 lá liên tiếp, nghiêm cấm chứa quân 2).</li>
+<li><strong>Bộ nhận diện &quot;Hàng&quot; &amp; Chặt Heo</strong>: 3 Đôi Thông, Tứ Quý, 4 Đôi Thông (đặc biệt 4 Đôi Thông có thể chặt tự do mà không cần vòng chờ).</li>
+<li><strong>Cơ chế sát phạt thực tế</strong>: Chặt chồng liên hoàn (Heo đè Heo, Hàng đè Heo, Hàng đè Hàng tính tiền theo cấp số nhân), Cóng (cháy bài khi không tẩu nổi một lá nào), Thối Heo/Hàng khi ván đấu kết thúc.</li>
+<li><strong>Tới Trắng ngay sau khi chia bài</strong>: Tự động nhận diện Sảnh rồng, Tứ quý 2, 5 hoặc 6 đôi thông...</li>
+<li><strong>Luật phụ dân gian</strong>: Cấm đánh 2 về chót, thưởng ăn 3 bích về cuối, và cơ chế chống đền bài khi người kế tiếp đã báo chỉ còn đúng 1 lá trên tay.</li>
+</ul>
+<p>Để việc tùy biến luật chơi trở nên linh hoạt mà không làm rối loạn mã nguồn, mình gom toàn bộ các tùy chọn luật vào một cấu hình tập trung, cho phép bật tắt từng điều luật một cách trực quan:</p>
+<pre><code class="language-typescript">// Cấu hình một bàn chơi Đếm Lá sát phạt linh hoạt
+const rules = configureRules({
+  mode: &#39;Đếm Lá&#39;,
+  choppingMultiplier: 2,          // Phạt chặt heo nhân đôi
+  allowFourPairsCutAnytime: true, // 4 đôi thông chặt tự do
+  congPenalty: 26,                // Cháy bài đền 26 lá
+  prohibitEndingWithTwo: true,    // Cấm đánh 2 về chót
+  threeSpadesEndingBonus: true    // Thưởng ăn 3 bích về cuối
+});
+</code></pre>
+<p>Mọi thông số luật đều được đóng gói rõ ràng, giúp hệ thống dễ dàng thích ứng với bất kỳ bàn đấu nào.</p>
+<p><img src="/images/tien-len-mien-nam/image-02.png" alt="Giao diện bàn đấu Tiến Lên Miền Nam trực quan"></p>
+<hr>
+<h2>🧭 2. Khám phá 3 chế độ chơi đa dạng</h2>
+<p>Để trải nghiệm chơi không bị đơn điệu, mình phân chia trò chơi thành 3 chế độ với những mục tiêu trải nghiệm hoàn toàn khác nhau:</p>
+<pre><code>┌────────────────────────────────────────────────────────────────────────┐
+│                   3 CHẾ ĐỘ CHƠI TRONG TIẾN LÊN MIỀN NAM               │
+├───────────────────┬────────────────────┬───────────────────────────────┤
+│ ⚡ Đấu Hạng Elo   │ 🗺️ Chiến Dịch      │ 🛠️ Phòng Tùy Biến (Sandbox)    │
+│ (Ranked Elo &amp;     │ (9 Chương Cốt      │ (Tự do chỉnh luật, số người,  │
+│  Quick Play)      │  Truyện Bụi Đời)   │  tiền cược &amp; mức phạt)        │
+└───────────────────┴────────────────────┴───────────────────────────────┘
+</code></pre>
+<p><img src="/images/tien-len-mien-nam/image-01.png" alt="Giao diện sảnh chính với bảng tin biến động giang hồ và các chế độ chơi"></p>
+<h3>1. ⚡ Đấu Hạng &amp; Chơi Nhanh (Ranked Elo &amp; Quick Play)</h3>
+<p>Hệ thống tự động xếp bàn với các đối thủ có trình độ tương đương dựa trên công thức tính biến động điểm Elo chuẩn quốc tế. Người chơi có thể lựa chọn giữa 4 kiểu phân định thắng thua:</p>
+<ul>
+<li><strong>Đếm Lá</strong>: Thắng ăn theo số lá bài còn lại trên tay đối thủ, cực kỳ hồi hộp.</li>
+<li><strong>Nhất Ăn Tất</strong>: Người về Nhất ẵm trọn toàn bộ tiền cược trên bàn.</li>
+<li><strong>Truyền Thống</strong>: Phân định rõ ràng 4 thứ hạng Nhất, Nhì, Ba, Bét.</li>
+<li><strong>Solo 1v1</strong>: Đối đầu trực diện tay đôi, đọ tài nhớ bài và giữ nhịp độ.</li>
+</ul>
+<h3>2. 🗺️ Hành Trình Sự Nghiệp (Campaign Story)</h3>
+<p>Chế độ cốt truyện đưa bạn trải nghiệm hành trình của một tay bài vô danh đi lên đỉnh cao thế giới qua <strong>9 chương</strong> dài hơi với độ khó và bối cảnh nâng tầm rõ rệt:</p>
+<ul>
+<li><strong>Chặng 1 – Khởi nghiệp bình dân (Chương 1 – 3)</strong>: Xuất phát từ <em>Sới Bạc Cây Đa</em> (nhập môn), ghé qua <em>Quán Nhậu Bến Xe Miền Tây</em> (lối đánh liều lĩnh, xả Heo tốc chiến) rồi lên <em>Quán Trà Lão Tướng</em> (bắt đầu biết gom bài, ém bộ).</li>
+<li><strong>Chặng 2 – Chiếu bạc tinh anh (Chương 4 – 6)</strong>: Đặt chân vào <em>Chiếu Bạc Kỳ Hữu</em>, <em>Câu Lạc Bộ Sài Gòn</em> và sòng bài trên <em>Du Thuyền 5 Sao Sông Sài Gòn</em>. Giai đoạn này đối thủ đếm bài cực chuẩn, biết rình rập săn Heo Đỏ và ép nhịp cờ tàn theo luật Đếm Lá.</li>
+<li><strong>Chặng 3 – Đỉnh cao thế giới &amp; Siêu AI (Chương 7 – 9)</strong>: Vươn tầm quốc tế tại <em>Sòng Bạc Quý Tộc Monaco</em>, bước vào <em>Hội Kín Vô Cực</em>, và đỉnh điểm là màn quyết đấu tại <em>Đền Thờ Trí Tuệ Tối Thượng</em> ở Chương 9 — nơi bạn đối đầu trực diện Tam Đại Boss Superhuman AI (<em>Alpha Mind, Zero Defeat, Mythic Overlord</em> sở hữu Elo 3200+) với khả năng tính toán trước 12 nước đi để chạm tay vào Ngai Vàng Bá Chủ!</li>
+</ul>
+<h3>3. 🛠️ Bàn Chơi Tùy Biến (Custom Sandbox)</h3>
+<p>Dành cho anh em muốn tạo bàn tập luyện hoặc thử nghiệm các thế bài dị. Bạn có thể tự do chỉnh số lượng người chơi (từ 2 đến 4 người), mức tiền cược, phạt Cóng, phạt Thối Heo, bật tắt luật 3 Bích về chót theo ý muốn.</p>
+<hr>
+<h2>🤖 3. Hệ sinh thái 200 Bot AI: &quot;Xã hội giang hồ&quot; tự tranh tài ngầm</h2>
+<p>Điểm làm mình hào hứng nhất trong dự án này chính là hệ sinh thái đối thủ ảo. Thay vì chỉ khởi tạo tạm 3 con bot ngẫu nhiên mỗi khi bắt đầu ván đấu rồi xóa sổ khi rời bàn, mình tạo ra hẳn một &quot;xã hội thu nhỏ&quot; gồm <strong>200 đối thủ bot sống động</strong>:</p>
+<pre><code>┌────────────────────────────────────────────────────────────┐
+│         HỆ SINH THÁI 200 BOT AI TỰ VẬN HÀNH NGẦM           │
+│                                                            │
+│   [Luồng chạy ngầm] ── Mô phỏng tự động ──► 200 Bot ghép bàn│
+│        │                                    │              │
+│        ▼                                    ▼              │
+│   Vỡ nợ phá sản                      Lập chuỗi thắng lớn   │
+│        │                                    │              │
+│        ▼                                    ▼              │
+│   Tuyển Mộ Tân Binh Mới              Leo bảng Vàng Elo     │
+│   (50.000 Xu &amp; 1.000 Elo)                   │              │
+│        │                                    │              │
+│        └───────────► [BẢNG TIN GIANG HỒ] ◄──┘              │
+│                   Cập nhật tin tức trực tiếp               │
+└────────────────────────────────────────────────────────────┘
+</code></pre>
+<h3>Chạy ngầm đa luồng qua Web Worker</h3>
+<p>Khi bạn đang thong thả ở sảnh chờ hay xem thông tin nhân vật, ở luồng chạy ngầm phía sau, 200 con bot này vẫn liên tục tự chia bàn, đấu bài và thanh toán tiền cược với nhau hàng trăm ván mỗi phút. </p>
+<p>Toàn bộ quá trình mô phỏng chạy tách biệt hoàn toàn khỏi luồng hiển thị, không làm đơ giật giao diện và giúp game luôn duy trì ở mức 60 FPS cực kỳ mượt mà.</p>
+<h3>Đào thải vỡ nợ &amp; Tuyển mộ tân binh</h3>
+<p>Trong thế giới này, bot không hề có &quot;tiền vô hạn&quot;:</p>
+<ul>
+<li>Con bot nào đánh dở, liên tục bị chặt heo hoặc dính cóng dẫn đến cạn túi tiền sẽ chính thức bị <strong>tuyên bố vỡ nợ</strong> và cuốn gói khỏi bảng danh sách.</li>
+<li>Hệ thống sẽ ngay lập tức kích hoạt cơ chế tuyển mộ một <strong>Tân Binh mới</strong> (được cấp 50.000 Xu khởi nghiệp và 1.000 điểm Elo), đồng thời kế thừa ngẫu nhiên một phong cách chiến thuật mới.</li>
+<li><strong>Bảng Tin Giang Hồ</strong> tại sảnh chính sẽ nhảy thông báo thời gian thực về những sự kiện nóng hổi:<blockquote>
+<p><em>&quot;Cu Tí vừa vỡ nợ cay đắng và cuốn gói rời sới bài...&quot;</em><br><em>&quot;Thần Bài Cô Ba vừa lập chuỗi 10 trận bất bại, bỏ túi 500.000 Xu!&quot;</em></p>
+</blockquote>
+</li>
+</ul>
+<p><img src="/images/tien-len-mien-nam/image-03.png" alt="Bảng tổng kết ván đấu và tính biến động điểm Elo"></p>
+<h3>Hệ thống 9 Bậc Rank Elo (Từ Sắt đến Thách Đấu)</h3>
+<p>200 con bot trong hệ sinh thái ngầm được phân bổ trải dài trên <strong>9 bậc Rank</strong> theo chuẩn Elo quốc tế, phản ánh đúng các nấc thang tiến hóa của trí tuệ nhân tạo:</p>
+<table>
+<thead>
+<tr>
+<th align="left">Bậc Rank</th>
+<th align="center">Huy hiệu</th>
+<th align="left">Dải Elo</th>
+<th align="left">Đại diện tiêu biểu</th>
+<th align="left">Đặc trưng chiến thuật &amp; Thuật toán</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>Tier 1: Sắt</strong></td>
+<td align="center">⚙️</td>
+<td align="left">0 – 899</td>
+<td align="left">Tí Chuột, Tèo Bờ Rào</td>
+<td align="left">Đánh theo bản năng, có gì nhỏ nhất đánh nấy, chưa biết nhớ bài</td>
+</tr>
+<tr>
+<td align="left"><strong>Tier 2: Đồng</strong></td>
+<td align="center">🥉</td>
+<td align="left">900 – 1199</td>
+<td align="left">Bảy Xe Lôi, Năm Xích Lô</td>
+<td align="left">Nắm vững luật cơ bản, bắt đầu biết tẩu rác và giữ Heo an toàn</td>
+</tr>
+<tr>
+<td align="left"><strong>Tier 3: Bạc</strong></td>
+<td align="center">🥈</td>
+<td align="left">1200 – 1499</td>
+<td align="left">Chú Tư Cờ, Rex Bụi Đời</td>
+<td align="left">Lối đánh phóng khoáng, biết đếm Heo và gài bẫy nhử mồi cơ bản</td>
+</tr>
+<tr>
+<td align="left"><strong>Tier 4: Vàng</strong></td>
+<td align="center">🥇</td>
+<td align="left">1500 – 1799</td>
+<td align="left">Cụ Tám, Bác Sáu Toán Học</td>
+<td align="left">Già rơ sới bạc, đếm Heo + Át chuẩn xác, chặn đền bài 1 lá quyết liệt</td>
+</tr>
+<tr>
+<td align="left"><strong>Tier 5: Bạch Kim</strong></td>
+<td align="center">💎</td>
+<td align="left">1800 – 2099</td>
+<td align="left">Thiếu Gia Ken, Sophia</td>
+<td align="left">Bán chuyên đẳng cấp, nhớ trọn 52 lá và bắt đầu tung đòn hỏa mù</td>
+</tr>
+<tr>
+<td align="left"><strong>Tier 6: Kim Cương</strong></td>
+<td align="center">🔮</td>
+<td align="left">2100 – 2399</td>
+<td align="left">Madam Ruby, Raven Ảo Ảnh</td>
+<td align="left">Chuyên nghiệp, tự động tái cấu trúc thế bài theo nhịp trận đấu</td>
+</tr>
+<tr>
+<td align="left"><strong>Tier 7: Cao Thủ</strong></td>
+<td align="center">👑</td>
+<td align="left">2400 – 2699</td>
+<td align="left">Phantom Apex, Alpha-TL Master</td>
+<td align="left">Suy luận đỉnh cao, dùng xác suất Bayes đoán chính xác bài ẩn đối thủ</td>
+</tr>
+<tr>
+<td align="left"><strong>Tier 8: Đại Cao Thủ</strong></td>
+<td align="center">🌌</td>
+<td align="left">2700 – 2999</td>
+<td align="left">Oracle Tiên Tri, Chronos Bất Tử</td>
+<td align="left">Khắc tinh cờ tàn, vét cạn cây quyết định tìm chuỗi kết liễu tất thắng</td>
+</tr>
+<tr>
+<td align="left"><strong>Tier 9: Thách Đấu</strong></td>
+<td align="center">⚡</td>
+<td align="left">3000+</td>
+<td align="left">Tam Đại Boss Superhuman</td>
+<td align="left">Siêu AI tối thượng: phối hợp tìm kiếm sâu 12 nước và Cân bằng Nash</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>🧠 4. Giải mã &quot;bộ não&quot; AI: Từ đếm bài xác suất đến mô phỏng cây quyết định</h2>
+<p>Để bot đánh vừa khôn ngoan vừa có cảm giác chân thật như người ngồi đối diện, mình xây dựng kiến trúc AI theo mô hình phân tầng:</p>
+<h3>1. Chuỗi phân cấp quyết định</h3>
+<p>Mỗi khi đến lượt ra bài, bot sẽ duyệt qua 5 tầng tư duy tuần tự:</p>
+<ol>
+<li><strong>Tầng Nguy Cấp</strong>: Xử lý tình huống khẩn cấp như phá bộ để cứu cóng hoặc ngăn đối thủ sắp về bài.</li>
+<li><strong>Tầng Kết Thúc Ván</strong>: Khi trên tay chỉ còn 1-3 lá bài, bot sẽ tìm cách dọn sạch bài nhanh nhất để dứt điểm trận đấu.</li>
+<li><strong>Tầng Chủ Động Ra Bài</strong>: Chọn bộ bài có lợi thế nhất khi nắm quyền đi trước (xả rác an toàn hoặc ép vào cửa yếu của đối phương).</li>
+<li><strong>Tầng Đỡ Bài Đối Thủ</strong>: Lựa chọn quân bài đè đối thủ với chi phí bài tổn thất nhỏ nhất.</li>
+<li><strong>Tầng Bỏ Lượt An Toàn</strong>: Quyết định bỏ lượt để bảo toàn lực lượng cho những vòng sau.</li>
+</ol>
+<h3>2. Bộ đếm bài &amp; Suy luận xác suất Bayes</h3>
+<p>Bot theo dõi toàn bộ 52 lá bài trong bộ bài. Dựa trên lịch sử những lá bài đã xuất hiện và các lần bỏ lượt của từng người chơi, bot sẽ tính toán xác suất:</p>
+<ul>
+<li><em>Liệu đối thủ ngồi kế tiếp có đang ém Tứ Quý hay 3 Đôi Thông không?</em></li>
+<li><em>Còn bao nhiêu con Heo chưa xuất hiện trên bàn?</em></li>
+</ul>
+<p>Nếu xác suất đối thủ đang rình rập chặt Heo vượt ngưỡng an toàn, bot cấp cao sẽ chủ động ghìm Heo lại chứ không ra bài một cách ngây ngô.</p>
+<h3>3. Đòn tâm lý tung hỏa mù (Bluffing)</h3>
+<p>Không phải cứ có bài đè được là bot sẽ đánh. Ở các bậc cao thủ, thuật toán lý thuyết trò chơi sẽ tính toán để bot thỉnh thoảng <strong>chủ động bỏ lượt</strong> dù trên tay hoàn toàn có bài đỡ được. Nước đi này nhằm nhử đối phương tưởng mình đã hết bài, từ đó bung quân bài chủ lực ra và dính bẫy phản công.</p>
+<h3>4. Thuật toán tìm kiếm cây quyết định (MCTS)</h3>
+<p>Với các đối thủ thuộc hàng Thần Bài và Siêu AI, bot được tích hợp bộ giải mô phỏng cây quyết định. Thuật toán sẽ giả lập hàng trăm kịch bản phân phối bài ẩn khả dĩ và chạy thử nghiệm ván đấu trong vài trăm mili-giây để tìm ra nước bài có tỷ lệ thắng tối ưu nhất.</p>
+<hr>
+<h2>⚖️ 5. Quá trình tinh chỉnh &amp; sửa lỗi logic cho bot</h2>
+<p>Việc xây dựng thuật toán trên lý thuyết thì khá suôn sẻ, nhưng khi đưa bot vào chạy thử nghiệm thực tế qua nhiều ván đấu, mình nhận ra một số lỗi logic khiến cách xử lý của bot chưa thật sự hợp lý:</p>
+<h3>1. Giữ Heo đến cuối khi có luật cấm về bằng 2</h3>
+<p>Ở các ván chơi có bật luật cấm đánh 2 về cuối, bot ban đầu chưa tính đến trường hợp này nên vẫn quen tay giữ con Heo to nhất lại để làm lá bài dứt điểm. Đến khi trên tay chỉ còn đúng một lá Heo thì luật cấm đánh kích hoạt, khiến bot không thể ra bài và bị xử phạt thối Heo. Sau đó mình đã bổ sung logic nhận diện luật chơi từ sớm: nếu bàn chơi cấm về bằng Heo, bot sẽ chủ động đánh Heo ở thời điểm thích hợp để dọn đường cho các lá bài nhỏ hơn về đích.</p>
+<h3>2. Xử lý khi bài vừa có đôi vừa có rác lẻ</h3>
+<p>Ban đầu mình đặt điều kiện nếu bài còn rác lẻ thì bot phải ưu tiên đánh rác trước để thăm dò. Tuy nhiên quy định này lại làm nảy sinh tình huống bất cập: có những ván bot cầm 3–4 đôi rất đẹp nhưng chỉ vì vướng 1–2 lá rác nhỏ mà không dám đánh đôi nào, cứ kiên trì ra từng lá bài lẻ để rồi bị đối thủ đè mất lượt. Sau khi quan sát, mình đã điều chỉnh lại điều kiện: chỉ khi rác lẻ chiếm số lượng áp đảo thì mới giữ đôi lớn để giành lại lượt, còn khi bài đã gom được nhiều bộ thì cứ chủ động đánh bộ để tạo lợi thế.</p>
+<h3>3. Hạn chế đánh đôi nhỏ khi đi đầu</h3>
+<p>Một số bot cấp trung khi được quyền đi đầu thường có thói quen đánh ngay các đôi nhỏ (như đôi 4, đôi 5) mà phía sau không có bài lớn bảo vệ. Ở bàn 4 người, nước đi này rất dễ bị người khác đè lại, làm bot mất quyền kiểm soát trận đấu và bị kẹt các lá bài lẻ còn lại. Mình đã điều chỉnh để bot chỉ chủ động ra đôi nhỏ khi bài đã sạch rác hoặc có bài đủ mạnh để giành lại lượt đi tiếp theo.</p>
+<h3>4. Đánh giá bài ẩn ở bàn 3 người</h3>
+<p>Ở thể thức 3 người chơi, có 13 lá bài úp không ai cầm. Những bot tính toán sâu đôi khi lại chơi quá cẩn trọng vì phán đoán đối thủ có thể đang giữ Heo hoặc hàng, dù thực tế các quân bài đó đang nằm trong đống bài úp. Việc tinh chỉnh lại cách đánh giá rủi ro giúp bot giữ được lối đánh linh hoạt và tự nhiên hơn tùy theo số lượng người trên bàn.</p>
+<h3>5. Thử nghiệm và đánh giá qua nhiều ván đấu</h3>
+<p>Trong game bài, kết quả thắng thua của một vài ván đơn lẻ thường phụ thuộc nhiều vào việc bài chia đẹp hay xấu. Để đánh giá thuật toán một cách khách quan, mình cho các bot hoán đổi ghế ngồi với cùng một bộ bài được chia và chạy mô phỏng hàng trăm ván để thu thập số liệu. Kết quả cho thấy bot ở bậc cao hơn duy trì được thứ hạng ổn định hơn, số lần bị phạt thối Heo giảm hẳn và tỷ lệ về bét cũng thấp hơn rõ rệt.</p>
+<hr>
+<h2>🏗️ 6. Hậu trường kiến trúc: Tách rời giao diện &amp; Kiểm soát lỗi nghiêm ngặt</h2>
+<p>Về mặt kỹ thuật, dự án được thiết kế với sự kỷ luật cao để đảm bảo hệ thống vận hành bền bỉ và dễ bảo trì:</p>
+<pre><code>┌─────────────────────────────────────────────────────────────┐
+│                   GIAO DIỆN NGƯỜI DÙNG                      │
+│         (Thuần hiển thị, nhận dữ liệu trạng thái bàn)       │
+└──────────────────────────────┬──────────────────────────────┘
+                               │ Thao tác người chơi
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│                 ĐIỀU PHỐI LUỒNG TRẬN ĐẤU                    │
+│     (Quản lý vào bàn, cược tiền, đầu hàng, tổng kết)        │
+└──────────────────────────────┬──────────────────────────────┘
+                               │ Điều khiển độc lập
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│                 BỘ ĐIỀU KHIỂN VÁN ĐẤU                       │
+│   ┌─────────────────────────────────────────────────────┐   │
+│   │         Vòng lặp trận đấu chạy ngoài DOM            │   │
+│   │     (Quản lý lượt đánh, tính bài, xử lý timer)      │   │
+│   └─────────────────────────────────────────────────────┘   │
+└──────────────────────────────┬──────────────────────────────┘
+                               │ Thực thi logic
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│                 BỘ LUẬT BÀI &amp; CƠ SỞ DỮ LIỆU                 │
+│         (Thẩm định nước đi, lưu trữ IndexedDB)              │
+└─────────────────────────────────────────────────────────────┘
+</code></pre>
+<h3>Tách rời hoàn toàn logic trận đấu ra khỏi giao diện React</h3>
+<p>Một trong những vấn đề hay gặp khi viết game bằng React là logic trò chơi dễ bị gắn chặt vào vòng đời của Component, dẫn đến việc dữ liệu bị cũ hoặc các bộ đếm thời gian vẫn chạy ngầm sau khi unmount.</p>
+<p>Ở dự án này, toàn bộ vòng lặp ván đấu — từ chia bài, tính lượt đánh cho đến đếm ngược thời gian — được tách riêng hoàn toàn bên ngoài giao diện:</p>
+<ul>
+<li>Bộ điều khiển ván đấu phụ trách trọn vẹn luồng trận đấu mà không phụ thuộc vào React DOM.</li>
+<li>Giao diện chỉ đóng vai trò thuần hiển thị, nhận dữ liệu trạng thái bàn đấu gửi về để vẽ lên màn hình, giúp mã nguồn giao diện cực kỳ tinh gọn.</li>
+<li>Hệ thống tự động giải phóng toàn bộ các tiến trình đếm giờ ngầm ngay khi người chơi rời bàn, triệt tiêu nguy cơ rò rỉ bộ nhớ.</li>
+</ul>
+<h3>Lưu trữ bền vững với IndexedDB</h3>
+<p>Thay vì dùng bộ nhớ cục bộ thông thường vốn bị giới hạn dung lượng và dễ gây nghẽn trình duyệt, dự án sử dụng IndexedDB với 8 bảng dữ liệu riêng biệt để quản lý hồ sơ người chơi, bảng xếp hạng Elo, lịch sử đối đầu và hệ thống nhiệm vụ hàng ngày.</p>
+<p>Đặc biệt, trạng thái bàn đấu luôn được đồng bộ liên tục: nếu bạn lỡ tay tải lại trang hay bị ngắt kết nối đột ngột, trò chơi sẽ tự động khôi phục đúng ván bài đang chơi dở mà không bị xử thua hay mất tiền oan.</p>
+<h3>Kỷ luật kiểm soát lỗi nghiêm ngặt</h3>
+<p>Để dự án vận hành mượt mà và không phát sinh lỗi bất ngờ giữa ván đấu, toàn bộ mã nguồn được thiết lập theo quy chuẩn an toàn cao nhất: cấm tuyệt đối việc dùng các kiểu dữ liệu mập mờ hoặc ép kiểu gượng ép. Mọi tình huống chia bài, kiểm tra tính hợp lệ của nước đi và vị trí ghế ngồi của người chơi đều được xác thực chặt chẽ ngay từ logic nền tảng, giúp triệt tiêu hoàn toàn nguy cơ game bị đứng hình hay phát sinh lỗi lúc đang chơi.</p>
+<hr>
+<h2>🎯 Lời kết</h2>
+<p>Xây dựng game Tiến Lên Miền Nam mang lại cho mình rất nhiều niềm vui: vừa được sống lại cảm giác của những ván bài rộn rã tiếng cười ngày Tết, vừa có dịp thử nghiệm nhiều bài toán thú vị về mô phỏng đa luồng và thuật toán trí tuệ nhân tạo.</p>
+<p>Đến đây thì cũng mỏi tay gõ phím cmnr. Nếu anh em muốn đổi gió làm vài ván bài giải trí không quảng cáo hoặc muốn thử tài xem mình có trụ nổi trước 200 con bot giang hồ hay không, hãy ghé qua chơi thử nhé!</p>
+</article></div>
+  </body>
+</html>

@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Single Page Apps for GitHub Pages Redirect Decoder -->
+    <script type="text/javascript">
+      (function(l) {
+        if (l.search[1] === '/' ) {
+          var decoded = l.search.slice(1).split('&').map(function(s) { 
+            return s.replace(/~and~/g, '&')
+          }).join('?');
+          window.history.replaceState(null, null,
+              l.pathname.slice(0, -1) + decoded + l.hash
+          );
+        }
+      }(window.location))
+    </script>
+    <meta name="author" content="Hà Mạnh Kiên (uongsuadaubung)" />
+    <meta name="description" content="Hướng dẫn đọc bộ nhớ game Minesweeper bằng C# và hiển thị map bom ra console." />
+    <meta property="og:title" content="Hack Minesweeper - part 2 — uongsuadaubung" />
+    <meta property="og:description" content="Hướng dẫn đọc bộ nhớ game Minesweeper bằng C# và hiển thị map bom ra console." />
+    <meta property="og:type" content="website" />
+    <title>Hack Minesweeper - part 2 — uongsuadaubung</title>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Hà Mạnh Kiên",
+      "alternateName": "uongsuadaubung",
+      "jobTitle": "Full Stack Web Developer",
+      "email": "k97.dev@gmail.com",
+      "telephone": "+84868931497",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Hà Nội",
+        "addressCountry": "VN"
+      },
+      "alumniOf": {
+        "@type": "EducationalOrganization",
+        "name": "Đại học Mở Hà Nội"
+      },
+      "sameAs": [
+        "https://github.com/uongsuadaubung"
+      ]
+    }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DrYRquR4.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DaAWQ7E0.css">
+    <link rel="canonical" href="https://uongsuadaubung.github.io/blog/hack-minesweeper-part-2/" />
+  </head>
+  <body>
+    <div id="root"><article class="markdown-body" style="max-width:800px;margin:40px auto;padding:0 20px;font-family:sans-serif;line-height:1.6;"><h1>Hack Minesweeper - part 2</h1><p>Nếu chưa xem phần 1 thì có thể xem lại tại <a href="https://uongsuadaubung.blogspot.com/2020/06/hack-minesweeper-part-1.html">đây</a>.
+Mình sẽ sử dụng C# để code, mình cũng có đọc ở đâu đó trên vài trang nước ngoài thấy nhiều người nói là để viết mấy cái tool hack này nọ thì nên viết bằng C++ và mình cũng có tìm hiểu qua C++ nhưng thấy nó khó vãi, hoặc do mình tiếp xúc với C# nhiều hơn và sớm hơn nên quen hơn. Nói sơ sơ qua thì công việc cũng chỉ là đọc ghi giá trị từ địa chỉ ô nhớ trong game thui.</p>
+<p><img src="/images/hack-minesweeper-part-2/image-01.png" alt="Giao diện Minesweeper"></p>
+<h2>Đọc bộ nhớ game</h2>
+<p>Đầu tiên chúng ta phải khai báo vài cái hàm API của Win32. Nếu ai chưa biết mấy hàm này thì có thể tìm hiểu thêm về DllImport nhé.</p>
+<pre><code class="language-csharp">[DllImport(&quot;kernel32.dll&quot;)]
+public static extern IntPtr OpenProcess(int dwDesiredAccess, bool bInheritHandle, int dwProcessId);
+[DllImport(&quot;kernel32.dll&quot;)]
+public static extern bool ReadProcessMemory(int hProcess, int lpBaseAddress, byte[] lpBuffer, int dwSize, ref int lpNumberOfBytesRead);
+</code></pre>
+<p>Khi một tiến trình được mở, ta phải chỉ định quyền truy cập mong muốn (với game Minesweeper thì mình chỉ muốn đọc giá trị thui nên yêu cầu quyền truy cập để đọc bộ nhớ), vì vậy hằng số này là cần thiết:</p>
+<pre><code class="language-csharp">const int PROCESS_VM_READ = 0x0010;
+</code></pre>
+<p>Giới thiệu thêm:</p>
+<pre><code class="language-csharp">const int PROCESS_VM_WRITE = 0x0020; // yêu cầu quyền truy cập để ghi vào bộ nhớ
+const int PROCESS_ALL_ACCESS = 0x1F0FFF; // đọc và ghi
+</code></pre>
+<h2>Ghi vào bộ nhớ game</h2>
+<pre><code class="language-csharp">[DllImport(&quot;kernel32.dll&quot;)]
+public static extern IntPtr OpenProcess(int dwDesiredAccess, bool bInheritHandle, int ProcessId);
+[DllImport(&quot;kernel32.dll&quot;, SetLastError = true)]
+public static extern bool WriteProcessMemory(int hProcess, int lpBaseAddress, byte[] lpBuffer, int dwSize, out int lpNumberOfBytesWritten);
+</code></pre>
+<p>Một chương trình có cả đọc và viết thì dùng OpenProcess một lần là được.</p>
+<h2>Bắt tay vào code thôi!!!</h2>
+<p>Theo lý thuyết bên trên thì ban đầu phải import cái hàm đọc bộ nhớ vào, bài này mình chỉ đọc bộ nhớ thôi sang bài sau với game khác mình sẽ làm đủ cả đọc ghi.</p>
+<p><img src="/images/hack-minesweeper-part-2/image-02.png" alt="Khai báo import"></p>
+<p>Đầu tiên phải khai báo một số biến hay ho ra trước, gồm mấy cái địa chỉ mà ở phần 1 mình tìm được:</p>
+<pre><code class="language-csharp">int widthAddr = 0x010056AC; // chiều rộng map
+int heightAddr = 0x010056A8; // chiều cao map
+int firstAddr = 0x01005361; // ô mìn đầu tiên map[0][0]
+int opendAddr = 0x010057A4; // số ô đã mở
+byte[] buffer = new byte[4]; // buffer là cái mà hàm yêu cầu, để nó lưu giá trị đọc được từ bộ nhớ vào buffer này, byte[4] là do tất cả các giá trị tìm được có kiểu lớn nhất 4bytes
+int mywidth = 0, myheight = 0, myopend = 0; // đọc được giá trị ra thì phải lưu vào để sử dụng
+int mycurr = 0;
+int reads = 0; // cái này cũng do hàm yêu cầu thôi, tạo cho đủ
+</code></pre>
+<p>Tiếp theo để mở tiến trình thì làm như sau:</p>
+<pre><code class="language-csharp">Process process = Process.GetProcessesByName(&quot;Winmine__XP&quot;)[0];
+IntPtr processHandle = OpenProcess(PROCESS_WM_READ, false, process.Id);
+</code></pre>
+<p>Cả đống nó sau thì sẽ trông thế này:</p>
+<p><img src="/images/hack-minesweeper-part-2/image-03.png" alt="Khai báo biến"></p>
+<p>Phân tích tiếp, mình sẽ đọc giá trị liên tục để update lại lên màn hình, cho nên sẽ sử dụng một vòng lặp như sau:</p>
+<p><img src="/images/hack-minesweeper-part-2/image-04.png" alt="Vòng lặp chính"></p>
+<p>Từ đây đọc các giá trị chiều rộng, chiều cao, và số ô đã mở đầu tiên:</p>
+<pre><code class="language-csharp">ReadProcessMemory(processHandle, widthAddr, buffer, 1, ref reads);
+mywidth = BitConverter.ToInt32(buffer, 0);
+ReadProcessMemory(processHandle, heightAddr, buffer, 1, ref reads);
+myheight = BitConverter.ToInt32(buffer, 0);
+ReadProcessMemory(processHandle, opendAddr, buffer, 1, ref reads);
+myopend = BitConverter.ToInt32(buffer, 0);
+</code></pre>
+<p>Tại sao đọc số ô đã mở thì là do sau khi mình ấn mở ô đầu tiên xong thì game nó mới tạo map, cho nên là phát click đầu tiên không bao giờ dẫm phải bom đâu. Đến đây thì suy luận xíu là đc, nếu chưa mở ô nào thì vẽ cái map mặc định toàn dấu <code>-</code> (gạch ngang), còn nếu mở rồi thì mới đọc giá trị của map để vẽ ra ô nào là bom ô nào không.</p>
+<pre><code class="language-csharp">if (myopend == 0) // số ô đã mở == 0 tức là chưa mở ô nào
+{
+    for (int i = 0; i &lt; myheight; i++)
+    {
+        for (int j = 0; j &lt; mywidth; j++)
+        {
+            Console.Write(&quot;- &quot;);
+        }
+        Console.WriteLine();
+    }
+}
+else // ngược lại thì là đã mở
+{
+    //// sẽ phân tích tiếp bên dưới
+}
+</code></pre>
+<p>Đến đây chạy thử sẽ có kết quả thế này:</p>
+<p><img src="/images/hack-minesweeper-part-2/image-05.png" alt="Kết quả chưa mở ô"></p>
+<p><img src="/images/hack-minesweeper-part-2/image-06.png" alt="Kết quả sau khi mở ô"></p>
+<p>Trông có vẻ khá chính xác 😅😅</p>
+<p>Còn trong trường hợp là đã mở một ô và map được tạo thì sao? Mở CE lên và vào đó tìm hiểu một xíu:</p>
+<p><img src="/images/hack-minesweeper-part-2/image-07.png" alt="CE xem vùng nhớ"></p>
+<p>Ấn Ctrl+B để mở xem vùng nhớ tại địa chỉ đó. Đặt vài cái cờ sẽ thấy giá trị của mấy địa chỉ liền kề nhau thay đổi, suy ra là với hàng ngang thì mỗi ô nó cách nhau 1 byte thôi, nên để đọc giá trị ô bên cạnh thì lấy địa chỉ hiện tại <strong>+1</strong> là được.</p>
+<p><img src="/images/hack-minesweeper-part-2/image-08.png" alt="Kiểm tra hàng ngang"></p>
+<p>Thế còn khi hết hàng ngang và xuống hàng mới?</p>
+<p><img src="/images/hack-minesweeper-part-2/image-09.png" alt="Kiểm tra xuống hàng"></p>
+<p>Nhìn ta thấy thì nó cách nhau một khoảng cố định là <strong>0x20</strong>, không tin thì lấy máy tính bấm giá trị sau trừ đi giá trị trước là ra.</p>
+<p><img src="/images/hack-minesweeper-part-2/image-10.png" alt="Tính khoảng cách"></p>
+<p>Vậy để di chuyển đến dòng thứ <code>i</code> thì mình có công thức thế này <code>firstAddr + 0x20 * i</code>, ví dụ để nhảy đến dòng 5: <code>0x01005361 + 0x20*5 = 01005401</code>.</p>
+<p><img src="/images/hack-minesweeper-part-2/image-11.png" alt="Kiểm tra công thức"></p>
+<p>Đó, địa chỉ có thật nhé, đúng công thức luôn. À ý mình là hàng thứ 6 nếu là trong game, cái hàng đầu tiên coi là hàng 0, nếu bạn có học về mảng rồi thì sẽ hiểu.</p>
+<p>Oke, đến đây bắt tay code nốt đoạn còn lại:</p>
+<pre><code class="language-csharp">int current = firstAddr;
+for (int i = 0; i &lt; myheight; i++)
+{
+    for (int j = 0; j &lt; mywidth; j++)
+    {
+        ReadProcessMemory(processHandle, current, buffer, 1, ref reads);
+        mycurr = BitConverter.ToInt32(buffer, 0);
+        if (mycurr == 0x8F || mycurr == 0x8E || mycurr == 0x8A) // 0x8F là bom, 0x8E là đặt cờ, 0x8A là bom mở ra sau khi kết thúc game
+        {
+            Console.Write(&quot;x &quot;);
+        }
+        else if (mycurr == 0xCC) // 0xCC là quả bom lúc ấn vào nó nổ
+        {
+            Console.Write(&quot;0 &quot;);
+        }
+        else if (mycurr == 0x0F) // 0x0F là ô mặc định chưa mở hoặc chưa đặt cờ
+        {
+            Console.Write(&quot;- &quot;);
+        }
+        else
+        {
+            Console.Write(&quot;  &quot;);
+        }
+        current++; // đi đến ô tiếp theo
+    }
+    current = (firstAddr + 0x20 * (i + 1)); // 0x20 là giá trị mỗi hàng cách nhau
+    Console.WriteLine();
+}
+</code></pre>
+<p>Và đây là thành quả đạt được:</p>
+<iframe title="video" allowfullscreen="allowfullscreen" frameborder="0" height="500" src="https://www.blogger.com/video.g?token=AD6v5dxvxh7AJb5Rzuc9rAPgfmjFtp6py17I-LWYFwhh_IQkZGLCQIPojELMYJjTiBkQTFpqbsiGmQwpsDpHeZlrle-dznWNYn8-5fgQp98t2OjsdRDc_Wh-Oro1cApctn4YOfHPsVY&origin=uongsuadaubung.blogspot.com" width="500"></iframe><p>Full code mình sẽ update tại <a href="https://github.com/uongsuadaubung/Hack-Minesweeper-csharp">đây</a>.</p>
+<p>Điều này trái ngược với tư duy logic của game đề ra, nhưng thui dù sao mình cũng tư duy theo cách của mình mà nhỉ, học hỏi thêm được cái khác hay ho hơn là ngồi đếm số thui đúng không :V</p>
+</article></div>
+  </body>
+</html>

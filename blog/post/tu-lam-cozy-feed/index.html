@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Single Page Apps for GitHub Pages Redirect Decoder -->
+    <script type="text/javascript">
+      (function(l) {
+        if (l.search[1] === '/' ) {
+          var decoded = l.search.slice(1).split('&').map(function(s) { 
+            return s.replace(/~and~/g, '&')
+          }).join('?');
+          window.history.replaceState(null, null,
+              l.pathname.slice(0, -1) + decoded + l.hash
+          );
+        }
+      }(window.location))
+    </script>
+    <meta name="author" content="Hà Mạnh Kiên (uongsuadaubung)" />
+    <meta name="description" content="Ứng dụng đọc và cào tin tức RSS cá nhân tập trung, thiết kế giao diện tối giản Cozy, không quảng cáo, tối ưu hiệu năng tải tin tức." />
+    <meta property="og:title" content="Cozy Feed: Bộ cào và đọc tin tức tập trung — uongsuadaubung" />
+    <meta property="og:description" content="Ứng dụng đọc và cào tin tức RSS cá nhân tập trung, thiết kế giao diện tối giản Cozy, không quảng cáo, tối ưu hiệu năng tải tin tức." />
+    <meta property="og:type" content="website" />
+    <title>Cozy Feed: Bộ cào và đọc tin tức tập trung — uongsuadaubung</title>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Hà Mạnh Kiên",
+      "alternateName": "uongsuadaubung",
+      "jobTitle": "Full Stack Web Developer",
+      "email": "k97.dev@gmail.com",
+      "telephone": "+84868931497",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Hà Nội",
+        "addressCountry": "VN"
+      },
+      "alumniOf": {
+        "@type": "EducationalOrganization",
+        "name": "Đại học Mở Hà Nội"
+      },
+      "sameAs": [
+        "https://github.com/uongsuadaubung"
+      ]
+    }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DrYRquR4.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DaAWQ7E0.css">
+    <link rel="canonical" href="https://uongsuadaubung.github.io/blog/tu-lam-cozy-feed/" />
+  </head>
+  <body>
+    <div id="root"><article class="markdown-body" style="max-width:800px;margin:40px auto;padding:0 20px;font-family:sans-serif;line-height:1.6;"><h1>Cozy Feed: Bộ cào và đọc tin tức tập trung</h1><p>Chuyện là dạo này trên công ty việc của mình cũng hòm hòm, task tủng được dẹp gọn gàng sạch sẽ nên đâm ra có kha khá thời gian rảnh rỗi ngồi chơi xơi nước. Vì muốn tìm cái gì đó mới mới để làm trong lúc rảnh cho đỡ chán, mình chợt nghĩ ngay đến việc viết một con crawler cào dữ liệu.</p>
+<p>Ý tưởng này xuất phát từ việc mình rất thích đọc tin tức ở một vài trang quen thuộc, cả trong nước lẫn ngoài nước (như <em>Hacker News, OMG! Ubuntu, GenK, Tinh tế</em>...). Nhưng ngặt nỗi mỗi lần đọc cứ phải gõ URL mở chục cái tab rồi chuyển qua chuyển lại liên tục thì hơi lười.</p>
+<p>Thế là mình bắt tay vào viết một cái &quot;RSS Reader&quot; tự chế mang tên <strong>Cozy Feed</strong> — sử dụng Deno, Cheerio và Preact để tự động cào tin về và hiển thị tập trung tại một nơi duy nhất cho ấm cúng và sạch sẽ.</p>
+<hr>
+<h2>🛠️ Cozy Feed hoạt động thế nào?</h2>
+<p>Ý tưởng xây dựng con app này cực kì tinh gọn, chia làm 2 phần chính chạy hoàn toàn độc lập:</p>
+<ol>
+<li><strong>Bộ Cào Dữ Liệu (Backend/Sync)</strong>: Viết bằng <strong>Deno</strong> kết hợp với thư viện parse HTML <strong>Cheerio</strong>. Chức năng là cào dữ liệu từ các trang tin mục tiêu, lấy tiêu đề, ảnh thumbnail, mô tả ngắn rồi gom tất cả lưu vào một file dữ liệu tĩnh <code>data.json</code>.</li>
+<li><strong>Bộ Hiển Thị (Frontend UI)</strong>: Sử dụng <strong>Preact</strong> (cho nó siêu nhẹ) kết hợp với CSS tối giản. Giao diện này chỉ việc fetch file <code>data.json</code> tĩnh kia về rồi render lên màn hình. Đọc tin không quảng cáo, chuyển trang mượt mà!</li>
+</ol>
+<pre><code>[Các trang tin: GenK, Tinh tế, HN...] 
+       │
+       ▼ (Deno + Cheerio Scraper)
+┌──────────────┐
+│   sync.ts    │ ──► Ghi đè file dữ liệu tĩnh
+└──────────────┘
+       │
+       ▼
+┌──────────────┐
+│  data.json   │ ◄── Fetch data cực nhanh
+└──────────────┘
+       │
+       ▼
+┌──────────────┐
+│  Preact UI   │ ──► Đọc tin sạch sẽ, ấm cúng
+└──────────────┘
+</code></pre>
+<hr>
+<h2>📡 Cào dữ liệu bằng Deno &amp; Cheerio</h2>
+<p>Để lấy dữ liệu tin tức, mình viết các script cào (scraper) cho từng trang. Chỉ cần F12 soi cấu trúc HTML của từng site là có thể bóc tách được các thông tin cần thiết.</p>
+<p>Dưới đây là một đoạn code scraper ví dụ cho trang <strong>Hacker News</strong> mà mình viết bằng Deno:</p>
+<pre><code class="language-typescript">import * as cheerio from &quot;cheerio&quot;;
+import { Post } from &quot;../types.ts&quot;;
+
+export const hackerNewsScraper = {
+  source: &quot;HackerNews&quot;,
+  async fetchPosts(): Promise&lt;Post[]&gt; {
+    const res = await fetch(&quot;https://news.ycombinator.com/&quot;);
+    const html = await res.text();
+    const $ = cheerio.load(html);
+    const posts: Post[] = [];
+
+    // Lùng sục các thẻ class athing để lôi cổ thông tin ra
+    $(&quot;.athing&quot;).each((_, element) =&gt; {
+      const id = $(element).attr(&quot;id&quot;) || &quot;&quot;;
+      const titleLink = $(element).find(&quot;.titleline &gt; a&quot;).first();
+      const title = titleLink.text();
+      const url = titleLink.attr(&quot;href&quot;) || &quot;&quot;;
+
+      posts.push({
+        id: `hn-${id}`,
+        title,
+        url,
+        source: &quot;HackerNews&quot;,
+        // Hacker News không có mô tả hay ảnh, ta để mặc định
+        description: &quot;Bàn luận công nghệ trên Hacker News...&quot;,
+        thumbnail: &quot;https://news.ycombinator.com/y18.svg&quot;,
+        createdAt: new Date().toISOString()
+      });
+    });
+
+    return posts;
+  }
+};
+</code></pre>
+<p>Cứ thế, mỗi nguồn tin sẽ có một file scraper riêng. Mình chỉ cần viết một vòng lặp trong file <code>sync.ts</code> để điều phối tất cả các bộ cào này chạy đồng thời, sau đó gộp kết quả lại:</p>
+<pre><code class="language-typescript">// Chạy song song tất cả scrapers để lấy tin tức mới nhất
+const results = await Promise.allSettled(
+  scrapers.map(async (scraper) =&gt; {
+    const posts = await scraper.fetchPosts();
+    return posts;
+  })
+);
+</code></pre>
+<p>Để tránh việc lưu trùng những bài viết cũ, bộ sync sẽ đọc file <code>data.json</code> hiện tại, so sánh ID của các bài viết mới xem có bị trùng không. Nếu chưa có thì mới thêm vào mảng và lưu lại.</p>
+<hr>
+<h2>🎨 UI Cozy: Nơi tập trung đọc tin ấm cúng</h2>
+<p>Sau khi đã có đống dữ liệu <code>data.json</code> ngon lành cành đào, phần UI được dựng cực kỳ tối giản với Preact. Mình thiết kế giao diện dạng cột, bên trái là menu các nguồn tin (Tinh tế, GenK, Hacker News...) và bên phải là danh sách bài viết hiển thị sạch sẽ dưới dạng thẻ (Card) có ảnh thumbnail rõ ràng.</p>
+<p>Đặc biệt là không hề có bất kì một banner quảng cáo hay pop-up &quot;nhận thông báo&quot; phiền phức nào. Tốc độ tải trang thì nhanh như chớp vì dữ liệu đã được cào sẵn và phục vụ như một file JSON tĩnh.</p>
+<hr>
+<h2>☕ Kết luận</h2>
+<p>Thế là chỉ sau vài tiếng táy máy nghịch ngợm trong lúc rảnh rỗi ở công ty, mình đã có ngay một công cụ Cozy Feed hoạt động cực kì mượt mà. Từ nay, cứ mỗi sáng mở máy lên là chỉ việc vào một trang duy nhất là nắm bắt được hết biến động công nghệ trong ngày, chả cần phải lạch cạch gõ từng URL hay chuyển qua chuyển lại giữa chục cái tab nữa. Tiết kiệm được bao nhiêu thời gian và công sức!</p>
+<p>Đến đây thì cũng mỏi tay gõ phím cmnr. Anh em nào ngại chuyển tab giống mình thì có thể bấm ngay vào menu <strong>Cozy</strong> mới toanh ở trên thanh điều hướng để trải nghiệm thử Cozy Feed nhé! 🚀</p>
+</article></div>
+  </body>
+</html>

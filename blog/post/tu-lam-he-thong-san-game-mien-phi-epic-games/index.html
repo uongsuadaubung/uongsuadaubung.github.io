@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Single Page Apps for GitHub Pages Redirect Decoder -->
+    <script type="text/javascript">
+      (function(l) {
+        if (l.search[1] === '/' ) {
+          var decoded = l.search.slice(1).split('&').map(function(s) { 
+            return s.replace(/~and~/g, '&')
+          }).join('?');
+          window.history.replaceState(null, null,
+              l.pathname.slice(0, -1) + decoded + l.hash
+          );
+        }
+      }(window.location))
+    </script>
+    <meta name="author" content="Hà Mạnh Kiên (uongsuadaubung)" />
+    <meta name="description" content="Hệ thống tự động săn game miễn phí trên Epic Games Store và gửi thông báo Telegram." />
+    <meta property="og:title" content="Săn game miễn phí Epic Games Store tự động với Deno, GitHub Actions và Telegram — uongsuadaubung" />
+    <meta property="og:description" content="Hệ thống tự động săn game miễn phí trên Epic Games Store và gửi thông báo Telegram." />
+    <meta property="og:type" content="website" />
+    <title>Săn game miễn phí Epic Games Store tự động với Deno, GitHub Actions và Telegram — uongsuadaubung</title>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Hà Mạnh Kiên",
+      "alternateName": "uongsuadaubung",
+      "jobTitle": "Full Stack Web Developer",
+      "email": "k97.dev@gmail.com",
+      "telephone": "+84868931497",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Hà Nội",
+        "addressCountry": "VN"
+      },
+      "alumniOf": {
+        "@type": "EducationalOrganization",
+        "name": "Đại học Mở Hà Nội"
+      },
+      "sameAs": [
+        "https://github.com/uongsuadaubung"
+      ]
+    }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DrYRquR4.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DaAWQ7E0.css">
+    <link rel="canonical" href="https://uongsuadaubung.github.io/blog/tu-lam-he-thong-san-game-mien-phi-epic-games/" />
+  </head>
+  <body>
+    <div id="root"><article class="markdown-body" style="max-width:800px;margin:40px auto;padding:0 20px;font-family:sans-serif;line-height:1.6;"><h1>Săn game miễn phí Epic Games Store tự động với Deno, GitHub Actions và Telegram</h1><p>Chắc hẳn ai trong chúng ta cũng đều có một thói quen rất &quot;game thủ&quot;: <strong>Chăm chỉ nhận game miễn phí trên Epic Games Store nhưng cả năm chẳng mở launcher lên chơi một lần nào.</strong> </p>
+<p>Hàng tuần cứ đến tối thứ Năm, Epic Games lại hào phóng phát từ một đến hai tựa game miễn phí. Có tuần là những siêu phẩm bom tấn AAA (như GTA V, Death Stranding), cũng có tuần là những tựa game độc lạ indie. Nhưng khổ một nỗi, vì lười mở cái Epic Games Launcher siêu nặng nề nên mình rất hay quên nhận game. </p>
+<p>Để giải quyết triệt để sự &quot;não cá vàng&quot; này, mình đã quyết định tự code một hệ thống quét tự động (crawler) và gửi tin nhắn báo về điện thoại qua Telegram Bot mỗi khi có game mới. Toàn bộ hệ thống được xây dựng gọn gàng bằng <strong>Deno</strong> và chạy hoàn toàn tự động.</p>
+<hr>
+<h2>🔍 Bước 1: Đảo ngược (Reverse) API ẩn của Epic Games Store</h2>
+<p>Thay vì viết một con bot chạy giả lập trình duyệt (Puppeteer/Playwright) rất nặng nề và dễ lỗi, mình đã tìm cách đảo ngược (reverse engineer) API ẩn mà Epic Games sử dụng để hiển thị các chương trình khuyến mãi trên trang chủ của họ.</p>
+<p>Sau vài phút &quot;F12 thần chưởng&quot; và rà soát tab Network, mình phát hiện ra Epic Games Store cung cấp một endpoint public dạng tĩnh cực kì xịn xò:</p>
+<pre><code class="language-http">GET https://store-site-backend-static-ipv4.ak.epicgames.com/freeGamesPromotions?locale=en-US&amp;country=VN&amp;allowCountries=VN
+</code></pre>
+<h3>Phân tích cấu trúc dữ liệu khuyến mãi</h3>
+<p>Endpoint này trả về một cục dữ liệu JSON chứa toàn bộ danh sách game đang và sắp có trên cửa hàng. Tuy nhiên, cấu trúc của nó tương đối lằng nhằng. Để biết chính xác một tựa game có đang được phát miễn phí hay không, chúng ta phải lọc theo quy tắc:</p>
+<ol>
+<li><strong>Game đang miễn phí (Free Now):</strong> Nằm trong <code>promotions.promotionalOffers</code>. Chúng ta cần duyệt qua mảng này và tìm ưu đãi nào có <code>discountType === &#39;PERCENTAGE&#39;</code> và tỷ lệ giảm giá <code>discountPercentage === 0</code>.</li>
+<li><strong>Game sắp miễn phí (Coming Soon):</strong> Nằm trong <code>promotions.upcomingPromotionalOffers</code>. Chúng ta cũng tìm ưu đãi có <code>discountPercentage === 0</code> nhưng thời gian bắt đầu nằm ở tương lai.</li>
+<li><strong>Đường dẫn nhận game:</strong> Cấu trúc liên kết động bằng cách ghép nối mã nhận dạng: <code>https://store.epicgames.com/en-US/p/</code> + <code>pageSlug</code> (hoặc <code>productSlug</code> làm fallback).</li>
+</ol>
+<p>Để thử nghiệm nhanh, bạn có thể mở Console F12 trên bất kỳ trang nào của Epic Games (để tránh lỗi chặn CORS) và chạy đoạn mã Javascript sau để thấy kết quả ngay lập tức:</p>
+<pre><code class="language-javascript">fetch(&quot;https://store-site-backend-static-ipv4.ak.epicgames.com/freeGamesPromotions?locale=en-US&amp;country=US&amp;allowCountries=US&quot;)
+  .then(res =&gt; res.json())
+  .then(data =&gt; {
+    const games = data.data.Catalog.searchStore.elements;
+    games.forEach(game =&gt; {
+      const activePromos = game.promotions?.promotionalOffers?.[0]?.promotionalOffers || [];
+      if (activePromos.length &gt; 0 &amp;&amp; activePromos[0].discountSetting?.discountPercentage === 0) {
+        console.log(`🔥 [FREE NOW] ${game.title}`);
+        console.log(`📅 Hạn nhận: ${new Date(activePromos[0].endDate).toLocaleDateString()}`);
+      }
+    });
+  });
+</code></pre>
+<hr>
+<h2>🛠️ Bước 2: Triển khai Tracker tự động bằng Deno</h2>
+<p>Mình chọn <strong>Deno 2.x</strong> để triển khai dự án này vì nó hỗ trợ TypeScript mặc định mà không cần cấu hình Babel hay Webpack rườm rà, tốc độ khởi động nhanh như chớp và cực kì bảo mật.</p>
+<p>Cấu trúc thư mục của dự án cực kỳ tinh gọn:</p>
+<pre><code class="language-text">freegames/
+├── games.json          # Cơ sở dữ liệu JSON lưu lịch sử các game đã thông báo
+├── tracker.ts          # Script điều phối chính
+└── src/
+    ├── services/
+        ├── database.ts    # Đọc/ghi lịch sử tránh gửi tin nhắn trùng lặp
+        ├── epicStore.ts   # Fetch và trích xuất dữ liệu từ Epic Games API
+        └── telegram.ts    # Định dạng tin nhắn HTML và gửi qua Telegram Bot
+</code></pre>
+<h3>Cơ chế chống trùng lặp với cơ sở dữ liệu <code>games.json</code></h3>
+<p>Một vấn đề cực kỳ quan trọng khi viết bot tự động quét tin tức là <strong>tránh gửi trùng lặp</strong>. Nếu không lưu lại trạng thái, cứ mỗi lần GitHub Actions khởi chạy, bot sẽ lại &quot;bắn&quot; thông báo của những tựa game đang miễn phí vào Telegram, gây phiền hà và spam kênh nhận tin.</p>
+<p>Để giải quyết vấn đề này, mình đã thiết kế một giải pháp lưu trữ trạng thái đơn giản nhưng cực kỳ hiệu quả:</p>
+<ul>
+<li><strong>Cơ sở dữ liệu dạng file tĩnh <code>games.json</code>:</strong> Tệp này đóng vai trò như một &quot;lịch sử quét&quot;, lưu trữ mảng các game đã gửi thông báo thành công dưới dạng JSON terabyte-scale (gồm các trường thông tin tối thiểu như <code>id</code>, <code>title</code>, <code>start_date</code>, <code>end_date</code>, <code>store_url</code>).</li>
+<li><strong>Hàm kiểm tra trạng thái (<code>isGameNotified</code>):</strong> Khi Deno quét danh sách game từ Epic, trước khi gửi bất kỳ thông báo nào, hệ thống sẽ mở file <code>games.json</code>, đọc dữ liệu và so khớp ID của game khuyến mãi hiện tại. </li>
+<li><strong>Quy trình lọc tin nhắn thông minh:</strong><ol>
+<li>Nếu ID game <strong>đã tồn tại</strong> trong danh sách lịch sử: Bỏ qua (Skip), không gửi tin nhắn.</li>
+<li>Nếu ID game <strong>chưa tồn tại</strong>: Kích hoạt gửi thông báo qua Telegram Bot. Sau khi gửi thành công, game mới sẽ được tự động thêm vào lịch sử của tệp <code>games.json</code> và lưu lại xuống ổ đĩa.</li>
+</ol>
+</li>
+<li><strong>Kết hợp lưu trữ trạng thái:</strong> File <code>games.json</code> sau đó sẽ được GitHub Actions tự động commit và push ngược lại repository để lưu giữ trạng thái cho lần chạy tiếp theo.</li>
+</ul>
+<h3>Module gửi thông báo qua Telegram Bot</h3>
+<p>Tận dụng API của Telegram, mỗi khi phát hiện ra game mới chưa có trong lịch sử lưu ở file <code>games.json</code>, hệ thống sẽ sử dụng phương thức <code>sendPhoto</code> (hoặc <code>sendMessage</code> làm fallback) để gửi tin nhắn kèm ảnh bìa game. Tin nhắn được định dạng dưới dạng <strong>HTML</strong> (<code>parse_mode: &quot;HTML&quot;</code>) cực kì chuyên nghiệp và trực quan:</p>
+<pre><code class="language-typescript">export function buildHtmlMessage(game: EpicGameStruct): string {
+  const startFormatted = formatDate(game.start_date);
+  const endFormatted = formatDate(game.end_date);
+
+  return [
+    `🎁 &lt;b&gt;GAME MIỄN PHÍ TRÊN EPIC GAMES STORE&lt;/b&gt; 🎁`,
+    `━━━━━━━━━━━━━━━━━━━━━━━━`,
+    `🎮 &lt;b&gt;Tên Game:&lt;/b&gt; &lt;a href=&quot;${game.store_url}&quot;&gt;${game.title}&lt;/a&gt;`,
+    `📅 &lt;b&gt;Thời hạn:&lt;/b&gt; &lt;code&gt;${startFormatted}&lt;/code&gt; đến &lt;code&gt;${endFormatted}&lt;/code&gt;`,
+    `━━━━━━━━━━━━━━━━━━━━━━━━`,
+    `👉 &lt;b&gt;Nhấp vào đây để nhận game miễn phí:&lt;/b&gt;`,
+    `&lt;a href=&quot;${game.store_url}&quot;&gt;👉 NHẬN NGAY ${game.title.toUpperCase()} 👈&lt;/a&gt;`,
+  ].filter((line) =&gt; line !== null).join(&quot;\n&quot;);
+}
+</code></pre>
+<hr>
+<h2>⚙️ Bước 3: Tự động hóa định kỳ với GitHub Actions</h2>
+<p>Code chạy bằng Deno đã xong, nhưng làm sao để nó tự chạy hàng ngày mà không cần chúng ta phải bật máy tính lên gõ lệnh? Giải pháp chính là <strong>GitHub Actions</strong> — một nền tảng CI/CD miễn phí, mạnh mẽ và cực kì thích hợp cho các tác vụ tự động hóa dạng này.</p>
+<p>Mình đã thiết lập một file workflow tinh gọn tại <code>.github/workflows/epic-tracker.yml</code> tập trung vào các cấu hình cốt lõi sau:</p>
+<pre><code class="language-yaml">on:
+  schedule:
+    # Chạy tự động hàng ngày lúc 09:00 sáng giờ Việt Nam (02:00 UTC)
+    - cron: &quot;0 2 * * *&quot;
+  workflow_dispatch: # Cho phép kích hoạt chạy thủ công
+
+jobs:
+  track-and-notify:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Cấp quyền ghi để tự động commit và push file games.json
+
+    steps:
+      # ... (Các bước checkout và cài đặt môi trường Deno) ...
+
+      - name: Khởi chạy bộ quét game Epic Games &amp; Gửi thông báo
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: deno task start
+
+      - name: Tự động cập nhật cơ sở dữ liệu games.json
+        run: |
+          git config --global user.name &quot;github-actions[bot]&quot;
+          git add games.json
+
+          # Chỉ commit và push ngược lên repo nếu có game mới được lưu
+          if ! git diff --staged --quiet; then
+            git commit -m &quot;chore: cập nhật cơ sở dữ liệu games.json [skip ci]&quot;
+            git push
+          fi
+</code></pre>
+<h3>Các điểm sáng trong cấu hình này:</h3>
+<ol>
+<li><strong>Lịch trình Cronjob:</strong> Bộ quét tự động chạy vào lúc 9h sáng hàng ngày để luôn cập nhật game sớm nhất có thể.</li>
+<li><strong>Quyền ghi tệp tự động (contents: write):</strong> Khi phát hiện game mới, script Deno sẽ thêm game đó vào tệp lịch sử <code>games.json</code>. Nhờ phân quyền ghi của GitHub Actions, bot sẽ tự động thực hiện commit và push cập nhật này ngược lại repository, tránh gửi lặp lại cùng một tựa game vào ngày hôm sau.</li>
+<li><strong>Bảo mật tối đa với Secrets:</strong> Token của bot Telegram và Chat ID của bạn được mã hóa an toàn dưới dạng các biến môi trường ẩn (<code>secrets</code>), tuyệt đối không bị lộ ra ngoài mã nguồn công khai.</li>
+</ol>
+<hr>
+<h2>🏁 Kết quả ngọt ngào</h2>
+<p>Hệ thống sau khi hoàn thành chạy cực kỳ ổn định. Mỗi ngày, GitHub Actions sẽ tự động khởi động máy ảo Ubuntu, cài đặt Deno, chạy script quét và tắt máy chỉ trong vòng chưa đầy <strong>15 giây</strong> (hoàn toàn miễn phí!). Và kết quả là những thông báo game miễn phí dạng HTML cực sắc nét kèm ảnh bìa đã được gửi thẳng vào Telegram thông qua bot &quot;Meow&quot;:</p>
+<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin: 24px 0;">
+  <img src="/images/tu-lam-he-thong-san-game-mien-phi-epic-games/image-01.jpg" alt="Thông báo game Tomb Raider" style="width: 100%; max-width: 260px; border-radius: 12px; border: 1px solid var(--border-subtle); box-shadow: 0 4px 12px rgba(0,0,0,0.1);" />
+  <img src="/images/tu-lam-he-thong-san-game-mien-phi-epic-games/image-02.jpg" alt="Thông báo game Sunderfolk" style="width: 100%; max-width: 260px; border-radius: 12px; border: 1px solid var(--border-subtle); box-shadow: 0 4px 12px rgba(0,0,0,0.1);" />
+  <img src="/images/tu-lam-he-thong-san-game-mien-phi-epic-games/image-03.jpg" alt="Thông báo game Batman" style="width: 100%; max-width: 260px; border-radius: 12px; border: 1px solid var(--border-subtle); box-shadow: 0 4px 12px rgba(0,0,0,0.1);" />
+</div><p>Chỉ với một cú click nhẹ ngay từ liên kết nhận game trong tin nhắn, trình duyệt sẽ mở thẳng trang nhận game của Epic Games Store mà mình không cần phải mở launcher hay vào trang chủ để tìm kiếm nữa!</p>
+<h3>Bài học rút ra từ dự án nhỏ này:</h3>
+<ul>
+<li><strong>Tận dụng API ẩn:</strong> Hầu hết các website lớn đều có API nội bộ hoạt động rất mượt mà. Thay vì cào HTML (web scraping) dễ lỗi, hãy ưu tiên tìm kiếm các endpoint JSON ẩn này.</li>
+<li><strong>TypeScript trên Deno là chân ái:</strong> Cho các dự án kịch bản (automation scripts), Deno giúp giảm thiểu 90% thời gian thiết lập môi trường so với Node.js truyền thống.</li>
+</ul>
+<p>Chúc các bạn săn game vui vẻ và không bao giờ bỏ lỡ bất kỳ cực phẩm miễn phí nào từ Epic Games nữa nhé! 🚀</p>
+</article></div>
+  </body>
+</html>

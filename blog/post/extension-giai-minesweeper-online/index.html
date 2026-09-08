@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Single Page Apps for GitHub Pages Redirect Decoder -->
+    <script type="text/javascript">
+      (function(l) {
+        if (l.search[1] === '/' ) {
+          var decoded = l.search.slice(1).split('&').map(function(s) { 
+            return s.replace(/~and~/g, '&')
+          }).join('?');
+          window.history.replaceState(null, null,
+              l.pathname.slice(0, -1) + decoded + l.hash
+          );
+        }
+      }(window.location))
+    </script>
+    <meta name="author" content="Hà Mạnh Kiên (uongsuadaubung)" />
+    <meta name="description" content="Hành trình xây dựng Browser Extension tính toán và giải minesweeper.online: Bóc tách DOM động, trừu tượng hóa bàn cờ bằng Adapter, giải bài toán ràng buộc Tank CSP, tính xác suất Bayes và vẽ Heatmap thời gian thực." />
+    <meta property="og:title" content="Viết Extension giải Minesweeper.online: Từ bóc tách DOM, mô phỏng bàn cờ đến thuật toán Tank CSP & Bayes — uongsuadaubung" />
+    <meta property="og:description" content="Hành trình xây dựng Browser Extension tính toán và giải minesweeper.online: Bóc tách DOM động, trừu tượng hóa bàn cờ bằng Adapter, giải bài toán ràng buộc Tank CSP, tính xác suất Bayes và vẽ Heatmap thời gian thực." />
+    <meta property="og:type" content="website" />
+    <title>Viết Extension giải Minesweeper.online: Từ bóc tách DOM, mô phỏng bàn cờ đến thuật toán Tank CSP & Bayes — uongsuadaubung</title>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Hà Mạnh Kiên",
+      "alternateName": "uongsuadaubung",
+      "jobTitle": "Full Stack Web Developer",
+      "email": "k97.dev@gmail.com",
+      "telephone": "+84868931497",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Hà Nội",
+        "addressCountry": "VN"
+      },
+      "alumniOf": {
+        "@type": "EducationalOrganization",
+        "name": "Đại học Mở Hà Nội"
+      },
+      "sameAs": [
+        "https://github.com/uongsuadaubung"
+      ]
+    }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DrYRquR4.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DaAWQ7E0.css">
+    <link rel="canonical" href="https://uongsuadaubung.github.io/blog/extension-giai-minesweeper-online/" />
+  </head>
+  <body>
+    <div id="root"><article class="markdown-body" style="max-width:800px;margin:40px auto;padding:0 20px;font-family:sans-serif;line-height:1.6;"><h1>Viết Extension giải Minesweeper.online: Từ bóc tách DOM, mô phỏng bàn cờ đến thuật toán Tank CSP & Bayes</h1><p>Đã lâu lắm rồi mình không còn đụng vào mấy trò hack/cheat game nữa. Dạo gần đây rảnh rỗi ngồi bấm vài ván Dò Mìn (Minesweeper) giải trí, ai dè mò vào trang <strong><a href="https://minesweeper.online">minesweeper.online</a></strong> chơi thử thì gặp mấy map rộng với những thế cờ hiểm hóc làm mình toát cả mồ hôi hột. Càng chơi càng cuốn mà thua liên tục thì cay cú không chịu nổi, thế là máu tò mò và cái tính &quot;nghề cũ tái phát&quot; lại trỗi dậy!</p>
+<p>Nhớ lại hồi xưa (tận năm 2020), mình cũng từng có hai bài viết <a href="/blog/hack-minesweeper-part-1/">Hack Minesweeper part 1</a> và <a href="/blog/hack-minesweeper-part-2/">part 2</a> dùng Cheat Engine với C# <code>ReadProcessMemory</code> chọc thẳng vào RAM của game <code>Winmine.exe</code> trên Windows XP để đọc vị trí bom. Nhưng giờ game đã chuyển hẳn lên web với hệ thống xếp hạng rank và giải đấu toàn cầu, không còn môi trường RAM nguyên thủy để chọc nữa.</p>
+<p>Và thế là bài toán lần này được nâng cấp lên một tầm cao mới: <strong>Làm thế nào để xây dựng một Browser Extension tự động tính toán nước đi chuẩn xác theo thời gian thực?</strong> Một công cụ có thể tự động bóc tách trạng thái bàn cờ từ DOM web, áp dụng các thuật toán giải logic &amp; xác suất toán học thuần túy, rồi vẽ trực tiếp bản đồ nhiệt (Heatmap) lên giao diện game mà không làm giật lag một khung hình nào.</p>
+<p>Hôm nay, hãy cùng mình bước vào hành trình &quot;tái xuất giang hồ&quot; này từ con số 0 nhé! 🚀</p>
+<hr>
+<h2>🔍 Chặng 1: Mổ xẻ cấu trúc DOM của minesweeper.online</h2>
+<p>Muốn can thiệp vào bất kỳ web game nào, vũ khí đầu tiên luôn là tổ hợp phím bất hủ: <code>F12</code> (Chrome DevTools).</p>
+<p>Khác với các game vẽ trên HTML5 <code>&lt;canvas&gt;</code> (rất khó bóc tách tọa độ trừ khi hook thẳng vào hàm render WebGL/Canvas2D), trang <strong>minesweeper.online</strong> dựng toàn bộ bàn cờ bằng các thẻ HTML DOM thuần túy. Đây là một lợi thế cực lớn!</p>
+<pre><code class="language-html">&lt;!-- Cấu trúc vùng bàn cờ tại minesweeper.online --&gt;
+&lt;div id=&quot;AreaBlock&quot; class=&quot;unselectable&quot;&gt;
+  &lt;div id=&quot;cell_0_0&quot; class=&quot;cell hdd_opened hdd_type1&quot; data-x=&quot;0&quot; data-y=&quot;0&quot;&gt;&lt;/div&gt;
+  &lt;div id=&quot;cell_1_0&quot; class=&quot;cell hdd_closed&quot; data-x=&quot;1&quot; data-y=&quot;0&quot;&gt;&lt;/div&gt;
+  &lt;div id=&quot;cell_2_0&quot; class=&quot;cell hdd_closed hdd_flag&quot; data-x=&quot;2&quot; data-y=&quot;0&quot;&gt;&lt;/div&gt;
+  &lt;!-- Hàng trăm ô cell khác... --&gt;
+&lt;/div&gt;
+</code></pre>
+<h3>1. Giải mã hệ thống CSS Class của từng ô cờ</h3>
+<p>Sau khi soi từng phần tử <code>.cell</code>, mình đúc kết được bảng quy tắc ánh xạ trạng thái cực kỳ mạch lạc:</p>
+<ul>
+<li><strong>Tọa độ ô:</strong> Lưu sẵn trong thuộc tính <code>data-x</code> (cột) và <code>data-y</code> (dòng).</li>
+<li><strong>Trạng thái đóng/mở:</strong><ul>
+<li><code>hdd_opened</code> hoặc <code>opened</code>: Ô đã được lật mở.</li>
+<li><code>hdd_closed</code> hoặc không có <code>hdd_opened</code>: Ô đang đóng (chưa mở).</li>
+<li><code>hdd_flag</code> hoặc <code>flag</code>: Ô đã được người chơi cắm cờ.</li>
+<li><code>hdd_mine</code> / <code>hdd_exploded</code>: Ô có mìn hoặc mìn phát nổ kết thúc ván.</li>
+</ul>
+</li>
+<li><strong>Số mìn xung quanh:</strong> Các class từ <code>hdd_type0</code> đến <code>hdd_type8</code>. Trong đó <code>hdd_type0</code> là ô trống (số 0), <code>hdd_type1</code> là số 1 (xanh lam), <code>hdd_type2</code> là số 2 (xanh lục),...</li>
+</ul>
+<h3>2. Đọc số mìn còn lại từ màn hình LED 7 đoạn</h3>
+<p>Trên đầu bàn cờ có một cụm đồng hồ LED hiển thị số mìn còn lại gồm 3 chữ số: hàng trăm (<code>#top_area_mines_100</code>), hàng chục (<code>#top_area_mines_10</code>) và hàng đơn vị (<code>#top_area_mines_1</code>). Mỗi thẻ mang class kiểu <code>hdd_top-area-num{0-9}</code>:</p>
+<pre><code class="language-typescript">private extractDigit(id: string): number {
+  const el = document.getElementById(id);
+  if (!el) return 0;
+  const cls = el.className;
+  for (let i = 0; i &lt;= 9; i++) {
+    if (cls.includes(`hdd_top-area-num${i}`) || cls.includes(`top-area-num${i}`)) {
+      return i;
+    }
+  }
+  return 0;
+}
+</code></pre>
+<p>Nhờ đó, tổng số mìn chưa tìm ra sẽ là: <code>remainingMines = m100 * 100 + m10 * 10 + m1</code>.</p>
+<hr>
+<h2>🏗️ Chặng 2: Mô phỏng lại bàn cờ &amp; Đồng bộ Real-Time không độ trễ</h2>
+<p>Sau khi bóc tách được các phần tử DOM, việc tiếp theo là mô phỏng lại toàn bộ trạng thái bàn cờ dưới dạng ma trận dữ liệu thuần túy <code>BoardState</code>. Nhờ đó, lõi thuật toán giải có thể tập trung xử lý logic độc lập trên dữ liệu ma trận mà không cần quan tâm đến các thẻ HTML:</p>
+<pre><code class="language-typescript">export interface CellData {
+  row: number;
+  col: number;
+  isRevealed: boolean;
+  isFlagged: boolean;
+  isMine?: boolean;
+  neighborMines: number; // 0 đến 8
+  element: HTMLElement;
+}
+
+export interface BoardState {
+  rows: number;
+  cols: number;
+  remainingMines: number;
+  grid: CellData[][];
+}
+</code></pre>
+<h3>Bài toán đồng bộ Real-Time 3 lớp (Multi-layer Real-Time Sync)</h3>
+<p>Một ván Dò Mìn tốc độ cao có thể có đến 5–10 cú click mỗi giây. Nếu dùng <code>setInterval</code> quét DOM liên tục thì cực kỳ tốn CPU và gây giật khung hình. Ngược lại, nếu chỉ dùng một cơ chế đơn lẻ thì rất dễ bị miss (bỏ lỡ) sự kiện.</p>
+<p>Mình giải quyết triệt để bằng <strong>hệ thống đồng bộ 3 tầng</strong>:</p>
+<pre><code>┌─────────────────────────────────────────────────────────────┐
+│               HỆ THỐNG ĐỒNG BỘ 3 TẦNG THỜI GIAN THỰC        │
+├─────────────────────────────────────────────────────────────┤
+│ 👁️ Tầng 1: MutationObserver (Lắng nghe thay đổi cây DOM)    │
+│            -&gt; Bắt các biến đổi cấu trúc bàn cờ từ game      │
+│                                                             │
+│ 🖱️ Tầng 2: Global Pointer Listeners (Bắt cú click chuột)     │
+│            -&gt; Debounce 30ms kích hoạt tính toán ngay lập tức │
+│                                                             │
+│ 💓 Tầng 3: State Hash Heartbeat (Nhịp tim băm trạng thái)   │
+│            -&gt; Băm &quot;${total}_${revealed}_${flagged}&quot; mỗi     │
+│               350ms bắt trọn mọi biến động âm thầm          │
+└─────────────────────────────────────────────────────────────┘
+</code></pre>
+<hr>
+<h2>🧠 Chặng 3: Thuật toán giải — Từ logic cơ bản đến Tank CSP &amp; Bayes</h2>
+<p>Đây chính là phần cốt lõi của toàn bộ dự án! Làm sao để từ ma trận các con số, chương trình có thể suy luận ra đâu là ô an toàn 100%, đâu là mìn 100%, và khi gặp thế bí thì ô nào có xác suất sống sót cao nhất?</p>
+<p>Thuật toán trong <code>src/solver.ts</code> được thiết kế theo 3 tầng từ nhanh đến sâu:</p>
+<pre><code>                  ┌───────────────────────────────┐
+                  │ Bắt đầu: Trích xuất ràng buộc │
+                  │  Constraint: remMines = N     │
+                  └───────────────┬───────────────┘
+                                  │
+                                  ▼
+                  ┌───────────────────────────────┐
+                  │ Tầng 1: Single-Cell Logic     │
+                  │ rem == count -&gt; 100% Mìn      │
+                  │ rem == 0     -&gt; 100% An Toàn  │
+                  └───────────────┬───────────────┘
+                                  │ (Lan truyền &amp; thu hẹp)
+                                  ▼
+                  ┌───────────────────────────────┐
+                  │ Tầng 2: Subset Reduction      │
+                  │ (Khử tập con A ⊆ B)           │
+                  │ Giải quyết 1-2-1, 1-2-2-1     │
+                  └───────────────┬───────────────┘
+                                  │
+                       Vẫn còn ô chưa rõ?
+                       /              \
+                    [CÒN]            [HẾT] ──&gt; Trả kết quả 100%
+                      │
+                      ▼
+        ┌──────────────────────────────────────────┐
+        │ Tầng 3: TANK CSP + BAYESIAN SOLVER       │
+        │ - Chia thành các Connected Components    │
+        │ - Backtracking đếm tổng số nghiệm hợp lệ │
+        │ - Tính Heatmap % An Toàn &amp; Vùng hoang vu │
+        └──────────────────────────────────────────┘
+</code></pre>
+<p><img src="/images/extension-giai-minesweeper-online/image-01.png" alt="Gợi ý nước mở đầu tại ô trung tâm"></p>
+<p><em>Khi vừa vào ván và chưa mở ô nào, thuật toán tự động gợi ý mở ô trung tâm để tạo lợi thế ban đầu.</em></p>
+<h3>1. Trích xuất ràng buộc (Constraint Extraction)</h3>
+<p>Với mỗi ô đã mở có số lớn hơn 0 (ký hiệu là <code>V</code>), ta đếm số cờ đã cắm xung quanh (<code>F</code>) và tập hợp các ô chưa mở lân cận (<code>U</code>).<br>Ràng buộc toán học rất trực quan:</p>
+<pre><code class="language-text">Tổng số mìn trong các ô chưa mở (U) = Số trên ô (V) - Số cờ đã cắm (F) = remainingMines
+</code></pre>
+<h3>2. Tầng 1: Single-Cell Logic (Suy luận đơn ô)</h3>
+<ul>
+<li>Nếu <code>remainingMines == số ô chưa mở</code>: Tất cả các ô xung quanh chắc chắn là <strong>Mìn 100%</strong>!</li>
+<li>Nếu <code>remainingMines == 0</code>: Tất cả các ô xung quanh chắc chắn là <strong>An toàn 100%</strong>!</li>
+</ul>
+<p>Khi phát hiện mìn hoặc ô an toàn mới, ta lập tức lan truyền (propagate) kết quả này vào tất cả các ràng buộc khác và lặp lại vòng lặp.</p>
+<h3>3. Tầng 2: Khử tập con (Subset Reduction: A ⊆ B)</h3>
+<p>Trong game Dò Mìn, người chơi lâu năm thường nhớ các công thức mẫu như <em>&quot;thế 1-2-1&quot;</em>, <em>&quot;thế 1-2-2-1&quot;</em>, <em>&quot;thế góc tường&quot;</em>. Nhưng thay vì phải viết hàng chục hàm if-else hardcode từng trường hợp, toán học tập hợp cho phép ta giải quyết tổng quát bằng <strong>Khử tập con</strong>:</p>
+<p>Cho hai ràng buộc <code>A</code> và <code>B</code>. Nếu tập ô chưa mở của <code>A</code> nằm trọn trong tập ô chưa mở của <code>B</code> (tập con <code>A ⊆ B</code>):</p>
+<ul>
+<li>Số mìn nằm trong phần chênh lệch <code>(B trừ A)</code> sẽ đúng bằng: <code>ΔMines = remainingMines(B) - remainingMines(A)</code>.</li>
+<li><strong>Nếu ΔMines == 0:</strong> Toàn bộ các ô thuộc phần chênh lệch đều <strong>An toàn 100%</strong>!</li>
+<li><strong>Nếu ΔMines == số ô chênh lệch:</strong> Toàn bộ các ô thuộc phần chênh lệch đều là <strong>Mìn 100%</strong>!</li>
+</ul>
+<pre><code class="language-typescript">// Trích đoạn thuật toán Subset Reduction trong solver.ts
+if (cA.unknowns.length &gt; 0 &amp;&amp; cA.unknowns.length &lt; cB.unknowns.length) {
+  const isSubset = cA.unknowns.every(u =&gt; cB.unknowns.includes(u));
+  if (isSubset) {
+    const diffUnknowns = cB.unknowns.filter(u =&gt; !cA.unknowns.includes(u));
+    const diffMines = cB.remainingMines - cA.remainingMines;
+
+    if (diffMines === 0) {
+      // Toàn bộ phần chênh lệch là ô an toàn!
+      diffUnknowns.forEach(u =&gt; knownSafe.add(u));
+      progress = true;
+    } else if (diffMines === diffUnknowns.length) {
+      // Toàn bộ phần chênh lệch là mìn!
+      diffUnknowns.forEach(u =&gt; knownMines.add(u));
+      progress = true;
+    }
+  }
+}
+</code></pre>
+<p>Chỉ với vài dòng code đại số tập hợp thanh lịch này, mọi thế cờ 1-2-1 kinh điển hay các biến thể phức tạp trên cạnh tường đều được tự động phá giải trong nháy mắt!</p>
+<h3>4. Tầng 3: Tank CSP &amp; Tổ hợp xác suất Bayes (Giải quyết thế bí 50/50)</h3>
+<p>Khi cả Single-Cell lẫn Subset Reduction không tìm thêm được nước đi chắc chắn 100% nào, ván đấu rơi vào trạng thái phải suy đoán xác suất.</p>
+<p>Nếu chạy Backtracking vét cạn trên toàn bộ bàn cờ, độ phức tạp sẽ là <code>O(2^N)</code> với <code>N</code> là số ô chưa mở — một con số khổng lồ khiến trình duyệt đơ ngay lập tức. Để giải quyết, mình áp dụng kỹ thuật <strong>Tank CSP Solver</strong>:</p>
+<h4>Bước A: Phân rã đồ thị thành các cụm liên thông độc lập (Connected Components)</h4>
+<p>Hai ô biên chỉ phụ thuộc lẫn nhau nếu chúng cùng tham gia vào ít nhất một ràng buộc chung. Ta xây dựng một đồ thị vô hướng và dùng BFS/DFS để tách các biến biên (frontier) thành các cụm độc lập nhỏ hơn. Thay vì giải <code>2^30</code> trạng thái, ta chỉ cần giải vài cụm nhỏ <code>2^6</code>, <code>2^8</code> — tốc độ xử lý tăng gấp hàng nghìn lần!</p>
+<h4>Bước B: Quay lui (Backtracking) có cắt tỉa (Pruning)</h4>
+<p>Với mỗi cụm, ta duyệt gán thử từng ô nhận giá trị <code>0</code> (an toàn) hoặc <code>1</code> (mìn). Hàm <code>isPartialAssignmentValid</code> sẽ kiểm tra ngay lập tức: nếu số mìn đã gán vượt quá số mìn cho phép của bất kỳ ràng buộc nào, nhánh đó bị cắt tỉa (prune) lập tức mà không cần duyệt sâu thêm.</p>
+<pre><code class="language-typescript">// Kiểm tra tính hợp lệ từng phần để cắt tỉa nhánh quay lui
+private static isPartialAssignmentValid(
+  assignment: number[],
+  maxAssignedIdx: number,
+  compConstraints: { remainingMines: number; indices: number[] }[]
+): boolean {
+  for (const c of compConstraints) {
+    let assignedMines = 0;
+    let unassignedCount = 0;
+
+    for (const idx of c.indices) {
+      if (idx &lt;= maxAssignedIdx) {
+        if (assignment[idx] === 1) assignedMines++;
+      } else {
+        unassignedCount++;
+      }
+    }
+
+    // Cắt tỉa nếu đã thừa mìn hoặc dù gán hết ô còn lại vẫn thiếu mìn
+    if (assignedMines &gt; c.remainingMines) return false;
+    if (assignedMines + unassignedCount &lt; c.remainingMines) return false;
+  }
+  return true;
+}
+</code></pre>
+<h4>Bước C: Tính xác suất an toàn Bayes &amp; Vùng hoang vu (Wilderness)</h4>
+<p>Sau khi tìm được <code>T</code> nghiệm hợp lệ cho một cụm, nếu ô thứ <code>i</code> có mặt trong <code>M_i</code> nghiệm chứa mìn, thì tỉ lệ an toàn của ô đó được tính:</p>
+<pre><code class="language-text">Tỉ lệ An Toàn = 1 - (Số nghiệm chứa mìn / Tổng số nghiệm hợp lệ)
+</code></pre>
+<p>Đối với những ô nằm sâu phía ngoài vùng hoang vu (Wilderness - các ô ẩn chưa tiếp giáp với bất kỳ ô số nào), ta ước lượng số mìn còn lại sau khi trừ đi lượng mìn kỳ vọng ở các vùng biên:</p>
+<pre><code class="language-text">Mìn còn lại ngoài biên = max(0, Tổng mìn game - Tổng mìn kỳ vọng ở các biên)
+Tỉ lệ An Toàn ngoài biên = 1 - (Mìn còn lại ngoài biên / Tổng số ô hoang vu)
+</code></pre>
+<p>Nhờ vậy, khi gặp tình huống bế tắc bắt buộc phải đoán, thuật toán sẽ chỉ ra ngay ô có tỉ lệ an toàn cao nhất (ví dụ: <strong>87.5% an toàn</strong> thay vì đâm đầu vào ô 50% mìn)!</p>
+<hr>
+<h2>🎨 Chặng 4: Vẽ lại bản đồ &amp; Phủ Overlay trực quan lên Game</h2>
+<p>Có dữ liệu xác suất chuẩn xác trong tay rồi, bước cuối cùng là hiển thị trực quan nó lên trên bàn cờ của người chơi.</p>
+<pre><code>┌─────────────────────────────────────────────────────────────┐
+│ 🟩 100% (Xanh lục đậm)  : Ô AN TOÀN TUYỆT ĐỐI (Click ngay!) │
+│ 🟥 💣   (Đỏ thẫm)       : Ô CHẮC CHẮN LÀ MÌN (Cắm cờ!)      │
+│ 🟦 85%  (Xanh lam)      : Tỉ lệ an toàn rất cao (&gt;= 75%)    │
+│ 🟨 60%  (Hổ phách)      : Tỉ lệ an toàn trung bình (50-74%) │
+│ 🟧 25%  (Đỏ cảnh báo)   : Nguy hiểm cao (&lt; 50%)             │
+└─────────────────────────────────────────────────────────────┘
+</code></pre>
+<p><img src="/images/extension-giai-minesweeper-online/image-02.png" alt="Bản đồ nhiệt Heatmap hiển thị xác suất các ô"></p>
+<p><em>Sau nước mở đầu: Bàn cờ lập tức được phủ Heatmap — ô 100% an toàn (xanh lục), ô chắc chắn là mìn (đỏ có icon 💣) và các ô vùng hoang vu (xanh lam 84%).</em></p>
+<h3>1. Tối ưu hiệu năng DOM Reconciliation</h3>
+<p>Bàn cờ chế độ Expert có 480 ô, còn map Custom có thể lên đến hàng nghìn ô. Nếu mỗi lần người chơi bấm một nước mà extension lại xóa sạch DOM rồi tạo lại hàng nghìn phần tử <code>div</code>, trang web chắc chắn sẽ giật lag.</p>
+<p>Giải pháp là <strong>tái sử dụng (Reconciliation)</strong>:</p>
+<ol>
+<li>Duy trì các thẻ nhãn xác suất (badge) có sẵn trong từng ô.</li>
+<li>Dùng một <code>Set&lt;Element&gt;</code> đánh dấu các badge còn hiệu lực trong lượt tính toán hiện tại.</li>
+<li>Chỉ cập nhật lại nội dung text và màu nền nếu ô đó vẫn chưa mở.</li>
+<li>Xóa những badge của những ô vừa được lật mở.</li>
+</ol>
+<pre><code class="language-typescript">private renderHeatmapBadges(board: BoardState, probabilityMap: Map&lt;string, number&gt;) {
+  const currentValidBadges = new Set&lt;Element&gt;();
+
+  probabilityMap.forEach((safeProb, key) =&gt; {
+    const [r, c] = key.split(&#39;,&#39;).map(Number);
+    const cell = board.grid[r]?.[c];
+    if (cell &amp;&amp; !cell.isRevealed &amp;&amp; !cell.isFlagged &amp;&amp; cell.element) {
+      let badge = cell.element.firstElementChild as HTMLElement;
+      if (!badge) {
+        badge = document.createElement(&#39;div&#39;);
+        cell.element.style.position = &#39;relative&#39;;
+        cell.element.appendChild(badge);
+      }
+
+      const percent = Math.round(safeProb * 100);
+      badge.textContent = safeProb &lt;= 0.0001 ? &#39;💣&#39; : `${percent}%`;
+
+      currentValidBadges.add(badge);
+    }
+  });
+
+  // Dọn dẹp những badge không còn hợp lệ
+  // ...
+}
+</code></pre>
+<p><img src="/images/extension-giai-minesweeper-online/image-03.png" alt="Quá trình suy luận và giải thế cờ lan truyền"></p>
+<p><em>Quá trình suy luận liên hoàn: Vừa mở ô an toàn vừa tự động định vị toàn bộ mìn xung quanh theo thời gian thực.</em></p>
+<h3>2. Bí thuật CSS: <code>pointer-events: none</code></h3>
+<p>Một chi tiết kỹ thuật tưởng chừng nhỏ nhưng cực kỳ quan trọng: khi ta đè một lớp badge lên trên thẻ <code>.cell</code> của game, mặc định thẻ badge này sẽ &quot;chặn&quot; luôn cú click chuột của người dùng khiến bạn không bấm vào ô cờ được nữa!</p>
+<p>Chỉ cần một dòng CSS định mệnh:</p>
+<pre><code class="language-css">position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+pointer-events: none !important; /* Xuyên thấu toàn bộ sự kiện chuột! */
+z-index: 1000 !important;
+</code></pre>
+<p>Thuộc tính <code>pointer-events: none</code> làm cho toàn bộ lớp phủ trở nên &quot;vô hình&quot; trước con trỏ chuột. Mọi thao tác click trái, click phải của bạn đều xuyên thẳng xuống phần tử gốc của game một cách mượt mà không tì vết.</p>
+<hr>
+<h2>⚡ Chặng 5: Đóng gói Extension với SolidJS &amp; Bun</h2>
+<p>Để hoàn thiện sản phẩm, mình dựng thêm giao diện Popup điều khiển theo phong cách Retro Windows cổ điển bằng <strong>SolidJS</strong> siêu nhẹ kết hợp <strong>Bun</strong> và <strong>esbuild</strong>:</p>
+<p><img src="/images/extension-giai-minesweeper-online/image-04.png" alt="Giao diện Popup điều khiển Minesweeper Solver"></p>
+<p><em>Giao diện Popup điều khiển: Hiển thị trạng thái kết nối bàn cờ, nút bấm gợi ý nước đi và bật/tắt bản đồ nhiệt.</em></p>
+<ul>
+<li>Bật/tắt hiển thị Heatmap tức thì.</li>
+<li>Nút bấm &quot;Gợi Ý Nước Đi Tiếp Theo&quot; (Trigger Hint) để highlight ngay ô nên đi.</li>
+<li>Hiển thị thông số kết nối trạng thái bàn cờ theo thời gian thực.</li>
+</ul>
+<p>Toàn bộ quá trình build từ TypeScript, Sass sang bundle cho cả Chrome (Manifest v3) và Firefox diễn ra trong chưa đầy <strong>50 milisecond</strong> với Bun!</p>
+<hr>
+<h2>🎮 Chặng 6: Demo thực chiến — So sánh trước và sau khi giải</h2>
+<p>Dưới đây là màn so sánh thực tế giữa bàn cờ gốc và bàn cờ sau khi Extension phân tích qua các giai đoạn của ván đấu:</p>
+<h3>1. Tình huống Khử tập con (Subset Reduction)</h3>
+<table>
+<thead>
+<tr>
+<th align="center">Trước khi phân tích (Thế cờ gốc)</th>
+<th align="center">Sau khi Extension phân tích</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><img src="/images/extension-giai-minesweeper-online/subset-before.png" alt="Thế cờ gốc trước khi khử tập con"></td>
+<td align="center"><img src="/images/extension-giai-minesweeper-online/subset-after.png" alt="Extension phân tích khử tập con xác định mìn và ô an toàn"></td>
+</tr>
+</tbody></table>
+<p><em>So sánh trước và sau khi áp dụng Khử tập con: Tự động phát hiện 2 mìn 💣 (đỏ), 2 ô an toàn 100% (xanh lục) và các xác suất biên (59%, 75%).</em></p>
+<h3>2. Tình huống giải tỏa cụm biên phức tạp (Tank CSP &amp; Bayes)</h3>
+<table>
+<thead>
+<tr>
+<th align="center">Trước khi phân tích (Cụm biên phức tạp)</th>
+<th align="center">Sau khi Extension giải Tank CSP &amp; Bayes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><img src="/images/extension-giai-minesweeper-online/csp-before.png" alt="Cụm biên phức tạp trước khi giải Tank CSP"></td>
+<td align="center"><img src="/images/extension-giai-minesweeper-online/csp-after.png" alt="Extension giải tỏa cụm phức tạp bằng Tank CSP và tính xác suất Bayes"></td>
+</tr>
+</tbody></table>
+<p><em>So sánh trước và sau khi giải Tank CSP &amp; Bayes: Toàn bộ cụm biên phức tạp được phân tích đồng thời, chỉ rõ các vị trí mìn 💣 và tính toán xác suất an toàn chuẩn xác từng ô.</em></p>
+<h3>3. Tình huống hoàn tất ván đấu (Endgame trên bàn cờ lớn)</h3>
+<table>
+<thead>
+<tr>
+<th align="center">Trước khi phân tích (Thế cờ Endgame)</th>
+<th align="center">Sau khi Extension giải quyết toàn bộ bàn cờ</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><img src="/images/extension-giai-minesweeper-online/endgame-before.png" alt="Thế cờ bàn cờ lớn trước khi giải Endgame"></td>
+<td align="center"><img src="/images/extension-giai-minesweeper-online/endgame-after.png" alt="Extension định vị toàn bộ mìn và ô an toàn giai đoạn Endgame"></td>
+</tr>
+</tbody></table>
+<p><em>So sánh trước và sau ở giai đoạn Endgame: Toàn bộ mìn 💣 được khóa chặt và hàng ô an toàn 100% cuối cùng lộ diện giúp hoàn thành ván đấu trọn vẹn.</em></p>
+<hr>
+<h2>☕ Lời kết</h2>
+<p>Hy vọng câu chuyện chia sẻ về hành trình &quot;tái xuất giang hồ&quot; này sẽ mang lại cho anh em chút cảm hứng để xây dựng những công cụ hay ho cho riêng mình. Hẹn gặp lại anh em ở những bài viết tiếp theo! 🚀</p>
+</article></div>
+  </body>
+</html>

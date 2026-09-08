@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Single Page Apps for GitHub Pages Redirect Decoder -->
+    <script type="text/javascript">
+      (function(l) {
+        if (l.search[1] === '/' ) {
+          var decoded = l.search.slice(1).split('&').map(function(s) { 
+            return s.replace(/~and~/g, '&')
+          }).join('?');
+          window.history.replaceState(null, null,
+              l.pathname.slice(0, -1) + decoded + l.hash
+          );
+        }
+      }(window.location))
+    </script>
+    <meta name="author" content="Hà Mạnh Kiên (uongsuadaubung)" />
+    <meta name="description" content="Sau vài năm đi học thì mình mới chợt nhận ra là mình sống khá nhạt nhẽo, cho nên mình quyết định sẽ dọn nhà làm trang web riêng để thử viết lách linh tinh về nhiều thứ." />
+    <meta property="og:title" content="Xin chào thế giới — Blog của mình chính thức bắt đầu từ đây — uongsuadaubung" />
+    <meta property="og:description" content="Sau vài năm đi học thì mình mới chợt nhận ra là mình sống khá nhạt nhẽo, cho nên mình quyết định sẽ dọn nhà làm trang web riêng để thử viết lách linh tinh về nhiều thứ." />
+    <meta property="og:type" content="website" />
+    <title>Xin chào thế giới — Blog của mình chính thức bắt đầu từ đây — uongsuadaubung</title>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Hà Mạnh Kiên",
+      "alternateName": "uongsuadaubung",
+      "jobTitle": "Full Stack Web Developer",
+      "email": "k97.dev@gmail.com",
+      "telephone": "+84868931497",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Hà Nội",
+        "addressCountry": "VN"
+      },
+      "alumniOf": {
+        "@type": "EducationalOrganization",
+        "name": "Đại học Mở Hà Nội"
+      },
+      "sameAs": [
+        "https://github.com/uongsuadaubung"
+      ]
+    }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DrYRquR4.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DaAWQ7E0.css">
+    <link rel="canonical" href="https://uongsuadaubung.github.io/blog/xin-chao-the-gioi/" />
+  </head>
+  <body>
+    <div id="root"><article class="markdown-body" style="max-width:800px;margin:40px auto;padding:0 20px;font-family:sans-serif;line-height:1.6;"><h1>Xin chào thế giới — Blog của mình chính thức bắt đầu từ đây</h1><p><img src="/images/hello-world/image-01.png" alt="Hello World"></p>
+<p>Chuyện là sau vài năm đi học mài mòn ghế nhà trường, mình chợt nhận ra cuộc sống của bản thân có vẻ hơi nhạt nhẽo... Thế là vào một ngày đẹp trời, mình đi đến một quyết định táo bạo: sẽ thử viết lách linh tinh về những dự án, những góc khuất trong ngành và đủ các thể loại code mà mình cày cuốc được. Biết đâu những dòng chữ lởm chởm này lại phần nào gợi cảm hứng được cho các bạn sinh viên Công nghệ thông tin, hoặc các em cấp 3 đang có đam mê táy máy với máy tính chẳng hạn.</p>
+<p>Ban đầu lúc viết mấy bài đầu trên nền tảng blog cũ cũng sợ chả ai thèm đọc, vì rành gì rành chứ mình mù tịt vụ đưa trang web lên top tìm kiếm (SEO). Nhưng nghĩ kỹ lại thì, cũng chả sao, nếu một ngày trình duyệt vô tình đưa bạn trôi dạt vào chiếc web này thì chứng tỏ chúng ta có duyên. Còn không, coi như đây là cuốn nhật ký số gõ bằng bàn phím cơ để mình viết lại cho chính mình đọc lúc về già thôi vậy 😁😁.</p>
+<h2>Nỗi đau chuyển nhà và xây &quot;Tổ&quot; mới</h2>
+<p>Sau một thời gian vứt bài rải rác trên mạng, mình quyết định nảy số gom hết mọi thứ về &quot;một nhà&quot; và xây hẳn một trang cá nhân tử tế mang tên miềng riêng. Để tự do tùy biến mọi ngóc ngách, sau hàng tá giờ lựa chọn framework, mình chốt ngay bộ công cụ siêu tốc độ này:</p>
+<table>
+<thead>
+<tr>
+<th>Thành phần</th>
+<th>Công nghệ sử dụng</th>
+<th>Mức độ hài lòng</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Lõi Framework</td>
+<td><strong>SvelteKit</strong></td>
+<td>Đơn giản, chia route và xử lý siêu mượt</td>
+</tr>
+<tr>
+<td>Giao diện</td>
+<td><strong>SCSS</strong></td>
+<td>Tự code từng dòng CSS, rập khuôn theo ý muốn</td>
+</tr>
+<tr>
+<td>Render bài viết</td>
+<td><strong>mdsvex</strong> (Markdown)</td>
+<td>Gõ file markdown rồi render ra thẳng HTML</td>
+</tr>
+<tr>
+<td>Host máy chủ</td>
+<td><strong>GitHub Pages</strong></td>
+<td>Cứ deploy là chạy, ưu điểm lớn nhất là: Miễn phí 100%!</td>
+</tr>
+</tbody></table>
+<p>Quyết tâm dựng lên cái web này không phải để múa kỹ năng, mà động lực thực sự phía sau lại rất &quot;thực dụng&quot;. Mình muốn có một chỗ toàn quyền kiểm soát để:</p>
+<ul>
+<li>Ghi chép lại những bài học và kinh nghiệm thực tế sau những đợt thiết kế app, làm framework.</li>
+<li>Khoe nhẹ (và lưu trữ) toàn bộ các project mà mình rảnh rỗi code chống cháy lúc nửa đêm.</li>
+<li>Xây dựng một &quot;CV sống&quot; thứ thiệt để bất kì ai lướt vào đều nhìn thấu cái tâm hồn làm nghề của mình.</li>
+</ul>
+<h2>Lời chào</h2>
+<p>Dựng lên cái nền móng này thì cũng tốn mất bao nhiêu ly cà phê. Trước mắt thì chỉ mong bản thân không nổi cơn lười rồi bỏ xó cái tổ ấm mới dọn này. Gạch đầu dòng nhẹ vài việc cần làm:</p>
+<ul>
+<li><input checked="" disabled="" type="checkbox"> Tìm kiếm một cái host ổn định</li>
+<li><input checked="" disabled="" type="checkbox"> Lắp xong bộ render công cụ Markdown cho Svelte</li>
+<li><input checked="" disabled="" type="checkbox"> Gom bài viết cũ và đăng tải lời chào sân đầu tiên</li>
+<li><input disabled="" type="checkbox"> Trầy trật tối ưu SEO để lọt lòng Google Search (Đang chật vật)</li>
+<li><input disabled="" type="checkbox"> Tu luyện ra những nội dung xịn xò vào thời gian tới</li>
+</ul>
+<blockquote>
+<p>&quot;Bất kỳ dòng code thối nào mà chạy được, đều đáng để lưu lại cho anh em cùng gỡ lỗi.&quot;</p>
+</blockquote>
+<p>Thay cho dòng lệnh in ra màn hình huyền thoại <code>print(&quot;Hello, World&quot;);</code>, mình xin gửi lời chào đến thế giới mạng! Hẹn gặp lại mọi người ở những chia sẻ về gỡ lỗi và phát triển hệ thống sắp tới! 🚀</p>
+</article></div>
+  </body>
+</html>

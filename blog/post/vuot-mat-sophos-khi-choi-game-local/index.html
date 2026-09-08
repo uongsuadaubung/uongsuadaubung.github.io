@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Single Page Apps for GitHub Pages Redirect Decoder -->
+    <script type="text/javascript">
+      (function(l) {
+        if (l.search[1] === '/' ) {
+          var decoded = l.search.slice(1).split('&').map(function(s) { 
+            return s.replace(/~and~/g, '&')
+          }).join('?');
+          window.history.replaceState(null, null,
+              l.pathname.slice(0, -1) + decoded + l.hash
+          );
+        }
+      }(window.location))
+    </script>
+    <meta name="author" content="Hà Mạnh Kiên (uongsuadaubung)" />
+    <meta name="description" content="Game chạy Docker ở localhost ngon lành mà vẫn bị Sophos Endpoint chặn file bin, mình quyết định đổi biểu diễn dữ liệu sang Base64 để vượt mặt DPI." />
+    <meta property="og:title" content="Khi Sophos chặn luôn cả localhost và cách mình vượt rào để chơi game — uongsuadaubung" />
+    <meta property="og:description" content="Game chạy Docker ở localhost ngon lành mà vẫn bị Sophos Endpoint chặn file bin, mình quyết định đổi biểu diễn dữ liệu sang Base64 để vượt mặt DPI." />
+    <meta property="og:type" content="website" />
+    <title>Khi Sophos chặn luôn cả localhost và cách mình vượt rào để chơi game — uongsuadaubung</title>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Hà Mạnh Kiên",
+      "alternateName": "uongsuadaubung",
+      "jobTitle": "Full Stack Web Developer",
+      "email": "k97.dev@gmail.com",
+      "telephone": "+84868931497",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Hà Nội",
+        "addressCountry": "VN"
+      },
+      "alumniOf": {
+        "@type": "EducationalOrganization",
+        "name": "Đại học Mở Hà Nội"
+      },
+      "sameAs": [
+        "https://github.com/uongsuadaubung"
+      ]
+    }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DrYRquR4.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DaAWQ7E0.css">
+    <link rel="canonical" href="https://uongsuadaubung.github.io/blog/vuot-mat-sophos-khi-choi-game-local/" />
+  </head>
+  <body>
+    <div id="root"><article class="markdown-body" style="max-width:800px;margin:40px auto;padding:0 20px;font-family:sans-serif;line-height:1.6;"><h1>Khi Sophos chặn luôn cả localhost và cách mình vượt rào để chơi game</h1><p>Chào anh em, dạo gần đây mình có mày mò chơi thử con game huyền thoại <strong>PvZGE</strong>
+(Plants vs Zombies 2 PC port chạy trên nền web - Cocos Creator v3.8.4).</p>
+<p>Do trang chủ chính thức <code>play.pvzge.com</code> đã bị hệ thống bảo mật doanh nghiệp
+<strong>Sophos Endpoint Agent</strong> chặn thẳng tay với lý do &quot;Games&quot; (chính sách công ty
+nên đành chịu thôi), mình quyết định chuyển sang giải pháp chạy game local. Mình
+kéo <strong>Docker Image</strong> đóng gói sẵn của game về chạy dưới container <code>pvzge</code>, port
+mapping <code>8080:80</code> trên <code>localhost</code>.</p>
+<p>Tưởng thế là xong, ai ngờ lại gặp một vấn đề: dù chạy trên localhost, Sophos Web Control vẫn thò tay vào chặn tệp tin đồ họa .bin của game, làm game bị treo ở màn hình loading!</p>
+<hr>
+<h2>1. Khi game local chạy nhưng vẫn bị Sophos chặn 🛡️</h2>
+<h3>Triệu chứng &quot;treo máy&quot;</h3>
+<p>Khi truy cập game tại <code>http://localhost:8080/</code>, game đứng im ở màn hình tải. Bật
+<code>F12</code> lên soi network thì thấy yêu cầu tải tệp tin cấu hình đồ họa tại:
+<code>http://localhost:8080/src/effect.bin</code> bị chặn hoàn toàn và trả về mã lỗi <strong>HTTP
+403 Forbidden</strong>.</p>
+<p>Phần Response Body trả về không phải là dữ liệu nhị phân của game mà là một
+trang HTML cảnh báo đỏ lòm từ Sophos:</p>
+<ul>
+<li><strong>Tiêu đề</strong>: <em>Access denied: Restricted file type</em></li>
+<li><strong>Loại tệp bị chặn</strong>: <em>File type: Other Executables</em></li>
+<li><strong>MIME type ghi nhận</strong>: <em>application/x-executable-file</em></li>
+<li><strong>Chính sách áp dụng</strong>: <em>Sophos Web Protection</em></li>
+</ul>
+<pre><code class="language-text">Browser (Chrome/Edge)        Sophos Web Control           Nginx (Docker)
+       |                           |                           |
+       |---(1) GET /effect.bin----&gt;|                           |
+       |                           |---(2) Forward request----&gt;|
+       |                           |                           |
+       |                           |&lt;--(3) Resp: effect.bin ---|
+       |                           |       (Binary Data)       |
+       |                           |                           |
+       |                           | [DPI Scan: Phát hiện      |
+       |                           |  file nhị phân / executable]
+       |                           |                           |
+       |&lt;--(4) Resp: Block Page ---|                           |
+       |       (HTTP 403 HTML)     |                           |
+</code></pre>
+<h3>Tại sao Sophos lại khó chịu thế?</h3>
+<p>Sophos Web Control hoạt động bằng cách hook trực tiếp vào các tiến trình trình
+duyệt phổ biến (<code>chrome.exe</code>, <code>firefox.exe</code>, <code>msedge.exe</code>) hoặc lọc gói tin
+thông qua WFP (Windows Filtering Platform).</p>
+<p>Khi trình duyệt yêu cầu hoặc nhận về một tệp tin qua giao thức HTTP không mã
+hóa:</p>
+<ol>
+<li>Sophos quét phần mở rộng của URL (ở đây là đuôi <code>.bin</code>).</li>
+<li>Sophos thực hiện <strong>DPI (Deep Packet Inspection)</strong> quét các byte đầu tiên
+(magic bytes) để nhận diện cấu trúc file nhị phân thực thi.</li>
+<li>Vì chính sách an ninh chặn tải các tệp thực thi trái phép (tránh malware),
+Sophos chặn luôn luồng phản hồi và nhét trang HTML cảnh báo (403) vào.</li>
+</ol>
+<hr>
+<h2>2. Quá trình thử và sai</h2>
+<p>Để tìm cách vượt qua rào cản này mà không cần quyền Admin (vì laptop công ty cấp
+thì lấy đâu ra quyền Admin), mình đã thử đủ trò từ dễ đến khó. Dưới đây là 4
+phương án mình đã test và cái kết:</p>
+<table>
+<thead>
+<tr>
+<th align="left">STT</th>
+<th align="left">Phương án</th>
+<th align="left">Cách làm</th>
+<th align="left">Kết quả</th>
+<th align="left">Vì sao tạch/thành công?</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>1</strong></td>
+<td align="left"><strong>Dùng công cụ non-browser</strong></td>
+<td align="left">Dùng <code>Postman</code> hoặc <code>curl</code> không giả lập User-Agent của trình duyệt để tải tệp.</td>
+<td align="left"><strong>Thành công</strong> (HTTP 200 OK)</td>
+<td align="left">Sophos Web Control bỏ qua các tiến trình dev như <code>curl.exe</code> hay <code>Postman.exe</code> để anh em dev còn làm việc.</td>
+</tr>
+<tr>
+<td align="left"><strong>2</strong></td>
+<td align="left"><strong>Đổi Content-Type trên Nginx</strong></td>
+<td align="left">Cấu hình Nginx trả về tệp <code>.bin</code> dưới dạng MIME <code>text/plain</code> thay vì <code>application/octet-stream</code>.</td>
+<td align="left"><strong>Thất bại</strong> (HTTP 403)</td>
+<td align="left">Sophos dùng DPI quét magic bytes ở đầu file. Thấy là file nhị phân (non-ASCII) là nó trảm luôn không cần biết Content-Type là gì.</td>
+</tr>
+<tr>
+<td align="left"><strong>3</strong></td>
+<td align="left"><strong>Chuyển hướng (302 Redirect)</strong></td>
+<td align="left">Đổi tên file thành <code>.bin.txt</code>, cấu hình Nginx redirect (302) từ <code>.bin</code> sang <code>.bin.txt</code>.</td>
+<td align="left"><strong>Thất bại</strong> (HTTP 403)</td>
+<td align="left">Dù chuyển sang <code>.txt</code> (vốn được phép tải), Sophos vẫn quét ruột file. Thấy nhị phân là lại cấm.</td>
+</tr>
+<tr>
+<td align="left"><strong>4</strong></td>
+<td align="left"><strong>Nén dữ liệu mạng (Gzip)</strong></td>
+<td align="left">Ép Nginx nén gzip tệp tin <code>.bin</code> trước khi gửi đi với header <code>Content-Encoding: gzip</code>.</td>
+<td align="left"><strong>Thất bại</strong> (HTTP 403)</td>
+<td align="left">Sophos thừa sức giải nén gzip on-the-fly để quét trước khi đưa tới trình duyệt.</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>3. Giải pháp thành công: Mã hóa Base64 &amp; vá Engine Cocos 🛠️</h2>
+<p>Vì mấy cái trò đổi header hay nén gzip đều bị Sophos đi guốc trong bụng nhờ quả
+DPI xịn xò, mình đành phải chơi chiêu cuối: <strong>chuyển toàn bộ dữ liệu nhị phân
+(Binary) của file <code>.bin</code> thành văn bản thuần túy (Plain Text) bằng Base64</strong>. Để
+xem Sophos còn chặn kiểu gì!</p>
+<h3>Chiêu thức hoạt động</h3>
+<ol>
+<li><strong>Phía Server (Nginx)</strong>: Tệp <code>effect.bin</code> (nhị phân) được mã hóa Base64 thành
+tệp <code>effect.txt</code> (văn bản ASCII chỉ chứa các ký tự <code>A-Z</code>, <code>a-z</code>, <code>0-9</code>, <code>+</code>,
+<code>/</code>, <code>=</code>). Đối với Sophos, đây hoàn toàn là một tệp văn bản hợp lệ và vô hại,
+cho phép đi qua tự do.</li>
+<li><strong>Phía Client (Trình duyệt)</strong>: Sửa đổi logic nạp dữ liệu đồ họa của Cocos
+Engine. Khi engine cố gắng tải <code>src/effect.bin</code> qua <code>XMLHttpRequest</code>, ta can
+thiệp để chuyển hướng yêu cầu sang tệp văn bản <code>src/effect.txt</code>. Sau khi tải
+về chuỗi Base64, mã JavaScript client-side sẽ giải mã chuỗi này ngược lại
+thành một mảng byte (<code>Uint8Array</code>) và đưa lại vào vùng nhớ đệm
+(<code>ArrayBuffer</code>) ban đầu để Cocos tiếp tục xử lý.</li>
+</ol>
+<pre><code class="language-text">Browser (Game Code)          Sophos Web Control           Nginx (Docker)
+       |                           |                           |
+       |---(1) GET /effect.txt----&gt;|                           |
+       |                           | [Quét: URL (.txt) &amp;       |
+       |                           |  Nội dung (Base64 ASCII)  |
+       |                           |  =&gt; Bỏ qua (Hợp lệ)]      |
+       |                           |                           |
+       |                           |---(2) Forward request----&gt;|
+       |                           |                           |
+       |                           |&lt;--(3) Resp: effect.txt ---|
+       |                           |       (Base64 String)     |
+       |                           |                           |
+       |&lt;--(4) Resp: effect.txt ---|                           |
+       |       (HTTP 200 OK)       |                           |
+       |                           |                           |
+       | [window.atob() decode     |                           |
+       |  Base64 -&gt; ArrayBuffer]   |                           |
+       |                           |                           |
+       | [Cocos Engine khởi chạy]  |                           |
+</code></pre>
+<h3>Bắt tay vào thực hiện thôi!</h3>
+<h4>Bước 1: Phù phép file nhị phân thành chuỗi Base64</h4>
+<p>Đọc file nhị phân từ game, đổi sang chuỗi Base64 và ghi đè ra file <code>.txt</code>:</p>
+<pre><code class="language-powershell"># Tải file từ container ra host
+docker cp pvzge:/usr/share/nginx/html/src/effect.bin ./effect.bin
+
+# Mã hóa Base64 sang file text thuần túy
+[IO.File]::WriteAllText(&quot;$(Get-Location)/effect.txt&quot;, [Convert]::ToBase64String([IO.File]::ReadAllBytes(&quot;./effect.bin&quot;)))
+
+# Đẩy file text lên lại container
+docker cp ./effect.txt pvzge:/usr/share/nginx/html/src/effect.txt
+</code></pre>
+<h4>Bước 2: &quot;Vá&quot; engine Cocos Creator</h4>
+<p>Trong mã nguồn Cocos Creator v3.8.4, cấu hình đường dẫn <code>effectSettingsPath</code>
+được đọc từ <code>settings.json</code> và truyền vào hàm khởi tạo:</p>
+<pre><code class="language-javascript">TB.init(Pe.querySettings(De.Category.RENDERING, &quot;effectSettingsPath&quot;));
+</code></pre>
+<p>Hàm <code>TB.init</code> gốc sử dụng <code>XMLHttpRequest</code> để tải file dưới dạng nhị phân
+(<code>responseType = &quot;arraybuffer&quot;</code>):</p>
+<pre><code class="language-javascript">t.prototype.init = function (t) {
+  var e = this;
+  return void 0 === t &amp;&amp; (t = &quot;&quot;),
+    S.rendering &amp;&amp; S.rendering.enableEffectImport &amp;&amp; t
+      ? new Promise(function (i, n) {
+        var r = new XMLHttpRequest();
+        r.open(&quot;GET&quot;, t),
+          r.responseType = &quot;arraybuffer&quot;,
+          r.onload = function () {
+            e._data = r.response, i();
+          },
+          r.onerror = function () {
+            n(new Error(&quot;request effect settings failed!&quot;));
+          },
+          r.send(null);
+      })
+      : Promise.resolve();
+};
+</code></pre>
+<p>Và đây là cách mình đè lại hàm <code>init</code> để bắt nó tải file <code>.txt</code> chứa chuỗi
+Base64 rồi tự decode ngược lại:</p>
+<pre><code class="language-javascript">t.prototype.init = function (t) {
+  var e = this;
+  return void 0 === t &amp;&amp; (t = &quot;&quot;),
+    S.rendering &amp;&amp; S.rendering.enableEffectImport &amp;&amp; t
+      ? new Promise(function (i, n) {
+        var r = new XMLHttpRequest();
+        // 1. Chuyển hướng yêu cầu từ .bin sang .txt
+        var targetUrl = t.replace(&quot;effect.bin&quot;, &quot;effect.txt&quot;);
+        r.open(&quot;GET&quot;, targetUrl),
+          r.onload = function () {
+            try {
+              // 2. Đọc chuỗi Base64 và giải mã sang chuỗi nhị phân bằng atob()
+              var binary_string = window.atob(r.responseText.trim()),
+                len = binary_string.length,
+                bytes = new Uint8Array(len);
+              // 3. Chuyển đổi chuỗi nhị phân thành ArrayBuffer
+              for (var idx = 0; idx &lt; len; idx++) {
+                bytes[idx] = binary_string.charCodeAt(idx);
+              }
+              e._data = bytes.buffer;
+              i();
+            } catch (err) {
+              n(err);
+            }
+          },
+          r.onerror = function () {
+            n(new Error(&quot;request effect settings failed!&quot;));
+          },
+          r.send(null);
+      })
+      : Promise.resolve();
+};
+</code></pre>
+<hr>
+<h2>4. Kết luận &amp; Bài học rút ra 💡</h2>
+<h3>Đánh giá &quot;quả&quot; giải pháp này</h3>
+<ul>
+<li><strong>Ưu điểm</strong>:<ul>
+<li>Vượt qua 100% cơ chế kiểm duyệt DPI của Sophos mà không cần xin quyền Admin
+hay cấu hình Exclusions mệt mỏi.</li>
+<li>Tải game mượt mà trên mọi trình duyệt mà không làm ảnh hưởng trải nghiệm
+chơi.</li>
+<li>File <code>effect.bin</code> cực kỳ nhỏ (~4KB) nên khi chuyển sang Base64 tăng lên
+~5.3KB, giải mã ở client mất chưa đến 1ms, không lo giật lag.</li>
+</ul>
+</li>
+<li><strong>Nhược điểm</strong>:<ul>
+<li>Mỗi lần game cập nhật phiên bản mới, nếu dev build lại dự án Cocos, ta phải
+vá lại đống JS của engine (vì tên file build hay bị hash ngẫu nhiên). Cơ mà
+việc này viết script PowerShell tự động hóa là xong ngay.</li>
+</ul>
+</li>
+</ul>
+<h3>Bài học xương máu</h3>
+<p>Khi gặp mấy quả tường lửa hoặc antivirus công ty chặn mạng:</p>
+<ul>
+<li>Đừng cố tìm cách bypass ở tầng hạ tầng hay network bypass nếu không có quyền
+admin.</li>
+<li><strong>Thay đổi biểu diễn dữ liệu (Data Representation Transformation)</strong> như mã hóa
+Base64, XOR nhẹ hoặc custom serialization luôn là cứu cánh tuyệt vời để lách
+qua các khe cửa hẹp của hệ thống giám sát.</li>
+</ul>
+<p>Thôi bài viết đến đây cũng mỏi tay gõ phím cmnr. Chúc anh em lách luật và chơi
+game vui vẻ nhé! 😉</p>
+</article></div>
+  </body>
+</html>

@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Single Page Apps for GitHub Pages Redirect Decoder -->
+    <script type="text/javascript">
+      (function(l) {
+        if (l.search[1] === '/' ) {
+          var decoded = l.search.slice(1).split('&').map(function(s) { 
+            return s.replace(/~and~/g, '&')
+          }).join('?');
+          window.history.replaceState(null, null,
+              l.pathname.slice(0, -1) + decoded + l.hash
+          );
+        }
+      }(window.location))
+    </script>
+    <meta name="author" content="Hà Mạnh Kiên (uongsuadaubung)" />
+    <meta name="description" content="Chrome Extension dọn dẹp và tối ưu Newsfeed Facebook." />
+    <meta property="og:title" content="Viết Chrome Extension dọn dẹp Newsfeed Facebook — uongsuadaubung" />
+    <meta property="og:description" content="Chrome Extension dọn dẹp và tối ưu Newsfeed Facebook." />
+    <meta property="og:type" content="website" />
+    <title>Viết Chrome Extension dọn dẹp Newsfeed Facebook — uongsuadaubung</title>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Hà Mạnh Kiên",
+      "alternateName": "uongsuadaubung",
+      "jobTitle": "Full Stack Web Developer",
+      "email": "k97.dev@gmail.com",
+      "telephone": "+84868931497",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Hà Nội",
+        "addressCountry": "VN"
+      },
+      "alumniOf": {
+        "@type": "EducationalOrganization",
+        "name": "Đại học Mở Hà Nội"
+      },
+      "sameAs": [
+        "https://github.com/uongsuadaubung"
+      ]
+    }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DrYRquR4.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DaAWQ7E0.css">
+    <link rel="canonical" href="https://uongsuadaubung.github.io/blog/tu-lam-facebook-extension/" />
+  </head>
+  <body>
+    <div id="root"><article class="markdown-body" style="max-width:800px;margin:40px auto;padding:0 20px;font-family:sans-serif;line-height:1.6;"><h1>Viết Chrome Extension dọn dẹp Newsfeed Facebook</h1><p>Những năm gần đây mình bắt đầu cảm thấy hơi phiền mỗi khi truy cập <code>facebook.com</code>. Mở màn hình lên, thay vì được xem cập nhật của bạn bè người thân, giao diện hiển thị khá nhiều phần &quot;Gợi ý cho bạn&quot;, &quot;Sponsor&quot;, rồi cả các đoạn Reels từ những trang không theo dõi.</p>
+<p>Để giải quyết sự bất tiện này, mình quyết định viết một cái Chrome Extension nhằm lọc bớt các nội dung thừa cho sạch sẽ. Ban đầu cứ nghĩ chỉ cần vài dòng regex là xong, ai ngờ thực tế DOM của Facebook lại phức tạp hơn nhiều.</p>
+<h2>1. Lọc các nội dung quảng cáo cơ bản</h2>
+<p>Khảo sát nhanh cấu trúc DOM của Facebook, mình phát hiện mọi thứ được render bằng React, và các bài đăng trên Newsfeed đều có thuộc tính <code>data-pagelet^=&quot;FeedUnit_&quot;</code>. Tư duy ban đầu rất đơn giản, mình lập một danh sách các từ khóa cần lọc:</p>
+<pre><code class="language-javascript">let stringAds = [
+    &quot;Post you may like&quot;,
+    &quot;Suggested for you&quot;,
+    &quot;Sponsored&quot;,
+    &quot;Videos just for you&quot;,
+    &quot;People You May Know&quot;,
+    &quot;Gợi ý cho bạn&quot;
+]
+</code></pre>
+<p>Xong chỉ việc chạy vòng lặp tìm các phần tử chứa từ khóa và ẩn đi. Để tránh quét lại các phần tử đã xử lý, mình gắn thêm một class <code>done</code>:</p>
+<pre><code class="language-javascript">let notScanned = document.querySelectorAll(&#39;div:not(.done)[data-pagelet^=&quot;FeedUnit_&quot;]&#39;);
+for (const ele of notScanned) {
+    ele.classList.add(&quot;done&quot;);
+    if (stringAds.some(ads =&gt; ele.innerText.includes(ads))){
+        ele.remove() // Ẩn phần tử
+        console.log(&quot;Đã xoá quảng cáo: &quot;, ele.innerText.slice(0, 20))
+    }
+}
+</code></pre>
+<p>Mọi thứ hoạt động ổn định ở trang chủ, cho đến khi mình chuyển sang tab Watch...</p>
+<h2>2. Loại bỏ video trùng lặp bằng hàm băm cyrb53</h2>
+<p>Khi cuộn chuột trong phần <code>/watch</code>, thuật toán liên tục tải lại các đoạn video mình vừa mới lướt qua không lâu trước đó, khá mất thời gian và gây loãng nội dung.</p>
+<p>Để giải quyết, mình phải đi sâu vào cấu trúc của từng thẻ Video card (<code>div.j83agx80.cbu4d94t</code>). Bài toán đặt ra là: Làm sao để nhận diện được video đã xem trước đó một cách nhanh chóng?</p>
+<p>Giải pháp là băm chuỗi nội dung văn bản (Hash) của từng post thành một con số duy nhất bằng giải thuật băm <strong>cyrb53</strong>:</p>
+<pre><code class="language-javascript">// Hàm băm nội dung để tạo mã nhận diện riêng biệt cho mỗi bài đăng
+function cyrb53 (str, seed = 0) {
+    let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
+    for (let i = 0, ch; i &lt; str.length; i++) {
+        ch = str.charCodeAt(i);
+        h1 = Math.imul(h1 ^ ch, 2654435761);
+        h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1 = Math.imul(h1 ^ (h1&gt;&gt;&gt;16), 2246822507) ^ Math.imul(h2 ^ (h2&gt;&gt;&gt;13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2&gt;&gt;&gt;16), 2246822507) ^ Math.imul(h1 ^ (h1&gt;&gt;&gt;13), 3266489909);
+    return 4294967296 * (2097151 &amp; h2) + (h1&gt;&gt;&gt;0);
+}
+
+// Bên trong vòng quét
+let split = ele.innerText.split(&#39;\n&#39;);
+// Chỉ lấy phần chữ làm dữ kiện để tạo hash
+let hash = cyrb53(split.slice(0, split.length - 10).join());
+
+if (!loadedPost.includes(hash)) {
+    loadedPost.push(hash);
+} else {
+    // Tìm thấy mã băm trùng lặp, tự động gỡ bài đăng
+    ele.remove();
+}
+</code></pre>
+<p>Trình duyệt giờ đã có thể tự động lọc và loại bỏ các video trùng lặp một cách nhanh chóng.</p>
+<h2>3. Xử lý trên Single Page Application (SPA) để ngụy trang tên Chat</h2>
+<p>Khi ngồi ở văn phòng, mình muốn ngụy trang danh sách liên hệ ở cột bên phải để tăng tính riêng tư. Ý tưởng ban đầu là hoán đổi ngẫu nhiên ký tự trong tên để ngụy trang:</p>
+<pre><code class="language-javascript">function encryptName(name) {
+    return name.split(&#39;&#39;).sort(() =&gt; 0.5 - Math.random()).join(&#39;&#39;);
+}
+</code></pre>
+<p>Mình chèn trực tiếp dòng đó để thay tên người liên hệ, ấn Save và reload web. Mọi tên đều được đảo lộn thành công.</p>
+<p>Tuy nhiên, khi có người mới online hoặc trạng thái thay đổi, React sẽ re-render phần tử DOM. Tên người dùng lập tức quay về giá trị ban đầu. Việc lắng nghe sự thay đổi DOM (Mutation Observer) vẫn không bắt kịp tốc độ cập nhật Virtual DOM của React.</p>
+<p>Để giải quyết, mình áp dụng giải pháp trực tiếp là sử dụng <code>setInterval</code> để kiểm tra và áp lại tên mã hóa liên tục:</p>
+<pre><code class="language-javascript">nodeDiv.backupName ??= name.innerText
+nodeDiv.encrypt ??= encryptName(nodeDiv.backupName)
+
+name.innerText = nodeDiv.encrypt // Đổi sang tên ngẫu nhiên
+
+// Thiết lập khoảng thời gian lặp để kiểm tra và đè dữ liệu
+let ms = 1; 
+name.clearcheck ??= setInterval(repeatcheck, ms);
+let time = 0;
+
+function repeatcheck() {
+    if (name.innerText !== nodeDiv.encrypt) {
+        // Hễ React cập nhật lại tên cũ, ta cập nhật lại tên mã hóa
+        name.innerText = nodeDiv.encrypt;
+        clearInterval(name.clearcheck); 
+        
+        time += ms;
+        // Giới hạn thời gian chạy để tránh treo trình duyệt
+        if (time &gt; maxInterval) {
+            clearInterval(name.clearcheck);
+        }
+    }
+}
+</code></pre>
+<p>Ngoài ra mình còn lắng nghe sự kiện <code>mouseover</code> và <code>mouseout</code> để hiển thị lại tên thật mỗi lúc di chuột vào dòng liên hệ đó.</p>
+<h2>4. Tổng Kết</h2>
+<p>Kết quả thu được là một giao diện sạch sẽ hơn, không quảng cáo, không video trùng lặp và tên danh sách chat được ẩn đi. Qua quá trình này, mình cũng hiểu rõ hơn về cách thức hoạt động của các Single Page Application hiện đại.</p>
+<p>Những trải nghiệm thực tế này mang lại khá nhiều bài học bổ ích về thao tác DOM. Bạn nào quan tâm có thể ghé qua repo <code>facebook-ext</code> của mình để tải về và tùy chỉnh thêm nhé!</p>
+</article></div>
+  </body>
+</html>

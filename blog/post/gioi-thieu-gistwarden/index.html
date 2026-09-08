@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Single Page Apps for GitHub Pages Redirect Decoder -->
+    <script type="text/javascript">
+      (function(l) {
+        if (l.search[1] === '/' ) {
+          var decoded = l.search.slice(1).split('&').map(function(s) { 
+            return s.replace(/~and~/g, '&')
+          }).join('?');
+          window.history.replaceState(null, null,
+              l.pathname.slice(0, -1) + decoded + l.hash
+          );
+        }
+      }(window.location))
+    </script>
+    <meta name="author" content="Hà Mạnh Kiên (uongsuadaubung)" />
+    <meta name="description" content="Trình quản lý mật khẩu & mã 2FA TOTP bảo mật client-side theo triết lý Zero-Knowledge. Hỗ trợ Local Vault ngoại tuyến và đồng bộ mã hóa qua GitHub Gist." />
+    <meta property="og:title" content="Gistwarden - Trình quản lý mật khẩu mã hóa cá nhân — uongsuadaubung" />
+    <meta property="og:description" content="Trình quản lý mật khẩu & mã 2FA TOTP bảo mật client-side theo triết lý Zero-Knowledge. Hỗ trợ Local Vault ngoại tuyến và đồng bộ mã hóa qua GitHub Gist." />
+    <meta property="og:type" content="website" />
+    <title>Gistwarden - Trình quản lý mật khẩu mã hóa cá nhân — uongsuadaubung</title>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Hà Mạnh Kiên",
+      "alternateName": "uongsuadaubung",
+      "jobTitle": "Full Stack Web Developer",
+      "email": "k97.dev@gmail.com",
+      "telephone": "+84868931497",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Hà Nội",
+        "addressCountry": "VN"
+      },
+      "alumniOf": {
+        "@type": "EducationalOrganization",
+        "name": "Đại học Mở Hà Nội"
+      },
+      "sameAs": [
+        "https://github.com/uongsuadaubung"
+      ]
+    }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DrYRquR4.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DaAWQ7E0.css">
+    <link rel="canonical" href="https://uongsuadaubung.github.io/blog/gioi-thieu-gistwarden/" />
+  </head>
+  <body>
+    <div id="root"><article class="markdown-body" style="max-width:800px;margin:40px auto;padding:0 20px;font-family:sans-serif;line-height:1.6;"><h1>Gistwarden - Trình quản lý mật khẩu mã hóa cá nhân</h1><p>Trong thời đại số hiện nay, việc quản lý hàng trăm tài khoản với các mật khẩu khác nhau cùng các mã xác thực hai yếu tố (2FA / TOTP) là một bài toán nhức nhối với bất kỳ ai. Mặc dù có nhiều giải pháp cloud thương mại như Bitwarden, 1Password hay LastPass, nhưng việc giao toàn bộ dữ liệu nhạy cảm cho các server bên thứ ba luôn tiềm ẩn những nỗi lo về quyền riêng tư, rò rỉ dữ liệu hoặc chi phí duy trì hàng tháng.</p>
+<p>Chính vì lý do đó, mình đã bắt tay vào xây dựng <strong>Gistwarden</strong> — một ứng dụng quản lý mật khẩu và mã 2FA cá nhân dựa trên triết lý <strong>Zero-Knowledge</strong>, mã hóa 100% tại Client và hỗ trợ linh hoạt cả 2 chế độ lưu trữ: <strong>Local Vault (hoàn toàn ngoại tuyến trên máy)</strong> và đồng bộ an toàn qua <strong>GitHub Gist</strong> riêng tư của chính bạn.</p>
+<p><img src="/images/gioi-thieu-gistwarden/vault-list.png" alt="Giao diện danh sách Két sắt Gistwarden"></p>
+<hr>
+<h2>🛡️ 1. Lý do ra đời: Tự chủ dữ liệu 100%</h2>
+<p>Một ứng dụng quản lý mật khẩu lý tưởng đối với mình phải thỏa mãn các tiêu chí:</p>
+<ul>
+<li><strong>An toàn tuyệt đối (Zero-Knowledge)</strong>: Server hay bất kỳ ai (kể cả GitHub hay nhà phát triển) cũng không thể đọc được dữ liệu nếu không có Mật khẩu Master.</li>
+<li><strong>Không tốn phí server duy trì &amp; Linh hoạt chế độ lưu trữ</strong>:<ul>
+<li><strong>Local Vault (Ngoại tuyến Offline)</strong>: Lưu trữ két sắt mã hóa hoàn toàn cục bộ trên máy tính/trình duyệt (<code>chrome.storage</code> / LocalStorage), không bắt buộc phải có tài khoản GitHub hay kết nối mạng Internet.</li>
+<li><strong>GitHub Gist Sync (Đồng bộ)</strong>: Tận dụng hạ tầng đám mây của GitHub làm &quot;database tĩnh&quot; miễn phí thông qua <strong>Private GitHub Gist</strong> và GitHub Personal Access Token (PAT scope <code>gist</code>).</li>
+</ul>
+</li>
+<li><strong>Hoạt động độc lập &amp; Đa nền tảng</strong>: Cung cấp cả 2 phiên bản <strong>Browser Extension (Manifest V3)</strong> và <strong>Web Vault độc lập (SPA)</strong>.</li>
+</ul>
+<hr>
+<h2>🔒 2. Kiến trúc bảo mật Zero-Knowledge &amp; Argon2id KDF</h2>
+<p>Kiến trúc bảo mật của <strong>Gistwarden</strong> được thiết kế theo nguyên tắc: <strong>Mọi thao tác mã hóa và giải mã chỉ diễn ra trên thiết bị của người dùng (Client-Side Encryption)</strong>.</p>
+<pre><code>[ Master Password ] + [ Salt ] ──► (Argon2id WASM 64MB) ──► [ Encryption Key ]
+                                                                   │
+[ Plaintext Vault (Mật khẩu/2FA) ] ──► (AES-GCM-256) ──────────────┼──► [ Ciphertext JSON ]
+                                                                             │
+                                                                             ▼
+                                                     [ Local Storage / GitHub Private Gist ]
+</code></pre>
+<h3>Các lớp bảo mật cốt lõi:</h3>
+<ol>
+<li><strong>Khóa chống tấn công phần cứng Argon2id (WebAssembly)</strong>: Gistwarden áp dụng thuật toán <strong>Argon2id</strong> (WebAssembly) với thông số <strong>64 MB RAM</strong>, <strong>3 vòng lặp (iterations)</strong> cho mỗi lần sinh khóa. Việc yêu cầu 64MB RAM khiến các thiết bị đào coin/GPU bị nghẽn cổ chai RAM và tăng chi phí tấn công brute-force lên hàng triệu lần. Nhân WASM của <code>hash-wasm</code> được mã hóa Base64 nhúng trực tiếp vào bundle JS, tuân thủ nghiêm ngặt tiêu chuẩn Content Security Policy (CSP) của Chrome Extension Manifest V3 và không tải bất kỳ script nào từ internet.</li>
+<li><strong>Mã hóa đối xứng AES-GCM 256-bit</strong>: Dữ liệu két sắt được bảo vệ bằng chuẩn mã hóa đối xứng xác thực <strong>AES-GCM 256-bit</strong> với IV (Vector khởi tạo) 12-byte ngẫu nhiên cho mỗi lần lưu (<code>crypto.getRandomValues</code>). Bất kỳ sự can thiệp trái phép nào trên dữ liệu két sẽ khiến quá trình giải mã thất bại ngay lập tức.</li>
+<li><strong>Mở khóa nhanh bằng mã PIN (Quick PIN Unlock)</strong>: Cho phép thiết lập mã PIN ngắn để mở khóa nhanh phiên làm việc cục bộ mà không cần nhập lại Mật khẩu Master dài mỗi lần mở extension.</li>
+</ol>
+<hr>
+<h2>✨ 3. Các tính năng nổi bật của Gistwarden</h2>
+<h3>🗝️ Két sắt Đa danh mục &amp; Thư mục (Folders)</h3>
+<ul>
+<li>Lưu trữ an toàn các loại dữ liệu: <strong>Tài khoản đăng nhập (Logins)</strong>, <strong>Ghi chú bảo mật (Secure Notes)</strong>, <strong>Thẻ ngân hàng (Credit Cards)</strong>, <strong>Định danh cá nhân (Identities)</strong>, <strong>SSH Keys</strong> kèm các trường tùy biến (Custom Key-Value fields).</li>
+<li>Phân loại bằng Thư mục (Folders) và tìm kiếm tức thì.</li>
+</ul>
+<h3>🎲 Trình tạo Mật khẩu &amp; Cụm từ ghép Diceware (EFF Wordlist)</h3>
+<ul>
+<li>Tự động tạo mật khẩu ngẫu nhiên với độ dài tùy chỉnh, lựa chọn loại ký tự và loại bỏ các ký tự dễ nhầm lẫn.</li>
+<li><strong>Diceware Passphrase</strong>: Sinh cụm từ ghép ngẫu nhiên dễ nhớ dựa trên danh sách từ vựng chuẩn <strong>EFF Large Wordlist</strong>.</li>
+<li><strong>Lịch sử khởi tạo</strong>: Lưu giữ lịch sử các mật khẩu vừa tạo giúp dễ dàng truy vết và khôi phục khi cần.</li>
+</ul>
+<p><img src="/images/gioi-thieu-gistwarden/password-generator.png" alt="Giao diện Trình tạo mật khẩu Gistwarden"></p>
+<h3>🛡️ Báo cáo Kiểm tra Bảo mật Vault (Vault Security Audit)</h3>
+<ul>
+<li><strong>Kiểm tra rò rỉ dữ liệu (HIBP)</strong>: Phân tích email &amp; username với cơ sở dữ liệu Have I Been Pwned qua mô hình <em>k-Anonymity</em> bảo mật tuyệt đối.</li>
+<li><strong>Đánh giá độ mạnh &amp; Trùng lặp</strong>: Sử dụng thuật toán <code>zxcvbn</code> chấm điểm mật khẩu kết hợp bộ từ điển <strong>Tiếng Việt (<code>Viet74K</code>)</strong> và <strong>Tiếng Anh (<code>EFF</code>)</strong> để phát hiện các mật khẩu bị dùng trùng hoặc chứa từ ngữ thông dụng dễ bị đoán.</li>
+<li><strong>Cảnh báo lỗ hổng</strong>: Tự động phát hiện các tài khoản chưa bật 2FA/TOTP và các trang web chưa dùng HTTPS.</li>
+</ul>
+<p><img src="/images/gioi-thieu-gistwarden/security-audit.png" alt="Giao diện Báo cáo bảo mật Vault Audit"></p>
+<h3>🔄 Nhập / Xuất dữ liệu &amp; Giải mã Google Authenticator</h3>
+<ul>
+<li><strong>Quản lý dữ liệu toàn diện</strong>: Nhập/xuất dữ liệu tệp JSON/CSV từ Bitwarden, Chrome, Firefox, Edge và các ứng dụng quản lý mật khẩu khác.</li>
+<li><strong>Google Authenticator Migration Tool</strong>: Bóc tách nhị phân Protobuf trực tiếp từ ảnh QR hoặc chuỗi <code>otpauth-migration://</code> xuất từ Google Authenticator để tự động đưa toàn bộ mã 2FA vào Két sắt.</li>
+<li><strong>Quản lý Thư mục &amp; Thùng rác</strong>: Quản lý thư mục linh hoạt, xem và khôi phục các mục đã xóa từ Thùng rác.</li>
+</ul>
+<p><img src="/images/gioi-thieu-gistwarden/data-management.png" alt="Giao diện Quản lý dữ liệu và Chuyển đổi 2FA"></p>
+<h3>⏱️ Mã xác thực 2FA (TOTP) &amp; Quét mã QR</h3>
+<ul>
+<li>Tự động tính toán mã xác thực 2 lớp (TOTP 6 chữ số) cập nhật tự động sau mỗi 30 giây.</li>
+<li><strong>Quét mã QR tự động</strong>: Đọc mã QR 2FA trực tiếp trên trang web hoặc nạp file ảnh QR để tự bóc tách Secret Key.</li>
+</ul>
+<h3>⚡ Hỗ trợ Passkeys (FIDO2 / WebAuthn)</h3>
+<ul>
+<li>Khởi tạo, giả lập và lưu trữ các khóa đăng nhập không mật khẩu (<strong>Passkeys</strong>) hiện đại ngay trong extension.</li>
+<li><strong>Bảo vệ chống rò rỉ chéo tên miền</strong>: Tích hợp kiểm tra tên miền (Domain match protection) bảo vệ tài khoản không bị rò rỉ thông tin khóa trước các đòn tấn công Phishing.</li>
+</ul>
+<h3>✨ Tự động điền (Autofill) &amp; Gợi ý lưu thông minh</h3>
+<ul>
+<li>Nhận diện ô nhập tài khoản/mật khẩu trên website và hiển thị menu điền nhanh 1-click.</li>
+<li>Tự động phát hiện khi đăng nhập/đăng ký tài khoản mới và hiển thị gợi ý lưu hoặc cập nhật mật khẩu.</li>
+</ul>
+<hr>
+<h2>💻 4. Tech Stack &amp; Trải nghiệm phát triển</h2>
+<ul>
+<li><strong>Frontend Framework</strong>: <a href="https://www.solid-js.com/">SolidJS</a> — Mang lại hiệu năng tiệm cận JS thuần, reactivity mạnh mẽ, không ảo hóa DOM (No Virtual DOM), giúp Extension và Web Vault khởi động tức thì.</li>
+<li><strong>Runtime &amp; Package Manager</strong>: <strong>Bun</strong> — Tốc độ cài đặt package và thực thi script cực nhanh.</li>
+<li><strong>Bundler</strong>: <strong>Esbuild</strong> — Đóng gói Extension (Manifest V3) và Web Vault chỉ trong vài mili-giây.</li>
+<li><strong>Giao diện &amp; Song ngữ</strong>: Thiết kế tinh tế với chế độ Sáng/Tối (Light/Dark Mode) và hỗ trợ song ngữ <strong>Tiếng Việt 🇻🇳</strong> và <strong>Tiếng Anh 🇬🇧</strong>.</li>
+</ul>
+<hr>
+<h2>📥 Tải xuống Browser Extension</h2>
+<p>Bạn có thể cài đặt trực tiếp <strong>Gistwarden Browser Extension</strong> cho trình duyệt của mình từ 2 cửa hàng tiện ích chính thức:</p>
+<ul>
+<li>🦊 <strong>Firefox Add-ons Store</strong>: <a href="https://addons.mozilla.org/en-US/firefox/addon/gistwarden/">Tải Gistwarden cho Firefox</a></li>
+<li>🌊 <strong>Microsoft Edge Add-ons Store</strong>: <a href="https://microsoftedge.microsoft.com/addons/detail/gistwarden/gcbibgbakekbbeeibgaeciiikbdlfndl">Tải Gistwarden cho Microsoft Edge / Chrome</a></li>
+</ul>
+<hr>
+<h2>🚀 Lời kết</h2>
+<p><strong>Gistwarden</strong> là một dự án cá nhân mang lại cho mình rất nhiều niềm vui khi áp dụng các kỹ thuật mã hóa hiện đại và làm chủ toàn bộ dữ liệu riêng tư của bản thân. Bạn có thể trải nghiệm thử Web Vault trực tiếp tại menu <strong>Gistwarden</strong> trên trang web này!</p>
+<p>Cảm ơn bạn đã đọc bài viết! 💡</p>
+</article></div>
+  </body>
+</html>

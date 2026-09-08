@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Single Page Apps for GitHub Pages Redirect Decoder -->
+    <script type="text/javascript">
+      (function(l) {
+        if (l.search[1] === '/' ) {
+          var decoded = l.search.slice(1).split('&').map(function(s) { 
+            return s.replace(/~and~/g, '&')
+          }).join('?');
+          window.history.replaceState(null, null,
+              l.pathname.slice(0, -1) + decoded + l.hash
+          );
+        }
+      }(window.location))
+    </script>
+    <meta name="author" content="Hà Mạnh Kiên (uongsuadaubung)" />
+    <meta name="description" content="Ứng dụng gợi ý thực đơn ngẫu nhiên dẹp bỏ nỗi lo " />
+    <meta property="og:title" content="Hôm nay ăn gì: Ứng dụng dẹp bỏ cơn đau đầu mỗi tối — uongsuadaubung" />
+    <meta property="og:description" content="Ứng dụng gợi ý thực đơn ngẫu nhiên dẹp bỏ nỗi lo " />
+    <meta property="og:type" content="website" />
+    <title>Hôm nay ăn gì: Ứng dụng dẹp bỏ cơn đau đầu mỗi tối — uongsuadaubung</title>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Hà Mạnh Kiên",
+      "alternateName": "uongsuadaubung",
+      "jobTitle": "Full Stack Web Developer",
+      "email": "k97.dev@gmail.com",
+      "telephone": "+84868931497",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Hà Nội",
+        "addressCountry": "VN"
+      },
+      "alumniOf": {
+        "@type": "EducationalOrganization",
+        "name": "Đại học Mở Hà Nội"
+      },
+      "sameAs": [
+        "https://github.com/uongsuadaubung"
+      ]
+    }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DrYRquR4.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DaAWQ7E0.css">
+    <link rel="canonical" href="https://uongsuadaubung.github.io/blog/hom-nay-an-gi/" />
+  </head>
+  <body>
+    <div id="root"><article class="markdown-body" style="max-width:800px;margin:40px auto;padding:0 20px;font-family:sans-serif;line-height:1.6;"><h1>Hôm nay ăn gì: Ứng dụng dẹp bỏ cơn đau đầu mỗi tối</h1><p>Không biết các bạn thế nào, chứ mình thấy cứ tầm 5 - 6 giờ chiều là y như rằng có một câu hỏi kinh điển vang lên: &quot;Tối nay ăn gì?&quot;. Cứ nghĩ mãi, list đi list lại quanh quẩn cũng chỉ có luộc, kho, chiên... nghĩ thôi cũng thấy mệt. Đỉnh điểm là có những hôm đói meo nhưng hai anh em cứ ngồi nhìn nhau đùn đẩy vì lười suy nghĩ.</p>
+<p>Thế là quyết định xắn tay áo hý hửng viết một chiếc app nhỏ bằng Svelte kết hợp Tauri để quay ngẫu nhiên trực tiếp trên màn hình máy tính cho tiết kiệm thời gian. Tưởng làm cái vòng quay cho vui là dễ, ai ngờ đâm đầu vào mới thấy phát sinh một mớ vấn đề... </p>
+<p><img src="/images/hom-nay-an-gi/man-hinh-chinh.png" alt="Màn hình chính của ứng dụng">
+<em>Giao diện màn hình chính của ứng dụng với chiếc vòng quay định mệnh.</em></p>
+<h2>1. Nỗi đau nạp Dữ liệu &amp; Sự cố CORS</h2>
+<p>Tiêu chí ban đầu là ứng dụng phải thực dụng, món ăn phải có Món chính và Món rau. Nếu chỉ code cứng (hard-code) vài món vào file thì quá chán, nên mình mở ChatGPT lên, nhờ AI xuất ngay một danh sách 50 món Việt Nam kèm công thức nấu, rồi chép vào thẳng Google Sheet (Excel). Mình định dùng trang Sheet đó làm cơ sở dữ liệu luôn.</p>
+<p>Tuy nhiên, ngay bước đầu gọi lệnh <code>fetch()</code> để kéo data từ Google Sheet về, trình duyệt đã báo lỗi <code>CORS Policy Error</code>. Mình loay hoay mất một lúc để xử lý header, vì Google Sheet không hỗ trợ mở CORS dễ dàng như API thông thường.</p>
+<p>Cuối cùng, mình nhớ ra một giải pháp: xử lý qua cơ chế <strong>JSONP</strong>. Ý tưởng là chèn một thẻ <code>&lt;script&gt;</code> vào DOM để trình duyệt tự tải dữ liệu thay vì dùng hàm fetch, như sau:</p>
+<pre><code class="language-typescript">// Hàm fetch danh sách món ăn + cách nấu qua JSONP để vượt mức rào CORS
+export function fetchMenuFromGoogleSheet(scriptUrl: string): Promise&lt;{mains: FoodItem[], vegs: FoodItem[]}&gt; {
+  return new Promise((resolve, reject) =&gt; {
+    // Tạo 1 tên hàm callback ngẫu nhiên để tránh đụng độ
+    const callbackName = &#39;jsonpCallback_&#39; + Math.round(100000 * Math.random());
+    const script = document.createElement(&#39;script&#39;);
+
+    // Chờ Google Sheet gọi ngược lại hàm này
+    (window as any)[callbackName] = (data: any) =&gt; {
+      delete (window as any)[callbackName]; // Chạy xong thì xóa luôn cho gọn
+      document.body.removeChild(script);
+
+      try {
+        const recipesMap: Record&lt;string, Recipe[]&gt; = data.recipes || {};
+        
+        // Nhào nặn dữ liệu ra mảng món chính
+        const mains: FoodItem[] = (data.mains || []).map((item: any, idx: number) =&gt; ({
+          id: idx + 1,
+          name: item.name,
+          color: item.color,
+          recipes: recipesMap[item.name] || undefined,
+        }));
+        
+        resolve({ mains, vegs: [] /* code rút gọn */ });
+      } catch (err) {
+        reject(err);
+      }
+    };
+
+    // Nối tham số callback vào link Script và thả vào body
+    const urlWithParams = `${scriptUrl}?callback=${callbackName}`;
+    script.src = urlWithParams;
+    document.body.appendChild(script);
+  });
+}
+</code></pre>
+<p>Cách này nhìn có vẻ đi đường vòng nhưng nó xử lý dứt điểm luôn bài toán lấy dữ liệu mà không cần phải cài web server trung gian phức tạp.</p>
+<h2>2. Bài toán thiết kế vòng quay (Lucky Wheel)</h2>
+<p>Data đã có, giờ đến khâu làm cái vòng quay. Mình thiết kế giao diện bằng Svelte. Lúc đầu mình định chia vòng quay theo đúng số lượng món ăn, nhưng nếu có 50 món thì mỗi ô trên vòng quay trông như que tăm, rất xấu. Thế là mình thống nhất chỉ hiển thị 10 ô cố định (vẽ bằng CSS <code>conic-gradient</code>), điền chữ <code>?</code> bí ẩn vào vòng quay. Quay xong mới bốc thăm món.</p>
+<p>Và đây là đoạn cần lưu ý nhất: Tính góc xoay (<code>rotation</code>). Để vòng quay chạy trơn tru, mình kết hợp một chút công thức toán học vào hàm Svelte state.</p>
+<pre><code class="language-html">&lt;script lang=&quot;ts&quot;&gt;
+  const WHEEL_SLICES = 10;
+  const sliceAngle = 360 / WHEEL_SLICES;
+  
+  // Trạng thái Reactive của Svelte
+  let isSpinning = $state(false);
+  let rotation = $state(0);
+  
+  // Áp dụng CSS transition dài 8s để vòng quay chậm dần
+  let wheelStyles = $derived(
+    `transform: rotate(${rotation}deg); transition: transform ${isSpinning ? &#39;8s cubic-bezier(0.2, 0.8, 0.2, 1)&#39; : &#39;0s&#39;};`
+  );
+
+  function spin() {
+    if (isSpinning) return;
+    isSpinning = true;
+
+    // Tính toán góc quay cộng dồn
+    const extraSpins = 8 + Math.floor(Math.random() * 5); // quay 8 - 12 vòng
+    const targetSlice = Math.floor(Math.random() * WHEEL_SLICES);
+    const targetAngle = targetSlice * sliceAngle + sliceAngle / 2;
+    
+    // reset offset và cộng thêm góc để bánh xe quay tự nhiên nhất
+    const baseRotation = rotation % 360;
+    const spinsNeeded  = 360 * extraSpins;
+    const offset       = 360 - targetAngle;
+
+    rotation = rotation - baseRotation + spinsNeeded + offset;
+
+    // Chờ 8.1 giây cho animation CSS kết thúc rồi mới xổ kết quả
+    setTimeout(() =&gt; {
+      isSpinning = false;
+      const mains = $mainMenu;
+      // Bốc đại 1 món từ kho lưu trữ Google Sheet
+      const pickedMain = mains[Math.floor(Math.random() * mains.length)];
+      
+      selectedMain.set(pickedMain);
+      appState.set(&#39;result&#39;);
+    }, 8100);
+  }
+&lt;/script&gt;
+
+&lt;!-- Giao diện vòng quay --&gt;
+&lt;div class=&quot;relative w-[300px] h-[300px] rounded-full overflow-hidden&quot; style={wheelStyles}&gt;
+    &lt;!-- Các thẻ chia ô gradient... --&gt;
+&lt;/div&gt;
+&lt;button onclick={spin} disabled={isSpinning}&gt;QUAY&lt;/button&gt;
+</code></pre>
+<p>Khúc mất thời gian nhất là tìm được đường cong <code>cubic-bezier(0.2, 0.8, 0.2, 1)</code>. Chỉnh đi chỉnh lại nhiều lần thì mới có cảm giác quay nhanh dần đều rồi dừng lại từ từ giống hệt vòng quay thực tế. Quả thực gõ code thì ít mà ngồi tinh chỉnh giao diện khá tốn thời gian.</p>
+<h2>3. Tổng kết</h2>
+<p>Mất đâu đó vài buổi tối hì hục, ứng dụng cũng gói gọn thành file chạy trên Desktop. Giờ cứ chiều đến trước lúc về, anh em lại bật app lên quay xạch xạch xem tối nay về phải đi ăn món gì. Ấn vào kết quả nó còn hiển thị thêm &quot;Cách nấu: Xào tỏi / Nướng than&quot; từ data AI cung cấp khá là trực quan. </p>
+<p><img src="/images/hom-nay-an-gi/chon-xong-mon.png" alt="Chốt đơn bữa tối">
+<em>Quay xong là ứng dụng tự động hiển thị món ăn (cả món mặn lẫn rau) may mắn của ngày.</em></p>
+<p><img src="/images/hom-nay-an-gi/xem-cong-thuc-nau.png" alt="Xem công thức nấu ăn">
+<em>Bấm vào kết quả để xem ngay công thức do AI hướng dẫn.</em></p>
+<p>Thấy làm mấy cái phần mềm cá nhân nhỏ nhỏ dọn gọn gàng nhu cầu thế này công nhận giúp ích được rất nhiều. Bạn nào cũng muốn giải quyết nhanh câu hỏi ăn gì mỗi ngày giống mình, có hứng thì ghé qua repo Github lấy mã nguồn về trổ tài thử nhé. Hẹn mọi người ở một dự án tự build khác!</p>
+</article></div>
+  </body>
+</html>

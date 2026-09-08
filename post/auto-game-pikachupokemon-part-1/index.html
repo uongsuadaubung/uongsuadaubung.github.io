@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Single Page Apps for GitHub Pages Redirect Decoder -->
+    <script type="text/javascript">
+      (function(l) {
+        if (l.search[1] === '/' ) {
+          var decoded = l.search.slice(1).split('&').map(function(s) { 
+            return s.replace(/~and~/g, '&')
+          }).join('?');
+          window.history.replaceState(null, null,
+              l.pathname.slice(0, -1) + decoded + l.hash
+          );
+        }
+      }(window.location))
+    </script>
+    <meta name="author" content="Hà Mạnh Kiên (uongsuadaubung)" />
+    <meta name="description" content="Ứng dụng C# tự động hóa game Pikachu & Kawai 2003 bằng kỹ thuật Reverse Engineering, đọc bộ nhớ RAM của process và gọi WinAPI tự động click." />
+    <meta property="og:title" content="Auto game Pikachu/Pokemon - Part 1 — uongsuadaubung" />
+    <meta property="og:description" content="Ứng dụng C# tự động hóa game Pikachu & Kawai 2003 bằng kỹ thuật Reverse Engineering, đọc bộ nhớ RAM của process và gọi WinAPI tự động click." />
+    <meta property="og:type" content="website" />
+    <title>Auto game Pikachu/Pokemon - Part 1 — uongsuadaubung</title>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Hà Mạnh Kiên",
+      "alternateName": "uongsuadaubung",
+      "jobTitle": "Full Stack Web Developer",
+      "email": "k97.dev@gmail.com",
+      "telephone": "+84868931497",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Hà Nội",
+        "addressCountry": "VN"
+      },
+      "alumniOf": {
+        "@type": "EducationalOrganization",
+        "name": "Đại học Mở Hà Nội"
+      },
+      "sameAs": [
+        "https://github.com/uongsuadaubung"
+      ]
+    }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DrYRquR4.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DaAWQ7E0.css">
+    <link rel="canonical" href="https://uongsuadaubung.github.io/blog/auto-game-pikachupokemon-part-1/" />
+  </head>
+  <body>
+    <div id="root"><article class="markdown-body" style="max-width:800px;margin:40px auto;padding:0 20px;font-family:sans-serif;line-height:1.6;"><h1>Auto game Pikachu/Pokemon - Part 1</h1><p><img src="/images/auto-game-pikachupokemon-part-1/image-01.png" alt="Pikachu Gameplay"></p>
+<p><img src="/images/auto-game-pikachupokemon-part-1/image-02.png" alt="Pikachu UI"></p>
+<p>Nhìn vào hai hình này chắc là biết game gì luôn đúng không nếu không nghe qua thì cũng phải nhìn thấy vì mình nghĩ nó huyền thoại cmnr, hồi xưa nhà nào mua máy tính cũng thấy cài sẵn cái này luôn -.-, mỗi tội hơi bối rối về cái tên thôi, người thì gọi là Pikachu, người thì gọi là Pokemon. Hồi còn bé chưa có máy tính, suốt ngày mình hay sang ngồi cạnh cô hàng xóm đóng vai trò cố vấn, chiến lược gia cấp cao giúp cho cô chiến thắng trò chơi, nhiều khi nhìn đau cả mắt chứ chả vừa :D</p>
+<p>Mục tiêu của bài này sẽ là làm một tool có chức năng tự động chơi game, không tập trung vào những cái khác như hack điểm...., cho nên mình sẽ liệt kê những thứ cần thiết ra đây:</p>
+<ul>
+<li>Quan trọng nhất là tìm được cái ma trận để lưu các con pokemon.</li>
+<li>Mà cần đủ thời gian tìm thì mình phải xử lý cái thời gian của trò chơi trước đã.</li>
+<li>Lấy được ma trận game rồi thì làm thế nào để xác định được 2 con pokemon hợp lệ.</li>
+<li>Làm thế nào để tự động click được lên game.</li>
+</ul>
+<p>Các công cụ cần thiết:</p>
+<ul>
+<li>Cheate Engine</li>
+<li>Knowledge about C# Programing Language :)) (vì C/C++ khó quá mình không học nổi với lại C# làm form dễ)</li>
+<li>Một cái đầu lạnh :V</li>
+</ul>
+<h3>1. Tìm kiếm địa chỉ lưu biến thời gian</h3>
+<p>Bật CE lên để search thôi, vì không rõ con số cụ thể nên sẽ phải để Scan type là Unkown initial value, Value type thì để all vì cũng chả biết nó sẽ thuộc kiểu dữ liệu gì.</p>
+<p>Ban đầu thì cứ nghĩ là thời gian sẽ giảm về 0 nên mình search ở những giá trị tiếp theo là Decreased Value mà nó cứ không ra, mãi lúc sau mới nhảy số để lại thành Increased Value thì tìm thấy vài giá trị, mình nghi ngờ cái biến kiểu float nên về set giá trị cho nó về 0, thế là thời gian được reset lại. vậy là tìm được địa chỉ <strong>0x004b6084</strong> là địa chỉ chứa giá trị thời gian.</p>
+<p><img src="/images/auto-game-pikachupokemon-part-1/image-03.png" alt="Address time"></p>
+<h3>2. Tìm kiếm ma trận của trò chơi</h3>
+<p>Cái này tìm gian nan hơn, vì mình không biết giá trị của các con pokemon, cũng may với cái kinh nghiệm từ trước mình có tìm cái ma trận của game Minesweeper nên cuối cùng cũng tìm ra được, rồi sau đó nhanh chóng tìm Pointer cho nó vì chẳng may tắt game rồi tìm lại ốm chết luôn :((. kết quả của pointer là <code>&quot;pikachu.exe&quot;+000B6044 offset 76</code></p>
+<p><img src="/images/auto-game-pikachupokemon-part-1/image-04.png" alt="Matrix pointer"></p>
+<p>Sau đó chọn Browse this memory region để xem memory</p>
+<p><img src="/images/auto-game-pikachupokemon-part-1/image-05.png" alt="Browse memory"></p>
+<p>Thấy như sau</p>
+<p><img src="/images/auto-game-pikachupokemon-part-1/image-06.png" alt="Memory detail"></p>
+<p>Cấu trúc của con pokemon đầu tiên là <code>FF FF 0A 00 0A 00</code>, và tất cả các con tiếp theo cũng có dạng đó gồm 6 bytes:</p>
+<ul>
+<li>2 bytes đầu tiên <code>FF FF</code> là con pokmon còn hiển thị, nếu ăn mất rồi thì nó sẽ là <code>00 00</code></li>
+<li>2 bytes tiếp theo <code>0A 0A</code> là hình ảnh hiển thị của con pokemon đó.</li>
+<li>2 bytes cuối cùng <code>0A 0A</code> là mã id của con pokemon, nếu cùng mã thì ăn được kể cả khác hiển thị</li>
+</ul>
+<p>Vậy nên mình sẽ tập trung vào 2 bytes đầu và 2 bytes cuối, vì nó cách nhau 4 bytes nên địa chỉ của 2 bytes đầu sẽ bằng cái Pointer mình tìm được bên trên trừ 4 Offset đi sẽ là <code>&quot;pikachu.exe&quot;+000B6044 Offset 72</code></p>
+<p>Mình đã lấy máy tính ra để tính toán 1 chút như thế này, từ địa con pokemon đầu tiên + 0x6 sẽ ra con pokemon tiếp theo</p>
+<table>
+<thead>
+<tr>
+<th>Pokemon row 1</th>
+<th>Offset</th>
+<th>Add</th>
+<th>Next Pokemon Offset</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Con đầu tiên</td>
+<td>72</td>
+<td>6</td>
+<td>78</td>
+</tr>
+<tr>
+<td>Con thứ 2</td>
+<td>78</td>
+<td>6</td>
+<td>7E</td>
+</tr>
+<tr>
+<td>Con thứ 3</td>
+<td>7E</td>
+<td>6</td>
+<td>84</td>
+</tr>
+<tr>
+<td>Con thứ n</td>
+<td>...</td>
+<td>6</td>
+<td>...</td>
+</tr>
+<tr>
+<td>Con thứ 15</td>
+<td>C6</td>
+<td>6</td>
+<td>CC</td>
+</tr>
+<tr>
+<td>Con thứ 16</td>
+<td>CC</td>
+<td>6</td>
+<td>D2</td>
+</tr>
+</tbody></table>
+<p>Đến đây tưởng là D2 sẽ là Offset của còn đầu tiên của row2 ư? Không hề! Ban đầu mình cũng hý hửng tưởng là vậy mà chỉnh thử ở memory để cho FF FF về 00 00 nhưng mà không có gì thay đổi, mặc dù vẫn đúng cái cấu trúc 6 bytes như thế. Mình phải cộng thêm tận 2 lần nữa thì mới ra con pokemon đầu tiên ở row 2.</p>
+<table>
+<thead>
+<tr>
+<th>Pokemon</th>
+<th>Offset</th>
+<th>Add</th>
+<th>Next Pokemon Offset</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Con thứ 16</td>
+<td>CC</td>
+<td>6</td>
+<td>D2</td>
+</tr>
+<tr>
+<td>Con thứ 17</td>
+<td>D2</td>
+<td>6</td>
+<td>D8</td>
+</tr>
+<tr>
+<td>Con thứ 18</td>
+<td>D8</td>
+<td>6</td>
+<td>DE</td>
+</tr>
+<tr>
+<td>Con thứ 1 ở row 2</td>
+<td>DE</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<p>Có vẻ như là game này không đơn giản chỉ là ma trận 9x16 mà phải là 9x18 cũng nên;</p>
+<p>Lấy giá trị <code>0xDE - 0x72 = 0x6C</code>. Vậy là để di chuyển đến row N thì dùng công thức <code>0x72 + 0x6c * N</code>, mình dùng cái công thức này để lúc viết code sử dụng vòng lặp kết hợp với công thức để đọc hết cái ma trận của game;</p>
+<h3>3. Thuật toán để tìm kiếm 2 con pokemon hợp lệ</h3>
+<p>Mình cũng có search để tìm kiếm thuật toán được sử dụng trong ma trận, kết quả là sử dụng BFS, nên mình cũng có thử viết code trước bằng Typescript trước xem sao;</p>
+<pre><code class="language-typescript">interface Point {
+  row: number;
+  col: number;
+}
+
+interface IQueue {
+  point: Point;
+  redirect: number;
+  prevDirection: Point | null;
+}
+
+const directions: Point[] = [
+  { row: -1, col: 0 }, // Di chuyển lên
+  { row: 1, col: 0 }, // Di chuyển xuống
+  { row: 0, col: -1 }, // Di chuyển trái
+  { row: 0, col: 1 }, // Di chuyển phải
+];
+
+function isValidMove(
+  matrix: number[][],
+  newRow: number,
+  newCol: number,
+): boolean {
+  const numRows = matrix.length;
+  const numCols = matrix[0].length;
+  return (
+    newRow &gt;= 0 &amp;&amp;
+    newRow &lt; numRows &amp;&amp;
+    newCol &gt;= 0 &amp;&amp;
+    newCol &lt; numCols &amp;&amp;
+    matrix[newRow][newCol] === 0
+  );
+}
+
+function isValidConnect(matrix: number[][], start: Point, end: Point): boolean {
+  const numRows = matrix.length;
+  const numCols = matrix[0].length;
+
+  const visited: boolean[][] = Array.from({ length: numRows }, () =&gt;
+    Array(numCols).fill(false),
+  );
+  visited[start.row][start.col] = true;
+
+  const queue: IQueue[] = [{ point: start, redirect: 0, prevDirection: null }];
+
+  while (queue.length &gt; 0) {
+    const { point, redirect, prevDirection } = queue.shift()!;
+
+    if (redirect &gt; 3) continue;
+    if (point.row === end.row &amp;&amp; point.col === end.col) {
+      return true;
+    }
+
+    for (const direction of directions) {
+      const newRow = point.row + direction.row;
+      const newCol = point.col + direction.col;
+
+      if (isValidMove(matrix, newRow, newCol) &amp;&amp; !visited[newRow][newCol]) {
+        visited[newRow][newCol] = true;
+
+        let newRedirect = redirect;
+        if (
+          prevDirection === null ||
+          prevDirection.row !== direction.row ||
+          prevDirection.col !== direction.col
+        ) {
+          newRedirect++; // Nếu có chuyển hướng thì tăng biến redirect
+        }
+
+        queue.push({
+          point: { row: newRow, col: newCol },
+          redirect: newRedirect,
+          prevDirection: direction,
+        });
+      }
+    }
+  }
+
+  return false; // Không tìm thấy đường đi
+}
+
+const matrix: number[][] = [
+  [0, 1, 0, 0],
+  [0, 0, 1, 1],
+  [0, 0, 0, 0],
+  [1, 0, 1, 0],
+  [0, 0, 0, 0],
+];
+
+const start: Point = { row: 0, col: 0 };
+const end: Point = { row: 3, col: 3 };
+
+const redirections = isValidConnect(matrix, start, end);
+console.log(redirections ? &#39;Valid&#39; : &#39;invalid&#39;);
+</code></pre>
+<p>Code minh hoạ đi từ điểm 0,0 đến 3,3, khi đi từ start đến end mà số lần chuyển hướng không quá 3 thì là hợp lệ, chạy code lên thì cũng khá là oke, nên sau đó mình sẽ chuyển sang C# để áp dụng với game sau.</p>
+<p>Đến đây là hết phần chuẩn bị thông tin rồi, phần sau sẽ là dựa vào những cái này để code.</p>
+</article></div>
+  </body>
+</html>

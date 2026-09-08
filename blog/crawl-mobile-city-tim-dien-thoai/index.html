@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Single Page Apps for GitHub Pages Redirect Decoder -->
+    <script type="text/javascript">
+      (function(l) {
+        if (l.search[1] === '/' ) {
+          var decoded = l.search.slice(1).split('&').map(function(s) { 
+            return s.replace(/~and~/g, '&')
+          }).join('?');
+          window.history.replaceState(null, null,
+              l.pathname.slice(0, -1) + decoded + l.hash
+          );
+        }
+      }(window.location))
+    </script>
+    <meta name="author" content="Hà Mạnh Kiên (uongsuadaubung)" />
+    <meta name="description" content="Ứng dụng lọc và tìm kiếm điện thoại xách tay MobileCity với bộ lọc cấu hình đa chiều thông minh, tìm kiếm máy theo chipset, RAM và mức giá." />
+    <meta property="og:title" content="Vợ cho tiền mua điện thoại, mình dành 2 ngày viết crawler để rồi nghe 3 tiếng:  — uongsuadaubung" />
+    <meta property="og:description" content="Ứng dụng lọc và tìm kiếm điện thoại xách tay MobileCity với bộ lọc cấu hình đa chiều thông minh, tìm kiếm máy theo chipset, RAM và mức giá." />
+    <meta property="og:type" content="website" />
+    <title>Vợ cho tiền mua điện thoại, mình dành 2 ngày viết crawler để rồi nghe 3 tiếng:  — uongsuadaubung</title>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Hà Mạnh Kiên",
+      "alternateName": "uongsuadaubung",
+      "jobTitle": "Full Stack Web Developer",
+      "email": "k97.dev@gmail.com",
+      "telephone": "+84868931497",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Hà Nội",
+        "addressCountry": "VN"
+      },
+      "alumniOf": {
+        "@type": "EducationalOrganization",
+        "name": "Đại học Mở Hà Nội"
+      },
+      "sameAs": [
+        "https://github.com/uongsuadaubung"
+      ]
+    }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DrYRquR4.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DaAWQ7E0.css">
+    <link rel="canonical" href="https://uongsuadaubung.github.io/blog/crawl-mobile-city-tim-dien-thoai/" />
+  </head>
+  <body>
+    <div id="root"><article class="markdown-body" style="max-width:800px;margin:40px auto;padding:0 20px;font-family:sans-serif;line-height:1.6;"><h1>Vợ cho tiền mua điện thoại, mình dành 2 ngày viết crawler để rồi nghe 3 tiếng: </h1><p>Chiếc điện thoại của mình đã cũ lắm rồi. Không phải kiểu &quot;cũ nhưng vẫn ngon&quot;, mà kiểu cũ thật sự — màn hình bị burn-in một góc, pin tụt từ 80% xuống 20% trong vòng 2 tiếng, camera thì thôi khỏi nói, chụp ảnh ban đêm trông như bức tranh impressionism của Monet nhưng phiên bản xấu hơn nhiều.</p>
+<p>Vợ mình thấy thế, bảo: <em>&quot;Thôi anh mua cái máy mới đi, em cho tiền&quot;</em>.</p>
+<p>Câu đó nghe như âm nhạc. Mình gật đầu ngay, chưa kịp nghĩ.</p>
+<hr>
+<h2>Hành trình 1: Lạc vào mê cung &quot;máy xách tay nội địa Trung&quot;</h2>
+<p>Mình bắt đầu nghiên cứu. Lúc đầu nghĩ sẽ mua Samsung hay Xiaomi bình thường, nhưng sau khi lướt một hồi thì rơi vào cái hố không đáy gọi là <strong>&quot;điện thoại nội địa Trung Quốc xách tay&quot;</strong>.</p>
+<p>Nghe có vẻ lạ, nhưng thực ra thị trường này rất béo: những chiếc máy như Xiaomi 15, Redmi Note 14, OPPO Reno... phiên bản bán tại Trung Quốc thường có chip tốt hơn, RAM nhiều hơn, nhưng giá lại rẻ hơn hàng chính hãng Việt Nam đáng kể. Đổi lại là bảo hành hạn chế và không có tiếng Việt sẵn (nhưng cài được).</p>
+<p>Mình tìm đến <strong>MobileCity</strong> — một trong những nơi bán máy xách tay nội địa Trung uy tín nhất Hà Nội. Website có vẻ ổn, nhiều hàng, giá niêm yết rõ ràng.</p>
+<p>Nhưng rồi mình nhận ra vấn đề.</p>
+<hr>
+<h2>Vấn đề: Website không có bộ lọc</h2>
+<p>MobileCity bán <strong>rất nhiều</strong> điện thoại. Hàng trăm sản phẩm. Nhưng trang web lại không có chức năng lọc đủ mạnh để mình tìm theo nhu cầu cụ thể của mình:</p>
+<ul>
+<li>RAM ít nhất 8GB</li>
+<li>Bộ nhớ 256GB</li>
+<li>Chip Snapdragon hoặc Dimensity (không thích MediaTek Helio cũ)</li>
+<li>Màn hình AMOLED</li>
+<li>Pin từ 5000mAh trở lên</li>
+<li>Có sạc nhanh</li>
+<li>Cổng USB Type-C</li>
+<li>Giá không quá X triệu</li>
+</ul>
+<p>Mình phải vào từng trang sản phẩm, đọc từng cái, rồi so sánh tay. Sau 30 phút, mình bực bội đóng tab lại.</p>
+<p><em>Và rồi mình nghĩ: &quot;Thay vì mất công tìm thủ công, mình viết code crawl về rồi tự lọc cho nhanh.&quot;</em></p>
+<hr>
+<h2>Hành trình 2: Ngồi viết crawler</h2>
+<h3>Khám phá cấu trúc website</h3>
+<p>Bước đầu tiên là hiểu website hoạt động như thế nào. Mình mở DevTools, vào tab Network, và bắt đầu theo dõi request khi tải trang danh sách điện thoại.</p>
+<p>Phát hiện thú vị: website dùng <strong>CSRF token</strong> để bảo vệ API phân trang. Khi cuộn xuống hoặc chuyển trang, trình duyệt gửi một <code>POST</code> request lên endpoint <code>/product_view_more</code> kèm theo:</p>
+<ul>
+<li><code>csrf-token</code> lấy từ <code>&lt;meta&gt;</code> tag</li>
+<li><code>Cookie</code> session từ lần load đầu tiên</li>
+<li>Các param: <code>slug</code>, <code>page</code>, <code>count</code>, <code>type_category</code></li>
+</ul>
+<p>Đây là cái hay — thay vì phải crawl 20 trang HTML rời rạc, mình chỉ cần giả lập đúng flow này là lấy được toàn bộ dữ liệu qua API một cách gọn gàng.</p>
+<h3>Tech stack</h3>
+<p>Mình chọn:</p>
+<ul>
+<li><strong>Bun</strong> — runtime TypeScript native, nhanh hơn Node.js nhiều, không cần compile</li>
+<li><strong>Axios</strong> — HTTP client để gửi request</li>
+<li><strong>Cheerio</strong> — parse HTML phía server (kiểu jQuery nhưng cho Node/Bun)</li>
+<li><strong>Zod</strong> — schema validation để đảm bảo dữ liệu đúng format</li>
+<li><strong>Svelte 5 + Vite</strong> — frontend để hiển thị và lọc kết quả</li>
+</ul>
+<h3>Quá trình crawl 3 giai đoạn</h3>
+<p>Crawler được thiết kế theo pipeline 3 bước, mỗi bước có validation độc lập bằng Zod:</p>
+<p><strong>Bước 0 — Load dữ liệu cũ:</strong><br>Nếu đã có <code>products.json</code> từ lần chạy trước, load lên để cache. Những sản phẩm đã có đủ thông số sẽ không bị crawl lại, tiết kiệm thời gian và tránh bị rate-limit.</p>
+<p><strong>Bước 1 — Lấy danh sách sản phẩm từ List Page:</strong></p>
+<pre><code class="language-typescript">// Lấy CSRF token và session từ trang chủ
+const firstPage = await session.get(&#39;https://mobilecity.vn/dien-thoai&#39;);
+const $ = cheerio.load(firstPage.data);
+const csrfToken = $(&#39;meta[name=&quot;csrf-token&quot;]&#39;).attr(&#39;content&#39;);
+const cookies = firstPage.headers[&#39;set-cookie&#39;];
+
+// Sau đó loop qua API phân trang
+const response = await session.post(`https://mobilecity.vn/product_view_more`,
+    `count=50&amp;slug=dien-thoai&amp;page=${page}&amp;type_category=phone_categories&amp;get_order=`,
+    { headers: { &#39;X-CSRF-TOKEN&#39;: csrfToken, &#39;Cookie&#39;: cookies.join(&#39;; &#39;), ... } }
+);
+</code></pre>
+<p>Mỗi sản phẩm từ danh sách được parse lấy: tên, giá, link, ảnh, thương hiệu. Sản phẩm qua được <code>BaseProductSchema</code> của Zod mới được chấp nhận. Các sản phẩm trong blacklist (tai nghe, đồng hồ, ốp lưng...) bị loại bỏ ngay tại bước này.</p>
+<p><strong>Bước 2 — Lấy thông số kỹ thuật từ trang chi tiết:</strong></p>
+<pre><code class="language-typescript">// Crawl song song theo batch 10 sản phẩm
+const batchSize = 10;
+for (let i = 0; i &lt; productsToFetch.length; i += batchSize) {
+    const batch = productsToFetch.slice(i, i + batchSize);
+    await Promise.all(batch.map(async (product) =&gt; {
+        const response = await session.get(product.link);
+        const $ = cheerio.load(response.data);
+        
+        // Parse bảng thông số kỹ thuật
+        const specsTable = {};
+        $(&#39;table tr&#39;).each((_, tr) =&gt; {
+            const [key, value] = $(tr).find(&#39;td&#39;);
+            if (key &amp;&amp; value) specsTable[key.text()] = value.text();
+        });
+        
+        // Normalize RAM: &quot;8GB / 12GB&quot; -&gt; [8, 12]
+        // Normalize Storage: &quot;256GB / 512GB&quot; -&gt; [256, 512]
+        // Extract pin, cổng sạc, loại loa...
+    }));
+    
+    await delay(500); // Nghỉ 500ms giữa các batch
+}
+</code></pre>
+<p>Dữ liệu specs được normalize về dạng mảng số để việc lọc sau này dễ dàng hơn. Ví dụ: một máy có &quot;8GB/12GB RAM&quot; sẽ có <code>ram_values: [8, 12]</code>, người dùng lọc &quot;8GB&quot; hoặc &quot;12GB&quot; đều tìm thấy máy này.</p>
+<p><strong>Bước 3 — Validate và lưu:</strong><br>Gộp <code>BaseProduct</code> + <code>ProductSpecs</code> → validate lần cuối bằng <code>ProductSchema</code> → lưu vào <code>products.json</code>.</p>
+<h3>Frontend với Svelte 5</h3>
+<p>Sau khi có data, mình xây frontend bằng Svelte 5 với <strong>faceted filter</strong> — kiểu lọc thông minh mà các tùy chọn sẽ tự động ẩn/hiện dựa trên context hiện tại. Ví dụ: nếu bạn đang lọc &quot;Xiaomi&quot;, thì dropdown RAM sẽ chỉ hiện các giá trị RAM có trong máy Xiaomi thôi, thay vì hiện hết rồi kết quả 0 sản phẩm.</p>
+<p>Bộ lọc hỗ trợ:</p>
+<ul>
+<li>Tìm theo tên</li>
+<li>Hãng sản xuất</li>
+<li>Tình trạng (mới/cũ)</li>
+<li>RAM, bộ nhớ trong</li>
+<li>Dòng chip (Snapdragon, Dimensity, MediaTek...)</li>
+<li>Loại màn hình (AMOLED, OLED, IPS...)</li>
+<li>Cổng sạc</li>
+<li>Dung lượng pin tối thiểu</li>
+<li>Có/không có sạc nhanh</li>
+<li>Khoảng giá</li>
+<li>Hệ thống loa (Stereo/Mono)</li>
+<li>Tình trạng kho</li>
+</ul>
+<p>Ngoài ra còn có GitHub Actions chạy tự động mỗi ngày lúc 0 giờ để crawl dữ liệu mới và re-deploy lên GitHub Pages. Xịn chứ?</p>
+<hr>
+<h2>Kết quả</h2>
+<p>Sau khoảng 2 ngày code (vừa làm vừa debug, vừa chửi CSRF token), crawler chạy ngon, kéo về được gần 2 nghìn sản phẩm.</p>
+<p>Mình bật giao diện lên, set filter:</p>
+<ul>
+<li>RAM: 8GB</li>
+<li>Storage: 256GB  </li>
+<li>Chip: Dimensity</li>
+<li>Màn hình: AMOLED</li>
+<li>Pin: <code>&gt;= 5000mAh</code></li>
+<li>Giá: <code>&lt;= 5 triệu</code></li>
+</ul>
+<p><strong>Kết quả: 2 chiếc máy.</strong></p>
+<p>Hai chiếc máy hoàn hảo trên giấy tờ. Mình mừng lắm, chụp màn hình, paste vào chat với vợ: <em>&quot;Em ơi anh tìm được rồi nè!&quot;</em></p>
+<hr>
+<h2>Cái kết... không ai ngờ tới</h2>
+<p>Mình gọi điện cho MobileCity.</p>
+<p>Hỏi máy A → <em>&quot;Dạ máy đó bên em hết xách tay rồi anh ơi, chỉ còn hàng chính hãng thôi.&quot;</em></p>
+<p>Hỏi máy B → <em>&quot;Máy đó cũng vậy anh ơi, xách tay hết lâu rồi.&quot;</em></p>
+<p>...</p>
+<p>Mình ngồi nhìn cái giao diện filter đẹp long lanh mà mình mất 2 ngày build, với kết quả 2 sản phẩm bây giờ thực tế đều <strong>hết hàng</strong>.</p>
+<p>Vợ hỏi: <em>&quot;Tìm được chưa anh?&quot;</em></p>
+<p>Mình: <em>&quot;...Tìm được rồi. Nhưng hết hàng.&quot;</em></p>
+<p>Vợ: <em>&quot;...&quot;</em></p>
+<hr>
+<h2>Bài học rút ra</h2>
+<ol>
+<li><p><strong>Dữ liệu trên web không phải lúc nào cũng phản ánh thực tế</strong> — website hiển thị &quot;còn hàng&quot; nhưng thực tế kho đã hết lâu.</p>
+</li>
+<li><p><strong>Đôi khi giải pháp kỹ thuật không phải câu trả lời</strong> — bước đơn giản nhất là gọi điện hỏi trước.</p>
+</li>
+<li><p><strong>Nhưng viết crawler thì vẫn vui</strong> — mình học được cách xử lý CSRF token, faceted filtering, Svelte 5 runes, Zod validation pipeline... Không hoàn toàn vô nghĩa.</p>
+</li>
+<li><p><strong>Vợ tốt thật sự</strong> — đưa tiền mua điện thoại mà chồng dành 2 ngày viết code rồi cuối cùng vẫn chưa mua được máy. Cô ấy không nói gì thêm, chỉ cười.</p>
+</li>
+</ol>
+<hr>
+<p><em>Code của dự án này được public tại <a href="https://github.com/uongsuadaubung/mobile-city">github.com/uongsuadaubung/mobile-city</a> và bạn có thể trải nghiệm bộ lọc tại <a href="https://uongsuadaubung.github.io/mobile-city/">uongsuadaubung.github.io/mobile-city</a>. Nếu bạn cũng đang tìm máy xách tay nội địa Trung và muốn có công cụ filter xịn hơn MobileCity, có thể clone về dùng — chỉ cần nhớ <strong>gọi điện xác nhận còn hàng trước</strong> khi mừng. :))</em></p>
+</article></div>
+  </body>
+</html>

@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Single Page Apps for GitHub Pages Redirect Decoder -->
+    <script type="text/javascript">
+      (function(l) {
+        if (l.search[1] === '/' ) {
+          var decoded = l.search.slice(1).split('&').map(function(s) { 
+            return s.replace(/~and~/g, '&')
+          }).join('?');
+          window.history.replaceState(null, null,
+              l.pathname.slice(0, -1) + decoded + l.hash
+          );
+        }
+      }(window.location))
+    </script>
+    <meta name="author" content="Hà Mạnh Kiên (uongsuadaubung)" />
+    <meta name="description" content="Công cụ hỗ trợ bóc tách và tải tài liệu/slide từ Slideshare nhanh chóng." />
+    <meta property="og:title" content="Tự code tool tải tài liệu Slideshare và đóng gói thành Web App — uongsuadaubung" />
+    <meta property="og:description" content="Công cụ hỗ trợ bóc tách và tải tài liệu/slide từ Slideshare nhanh chóng." />
+    <meta property="og:type" content="website" />
+    <title>Tự code tool tải tài liệu Slideshare và đóng gói thành Web App — uongsuadaubung</title>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Hà Mạnh Kiên",
+      "alternateName": "uongsuadaubung",
+      "jobTitle": "Full Stack Web Developer",
+      "email": "k97.dev@gmail.com",
+      "telephone": "+84868931497",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Hà Nội",
+        "addressCountry": "VN"
+      },
+      "alumniOf": {
+        "@type": "EducationalOrganization",
+        "name": "Đại học Mở Hà Nội"
+      },
+      "sameAs": [
+        "https://github.com/uongsuadaubung"
+      ]
+    }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DrYRquR4.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DaAWQ7E0.css">
+    <link rel="canonical" href="https://uongsuadaubung.github.io/blog/tu-lam-slideshare-downloader/" />
+  </head>
+  <body>
+    <div id="root"><article class="markdown-body" style="max-width:800px;margin:40px auto;padding:0 20px;font-family:sans-serif;line-height:1.6;"><h1>Tự code tool tải tài liệu Slideshare và đóng gói thành Web App</h1><p>Chuyện là hôm nọ, đang mổ cò hì hục fix bug thì tự dưng bà chị gái nhắn tin nhờ tải hộ cái tài liệu trên Slideshare. Chị bảo lướt thấy hay quá mà lại ngại đăng ký tài khoản lằng nhằng, nhờ mình tải hộ file PDF về xem cho tiện. Mình lẩm bẩm trong miệng đoạn lên Google gõ &#39;Slideshare downloader&#39; xem có rổ web tự động nào không.</p>
+<p>Tìm đại một công cụ tải trực tuyến rồi dán link vào, nhưng trong lúc ngồi đợi mòn mỏi server của họ tải file, cơn tò mò nghề nghiệp nổi lên. Mình bật tính năng F12 lên xem các công cụ online này sử dụng mánh khóe gì để bóc tách tệp.</p>
+<p>Ngồi khảo sát cấu trúc DOM của trang tải, sau đó lượn sang đọc DOM gốc của trang Slideshare thì mình chợt nhận ra... đáp án nằm ngay trước mắt!</p>
+<h2>1. Phát hiện cơ chế và Script đầu tay</h2>
+<p>Hóa ra thay vì bóc tách API ngầm quá cao siêu, hệ thống Slideshare xử lý mặt tiền khá đơn giản: họ nén nguyên tất cả các link ảnh của từng slide vào ngay bên trong một thẻ <code>div</code> bí mật mang ID <code>#new-player</code>. Không những thế, ảnh còn được chia sẵn ra 3 kích thước để lựa chọn: <code>320w</code>, <code>638w</code>, và rõ nét <code>2048w</code>.</p>
+<p>Các công cụ downloader trực tuyến thực tế chỉ làm nghiệp vụ cạo dữ liệu DOM (scrape) để gom toàn bộ danh sách link ảnh này lại, tải về và nén lại thành 1 file PDF nguyên xi.</p>
+<p>Thấy quy trình này quá ư là dễ đoán, mình mở ngay con IDE lên, viết một đoạn Script bằng Puppeteer + Typescript với tư duy thực dụng để lách luật. Khởi động Puppeteer chạy headless, trỏ đến URL của tài liệu, chờ thẻ <code>#new-player</code> xuất hiện rồi bắt đầu dùng Regex chọc lấy hết các đuôi phân giải <code>2048w</code>.</p>
+<pre><code class="language-typescript">// Trích xuất đoạn mã chứa link
+const htmlContent = await page.$eval(&#39;#new-player&#39;, el =&gt; el.innerHTML?.trim());
+
+// Quăng regex vô tìm toàn bộ link jpg siêu nét
+const regex = new RegExp(`https?:\\/\\/[^\\s&quot;]+\\.jpg(?=\\s${job.size}w)`, &quot;g&quot;);
+const matches: string[] = htmlContent.match(regex) || [];
+</code></pre>
+<p>Sau khi có link ảnh, mình lôi thư viện <code>pdf-lib</code> và <code>sharp</code> ra để sắp xếp ảnh thành một trang PDF. Nhồi buffer ảnh vào trang PDF rồi lưu lại thế là xong, vứt file ném trả bà chị. Quá đơn giản... nếu câu chuyện chỉ dừng lại ở đây.</p>
+<h2>2. Thiết kế giao diện web</h2>
+<p>Sau khi code xong script chạy trên terminal, mình muốn đóng gói nó thành một giao diện web đơn giản để dễ sử dụng hơn thay vì gõ dòng lệnh. Mình quyết định dựng một Web App nhỏ để bất kỳ ai có link đều dễ dàng dán vào và tải được luôn.</p>
+<p>Mình dựng server Express, dùng EJS làm giao diện nhập URL, và kết nối MongoDB để lưu trạng thái tải file của từng user. Cứ tưởng ném cái hàm tạo PDF hôm qua vào trong Router của Express là xong. Mình chạy thử và mở 2 tab lên test tính năng tải song song.</p>
+<p>Tuy nhiên, khi thử tải song song ở 2 tab khác nhau, server lập tức phản hồi rất chậm.</p>
+<p>Sau khi tìm hiểu, mình phát hiện ra vấn đề: quá trình dùng <code>sharp</code> để convert Buffer ảnh và <code>pdf-lib</code> để vẽ lại file PDF là một tác vụ nặng ngốn nhiều tài nguyên CPU. Vì Node.js chạy đơn luồng (Single Thread), nên khi luồng chính xử lý tạo PDF cho tab thứ nhất, nó sẽ chặn luồng request của các tab khác, khiến người dùng khác không thể truy cập được server.</p>
+<h2>3. Áp dụng Worker Threads</h2>
+<p>Để giải quyết vấn đề nghẽn tiến trình, mình tiến hành tái cấu trúc. Bài toán giờ đây là phải đưa toàn bộ khâu tải ảnh và tạo PDF ra một luồng riêng. Lời giải xuất hiện: <code>worker_threads</code>.</p>
+<p>Mình ném đoạn code tạo PDF sang một file độc lập tên là <code>pdfWorker.ts</code>. Tuy nhiên, nếu có quá nhiều người dùng gọi tạo PDF cùng lúc, hệ thống sẽ dễ bị quá tải. Mình thiết lập một lớp <strong>WorkerPool</strong> để giới hạn số luồng hoạt động. </p>
+<p>Dưới đây là cách mình triển khai WorkerPool:</p>
+<pre><code class="language-typescript">import { Worker } from &#39;worker_threads&#39;;
+// ...
+
+class WorkerPool {
+  private pool: Worker[] = [];
+  private readonly maxWorkers: number = 5; // Chỉ cho phép chạy tối đa 5 luồng tải PDF
+  
+  async createPdf(imageUrls: string[], job: DownloadItemModel) {
+    // Nếu số luồng đang bận chạm ngưỡng, bắt request đợi nghỉ một lát
+    if (this.pool.length &gt;= this.maxWorkers) {
+      await this.waitForAvailableWorker();
+    }
+    
+    // Khởi tạo luồng thợ phụ
+    const workerPath = path.resolve(__dirname, &quot;../worker/pdfWorker.js&quot;);
+    const worker = new Worker(workerPath, {
+      workerData: { job, imageUrls },
+    });
+    
+    this.pool.push(worker);
+    
+    worker.on(&quot;exit&quot;, (code) =&gt; {
+      // Chạy xong, đá nó ra khỏi Pool để nhường chỗ cho request khác
+      this.pool = this.pool.filter(w =&gt; w !== worker);
+    });
+  }
+  
+  private waitForAvailableWorker(): Promise&lt;void&gt; {
+    return new Promise(resolve =&gt; {
+      const interval = setInterval(() =&gt; { // Tái kiểm tra mỗi 100ms
+        if (this.pool.length &lt; this.maxWorkers) {
+          clearInterval(interval);
+          resolve();
+        }
+      }, 100);
+    });
+  }
+}
+</code></pre>
+<p>Mỗi User gửi request xong, server lập tức đẩy dữ liệu ID xuống MongoDB và đưa công việc vào hàng chờ của WorkerPool. Người dùng chỉ việc nhìn trang Web hiển thị thông báo &quot;Đang xử lý PDF...&quot; lặp lại sau mỗi 2 giây, trong khi ở dưới hầm máy rầm rập chạy. Xong xuôi, database cập nhật <code>isDone = true</code> và quăng nút tải về cho người dùng nhấn.</p>
+<h2>4. Chốt sổ</h2>
+<p>Gửi luôn cái link web public sang cho bà chị dùng, thấy bả thao tác tải file mượt mà là thấy vui rồi. Hành trình phát triển từ một dòng script đơn giản đến mô hình xử lý bất đồng bộ và tối ưu bằng Worker tuy mất chút thời gian tìm tòi, nhưng đổi lại hệ thống hoạt động ổn định và hiệu quả hơn.</p>
+<p>Tất cả code dự án Server + Worker này, anh em nào quan tâm cách setup Express với Puppeteer và MongoDB thì cứ sang repo Github của mình tham khảo nhé. Cứ clone về, điền URI MongoDB vô là chạy được ngay. Hẹn anh em ở một chia sẻ hệ thống kế tiếp :v!</p>
+</article></div>
+  </body>
+</html>
