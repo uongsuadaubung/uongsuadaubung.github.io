@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Single Page Apps for GitHub Pages Redirect Decoder -->
+    <script type="text/javascript">
+      (function(l) {
+        if (l.search[1] === '/' ) {
+          var decoded = l.search.slice(1).split('&').map(function(s) { 
+            return s.replace(/~and~/g, '&')
+          }).join('?');
+          window.history.replaceState(null, null,
+              l.pathname.slice(0, -1) + decoded + l.hash
+          );
+        }
+      }(window.location))
+    </script>
+    <meta name="author" content="Hà Mạnh Kiên (uongsuadaubung)" />
+    <meta name="description" content="Hành trình từ chuỗi ngày ức chế vì lỗi nhảy phím, tự động viết hoa của các bộ gõ cũ cho tới quyết định tự tay viết Kora bằng Rust với triết lý Profiles-first." />
+    <meta property="og:title" content="Chuyện chiếc bộ gõ tự làm: Khi mình chán cảnh sống chung với lỗi vặt — uongsuadaubung" />
+    <meta property="og:description" content="Hành trình từ chuỗi ngày ức chế vì lỗi nhảy phím, tự động viết hoa của các bộ gõ cũ cho tới quyết định tự tay viết Kora bằng Rust với triết lý Profiles-first." />
+    <meta property="og:type" content="website" />
+    <title>Chuyện chiếc bộ gõ tự làm: Khi mình chán cảnh sống chung với lỗi vặt — uongsuadaubung</title>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Hà Mạnh Kiên",
+      "alternateName": "uongsuadaubung",
+      "jobTitle": "Full Stack Web Developer",
+      "email": "k97.dev@gmail.com",
+      "telephone": "+84868931497",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Hà Nội",
+        "addressCountry": "VN"
+      },
+      "alumniOf": {
+        "@type": "EducationalOrganization",
+        "name": "Đại học Mở Hà Nội"
+      },
+      "sameAs": [
+        "https://github.com/uongsuadaubung"
+      ]
+    }
+    </script>
+    <script type="module" crossorigin src="/assets/index-BCdJeSnw.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DaAWQ7E0.css">
+    <link rel="canonical" href="https://uongsuadaubung.github.io/blog/kora-chuyen-tu-lam-bo-go/" />
+  </head>
+  <body>
+    <div id="root"><article class="markdown-body" style="max-width:800px;margin:40px auto;padding:0 20px;font-family:sans-serif;line-height:1.6;"><h1>Chuyện chiếc bộ gõ tự làm: Khi mình chán cảnh sống chung với lỗi vặt</h1><p>Là dân ngồi gõ phím kiếm cơm mỗi ngày, chắc anh em cũng đồng ý với mình một điều: bộ gõ tiếng Việt giống như không khí vậy. Bình thường hít thở êm ru thì chẳng mấy ai để ý, nhưng chỉ cần nó hụt hơi hay &quot;nghẹn&quot; một nhịp thôi là cả ngày hôm đó coi như tụt hết cảm hứng làm việc.</p>
+<p>Và câu chuyện dưới đây là hành trình mình đi tìm một chút &quot;không khí trong lành&quot; cho đôi bàn tay của mình.</p>
+<h2>1. Mối lương duyên trắc trở với các bộ gõ quen thuộc</h2>
+<p>Nói về bộ gõ trên Windows thì cái tên đầu tiên ai cũng nghĩ tới chắc chắn là <strong>UniKey</strong>. Đây là tượng đài gắn liền với tuổi thơ của biết bao thế hệ rồi. Mình cũng dùng UniKey suốt nhiều năm trời. Nhưng thú thật, thi thoảng gõ trên thanh địa chỉ trình duyệt hay trong mấy phần mềm mới, nó cứ hay bị nuốt chữ, mất dấu hoặc nhân đôi ký tự một cách khó hiểu. Cứ lâu lâu đang gõ bon tay lại phải backspace xóa đi gõ lại từ đầu, nghĩ cũng hơi cụt hứng.</p>
+<p>Thấy vậy, mình chuyển qua dùng <strong>EVKey</strong>. Phải công nhận lúc mới sang, EVKey đem lại cảm giác hiện đại hơn hẳn: sửa được lỗi gõ thanh địa chỉ, giao diện gọn gàng, dùng khá thích. Mình đã nghĩ thôi thế này là yên ổn rồi. Ai ngờ dùng được một thời gian thì tác giả dừng phát triển. Windows thì cập nhật liên tục, các ứng dụng mới ra đời ngày một nhiều, mà công cụ không còn người bảo trì thì sớm muộn gì cũng phát sinh vấn đề.</p>
+<p>Thế là mình lại khăn gói đi tìm bến đỗ mới. Lần này mình chọn <strong>OpenKey</strong> vì là mã nguồn mở, nhìn rất hứa hẹn. Nhưng ở đời đúng là &quot;tránh vỏ dưa lại gặp vỏ dừa&quot;. Dùng được vài hôm, mình bắt đầu gặp một cái lỗi dở khóc dở cười: <strong>tự động viết hoa khi bỏ dấu</strong>.</p>
+<p>Anh em cứ tưởng tượng đang nhắn tin hay viết tài liệu rất nghiêm túc, gõ chữ bình thường mà vừa ấn phím bỏ dấu một cái là nó nhảy tưng tửng thành chữ hoa, kiểu như đang quát vào mặt người ta vậy. Mỗi lần như thế, mình lại phải lụi hụi xóa đi, tắt bộ gõ, gõ lại bằng tiếng Anh rồi mới dám bật lại.</p>
+<p>Cảm giác sống chung với những cái lỗi lắt nhắt như thế kéo dài suốt một thời gian, vừa phiền vừa ức chế.</p>
+<h2>2. Khi sự kiên nhẫn chạm đáy: Thôi thì tự làm lấy một bản!</h2>
+<p>Một buổi tối ngồi trước màn hình, sau khi lại vừa bị cái lỗi viết hoa kia &quot;chơi khăm&quot; thêm lần nữa, mình bỗng tự hỏi:</p>
+<blockquote>
+<p><em>&quot;Ủa, sao mình là lập trình viên mà ngày nào cũng phải chịu đựng cái lỗi này nhỉ? Tại sao không tự viết một bộ gõ cho riêng mình dùng cho vừa ý?&quot;</em></p>
+</blockquote>
+<p>Nghĩ là làm. Sẵn dịp dạo gần đây mình đang rất có hứng thú với <strong>Rust</strong> – một ngôn ngữ nổi tiếng về độ an toàn, nhẹ và chạy siêu nhanh – mình quyết định mở project mới và bắt tay vào gõ những dòng đầu tiên.</p>
+<p>Ban đầu, tham vọng của mình bé tí tẹo. Trong lịch sử commit đầu tiên, mình chỉ đặt cho nó cái tên tạm là <strong>MKey</strong>. Mục tiêu lúc đó đơn giản đến mức không thể đơn giản hơn: làm sao gõ được tiếng Việt Telex tử tế, mượt mà, gõ trên trình duyệt không bị nhảy chữ lung tung, và quan trọng nhất là <strong>tuyệt đối không được tự ý viết hoa khi bỏ dấu</strong>. Chỉ cần chừng đó là mình đã mãn nguyện lắm rồi.</p>
+<p>Giao diện MKey hồi đó trông đơn sơ và mộc mạc đúng chất Win32 truyền thống, gói gọn vỏn vẹn trong 3 tab cơ bản:</p>
+<p><img src="/images/kora-chuyen-tu-lam-bo-go/ui-tab-bogo.png" alt="Tab Bộ gõ MKey thời kỳ đầu"></p>
+<p><em>Tab &quot;Bộ gõ&quot; thời kỳ đầu: lúc này mới chỉ tập trung giải quyết các bài toán cốt lõi nhất gồm bảng mã, kiểu gõ và cơ chế bỏ dấu sao cho chuẩn chỉnh.</em></p>
+<p><img src="/images/kora-chuyen-tu-lam-bo-go/ui-tab-gotat.png" alt="Tab Gõ tắt MKey thời kỳ đầu"></p>
+<p><em>Tab &quot;Gõ tắt&quot;: bảng macro đơn sơ ban đầu để gõ nhanh một vài cụm từ viết tắt thường dùng.</em></p>
+<p><img src="/images/kora-chuyen-tu-lam-bo-go/ui-tab-hethong.png" alt="Tab Hệ thống MKey thời kỳ đầu"></p>
+<p><em>Tab &quot;Hệ thống&quot;: các tùy chọn quen thuộc như khởi động cùng Windows hay chạy với quyền Administrator.</em></p>
+<p>Mất vài ngày hí hoáy, bản thử nghiệm đầu tiên chạy được. Tự tay gõ từng dòng tiếng Việt trên chính công cụ mình viết ra, cảm giác nó sướng và đã tay lạ lùng. Cái cảm giác gõ chữ nào ăn chữ đó, không còn nơm nớp lo bị giật hay nhảy phím bậy bạ, đúng là nhẹ nhõm hẳn.</p>
+<h2>3. Nhưng dùng thực tế mới thấy: Bộ gõ đâu chỉ là để gõ chữ?</h2>
+<p>Sau khi giải quyết xong bài toán gõ dấu cơ bản, mình bắt đầu dùng nó làm bộ gõ chính hàng ngày trên máy tính. Và chính lúc này, những vấn đề thực tế trong thói quen làm việc mới bắt đầu lộ ra.</p>
+<p>Mình nhận ra một điều mà trước đây các bộ gõ cũ chưa từng làm mình thỏa mãn: <strong>Mỗi ứng dụng chúng ta dùng hàng ngày lại có một nhu cầu về bàn phím hoàn toàn khác nhau</strong>.</p>
+<ul>
+<li><strong>Lúc vào game:</strong> Mình chỉ muốn bộ gõ tự tắt tiếng Việt ngay lập tức. Chứ đang combat căng thẳng mà bấm di chuyển <code>W-A-S-D</code> nó lại nhảy thành chữ <code>Ư</code> hay <code>S</code> có dấu thì coi như toang. Chưa kể nhiều lúc bấm nhầm phím Windows hay CapsLock là bị văng ra màn hình desktop.</li>
+<li><strong>Lúc mở công cụ lập trình / Terminal:</strong> Mình chủ yếu gõ lệnh và code bằng tiếng Anh, nhưng thi thoảng lại cần viết ghi chú (comment) hay tin nhắn commit bằng tiếng Việt. Nếu phím tắt bộ gõ xung đột với phím tắt của trình soạn thảo thì cực kỳ bực mình.</li>
+<li><strong>Lúc mở Telegram, trình duyệt, Word:</strong> Lúc này mới thực sự cần gõ tiếng Việt hết công suất, kèm theo cả gõ tắt, macro từ ngữ hay dùng.</li>
+</ul>
+<p>Ở các bộ gõ truyền thống, giải pháp duy nhất là: <strong>tự làm bằng tay</strong>. Cứ mỗi lần chuyển giữa game, trình duyệt và phần mềm làm việc, mình lại phải nhớ bấm tổ hợp phím chuyển chế độ Anh - Việt. Ngày chuyển qua lại cả trăm lần, vừa mất tập trung vừa mệt mỏi. Phím tắt thì bị cố định, không thể tùy biến sâu theo ý thích cá nhân.</p>
+<p>Thế là mình nhận ra: Nếu chỉ làm một bộ gõ đơn thuần để bỏ dấu tiếng Việt thì chưa đủ. Thứ mình thực sự cần là một công cụ hiểu được ngữ cảnh mình đang làm gì trên màn hình.</p>
+<h2>4. &quot;Quay xe&quot; sang triết lý: Profiles First</h2>
+<p>Nghĩ thông suốt điều đó, mình quyết định tái cấu trúc lại toàn bộ dự án và chuyển hướng sang mô hình <strong>Profiles First</strong>. Đồng thời, cái tên <strong>Kora</strong> chính thức ra đời.</p>
+<p>Ý tưởng cốt lõi của Kora rất đơn giản và tự nhiên:</p>
+<p>Mọi thứ sẽ bắt đầu từ một <strong>Profile Root</strong> (cấu hình gốc). Đây là nơi chứa toàn bộ thiết lập mặc định của bạn: kiểu gõ bạn thích, phím tắt quen thuộc, tốc độ gõ...</p>
+<p>Từ Profile Root đó, mỗi ứng dụng bạn dùng sẽ là một <strong>Profile con</strong>:</p>
+<ul>
+<li>Mặc định, profile con sẽ <strong>kế thừa toàn bộ</strong> những gì mà root đang có.</li>
+<li>Ứng dụng nào có nhu cầu đặc biệt thì bạn chỉ việc <strong>ghi đè (override)</strong> đúng phần cài đặt đó mà thôi.</li>
+</ul>
+<p>Chẳng hạn:</p>
+<ul>
+<li>Với game: Profile con chỉ cần ghi đè một dòng duy nhất: <em>Mặc định tiếng Anh, khóa phím Windows</em>. Còn lại mọi thứ khác cứ để nguyên.</li>
+<li>Với IDE lập trình: Ghi đè tổ hợp phím chuyển nhanh hoặc bật chế độ gõ thông minh riêng.</li>
+<li>Khi bạn chuyển cửa sổ làm việc: Kora sẽ tự động nhận diện ứng dụng đang mở để áp dụng cấu hình tương ứng, nhẹ nhàng và âm thầm như thể chưa từng có sự can thiệp nào.</li>
+</ul>
+<p>Không còn cảnh phải nhớ bật tắt phím bằng tay, không còn lo bấm nhầm phím khi đang chơi game, mọi thứ cứ tự động vận hành trơn tru theo đúng thói quen của mình.</p>
+<p><img src="/images/kora-chuyen-tu-lam-bo-go/kora-ui-bogo.png" alt="Giao diện mới của Kora với hệ thống Profiles"></p>
+<p><em>Bảng điều khiển mới của Kora: thanh bên trái là danh sách các Profile theo từng app (như PowerShell, Firefox...), bên phải là các thiết lập gõ tương ứng.</em></p>
+<h3>Tinh tế đến từng ô text: Bấm <code>Ctrl + ~</code> là xong chuyện</h3>
+<p>Sau khi làm xong hệ thống Profiles theo từng app, mình tưởng như mọi chuyện đã viên mãn. Nhưng dùng thực tế một thời gian, lại lòi ra một tình huống trớ trêu: <strong>Ngay trong cùng một ứng dụng, không phải ô nhập liệu nào cũng có &quot;tính nết&quot; giống nhau!</strong></p>
+<p>Điển hình nhất là mấy ông trình duyệt như Chrome hay Firefox:</p>
+<ul>
+<li>Lúc bạn gõ tài liệu trên Google Docs hay gõ bình luận Facebook thì êm ru, mượt mà không có gì để chê.</li>
+<li>Nhưng hễ vừa trỏ chuột lên thanh địa chỉ (URL) hay thanh tìm kiếm để gõ là y như rằng dở chứng: do trình duyệt có tính năng tự động gợi ý và bôi đen từ khóa, bộ gõ bỏ dấu một cái là rất dễ bị nuốt chữ hoặc nhân đôi ký tự (kiểu gõ &quot;gõ&quot; nó lại thành &quot;ggõ&quot;).</li>
+<li>Hay trong một số game, cửa sổ dòng lệnh và phần mềm đồ họa đặc thù: ô nhập liệu của họ lại khá &quot;kén&quot; phím, gõ kiểu thông thường không ăn mà phải dùng phương pháp sao chép rồi dán (Clipboard paste) thì mới hiển thị trọn vẹn tiếng Việt.</li>
+</ul>
+<p>Chẳng lẽ vì một thanh địa chỉ bị lỗi mà mình lại phải đổi phương pháp gõ cho nguyên cả cái trình duyệt? Như thế thì quá bất tiện.</p>
+<p>Để giải quyết cái sự &quot;ẩm ương&quot; này, Kora tiến thêm một bước: <strong>chăm sóc và thiết lập phương pháp gửi phím riêng cho từng ô text cụ thể</strong>.</p>
+<p>Và để không biến việc này thành một cực hình kỹ thuật (bắt người dùng đi tìm mã định danh hay cấu hình lằng nhằng), mình thiết kế nó hoạt động cực kỳ trực quan chỉ qua 3 bước:</p>
+<ol>
+<li>Nhấp con trỏ chuột vào ô text đang &quot;khó ở&quot; (như thanh địa chỉ trình duyệt).</li>
+<li>Bấm nhẹ tổ hợp phím tắt (mặc định là <code>Ctrl + ~</code>).</li>
+<li>Bùm! Kora lập tức tự động &quot;bắt trọn&quot; ô text đó, thêm ngay vào danh sách ngoại lệ của ứng dụng (nếu app đó chưa có Profile riêng, Kora sẽ tự tạo luôn một Profile mới kèm thông báo nhỏ xinh ở góc màn hình).</li>
+</ol>
+<p>Từ đây, bạn chỉ việc chọn phương pháp gửi phím tương ứng: ô này cần cơ chế chống nuốt chữ khi gợi ý tự động, hay cần gửi qua khay nhớ tạm (clipboard). Chọn xong là xong, từ lần sau cứ mỗi khi con trỏ chuột nhảy vào đúng ô đó, Kora sẽ tự động chuyển sang phương pháp gửi phím tối ưu nhất, còn ra ngoài các ô văn bản khác thì mọi thứ vẫn vận hành theo kiểu tiêu chuẩn siêu tốc.</p>
+<p><img src="/images/kora-chuyen-tu-lam-bo-go/kora-ui-go-tat.png" alt="Tab Gõ tắt trên giao diện mới"></p>
+<p><em>Tab Gõ tắt cũng được thiết kế lại gọn gàng, cho phép gõ tắt linh hoạt ngay cả khi đang để chế độ tiếng Anh.</em></p>
+<h2>5. Chuyện chiếc &quot;Tab Quản Lý Phím&quot;: Từ một nút bấm nhỏ đến trung tâm điều khiển</h2>
+<p>Nếu nhìn lại lịch sử các bản cập nhật của dự án, có một khu vực làm mình tốn không ít tâm sức nhưng cũng mang lại nhiều sự thỏa mãn nhất: <strong>Tab Quản lý phím</strong>.</p>
+<p>Ban đầu, mọi thứ xuất phát từ một nhu cầu rất nhỏ bé: mình ghét việc bị ép dùng các tổ hợp phím chuyển Anh - Việt cố định như <code>Ctrl + Shift</code> hay <code>Alt + Z</code>. Thế là mình làm một hộp thoại nhỏ xíu để tự do gán phím tắt chuyển chế độ theo ý mình thích.</p>
+<p>Nhưng một khi đã bước chân vào con đường &quot;tùy biến&quot;, lòng tham của một kẻ ngồi máy tính cả ngày bắt đầu trỗi dậy:</p>
+<ul>
+<li>Mình thấy phím <code>Caps Lock</code> trên bàn phím gần như chẳng bao giờ dùng tới, trong khi chiếm một vị trí cực kỳ đắc địa. Sao không đổi nó thành phím <code>Ctrl</code> hoặc <code>Esc</code> cho tiện tay khi code? Thế là tính năng <strong>Đổi phím (Remap)</strong> ra đời.</li>
+<li>Lúc vào game, phím <code>Windows</code> hay phím <code>Insert</code> là kẻ thù số một vì bấm nhầm một phát là văng game hoặc đè chữ. Vậy là tính năng <strong>Khóa phím (Key Blocker)</strong> xuất hiện.</li>
+</ul>
+<p>Càng làm, số lượng phím cần quản lý càng phình to. Để tránh màn hình cài đặt biến thành một mớ hỗn độn, mình quyết định tách hẳn thành một <strong>Tab Phím riêng biệt</strong>. Tại đây, mọi thứ được nâng cấp lên một nấc mới:</p>
+<ul>
+<li>Cho phép gán cả <strong>chuỗi phím tự động (Macro)</strong>: bấm một nút là nó tự thực hiện một chuỗi thao tác lặp đi lặp lại.</li>
+<li>Mỗi quy tắc đổi phím hay khóa phím đều có thể <strong>Bật / Tắt linh hoạt theo từng ứng dụng</strong>. Ở ngoài màn hình chung thì bật khóa phím Windows, nhưng vào Photoshop cần dùng phím Windows thì cấu hình con tự tắt quy tắc đó đi mà không làm ảnh hưởng đến cấu hình gốc.</li>
+</ul>
+<p>Và rồi... &quot;tai nạn&quot; xảy ra!</p>
+<p>Khi bạn gán quá nhiều thứ: phím chuyển tiếng Việt, phím đổi chức năng, phím khóa, phím macro... thì đến một ngày, chúng bắt đầu <strong>&quot;đá nhau&quot; chan chát</strong>. Có những lúc bấm một phím mà nó không chạy, hoặc nó kích hoạt cùng lúc hai chức năng khác nhau mà mình chẳng hiểu tại sao. Ngồi mò xem phím nào đang đè lên phím nào làm mình toát cả mồ hôi hột.</p>
+<p>Thế là mình lại ngồi làm thêm một màn hình <strong>Chẩn đoán &amp; Phát hiện xung đột phím</strong>. Mở tab phím ra là có ngay một bảng tổng quan: phím nào đang gán cho cái gì, quy tắc nào kế thừa từ đâu, và đặc biệt là nếu có hai phím đang dẫm chân lên nhau thì hệ thống sẽ giơ biển cảnh báo ngay lập tức. </p>
+<p><img src="/images/kora-chuyen-tu-lam-bo-go/kora-ui-quan-ly-phim.png" alt="Bảng tổng quan và chẩn đoán xung đột phím"></p>
+<p><em>Màn hình chẩn đoán phím tắt: liệt kê toàn bộ phím vật lý, chức năng, nguồn gốc toàn cục hay theo app, và trạng thái tối ưu 0 xung đột.</em></p>
+<p>Từ một ý định cỏn con là đổi phím tắt chuyển ngôn ngữ, tab phím đã âm thầm tiến hóa thành một &quot;trung tâm điều khiển&quot; thực thụ cho toàn bộ bàn phím của mình.</p>
+<h2>6. Thêm một chút gia vị cho vui tai</h2>
+<p>Trong quá trình hoàn thiện, mình còn tiện tay thêm vào một vài tính năng nho nhỏ để phục vụ sở thích cá nhân. Điển hình là tính năng giả lập âm thanh phím cơ.</p>
+<p>Nhiều hôm ngồi làm việc ở văn phòng hay quán cà phê, dùng bàn phím laptop gõ êm quá đôi lúc cũng thấy thiêu thiếu cảm giác. Thế là mình tích hợp luôn bộ phát âm thanh phím cơ vào Kora, chọn được cả chục loại switch khác nhau. Đeo tai nghe vào gõ cọc cạch vui tai phết, vừa có nhịp điệu làm việc mà lại không làm phiền người xung quanh.</p>
+<p><img src="/images/kora-chuyen-tu-lam-bo-go/kora-ui-am-thanh.png" alt="Tab Giả lập âm thanh gõ phím cơ"></p>
+<p><em>Tab Âm thanh gõ: tích hợp sẵn cả bộ switch nổi tiếng (Holy Panda, Cherry MX...), có cả nút nghe thử và chỉnh âm lượng trực tiếp.</em></p>
+<h2>Lời kết</h2>
+<p>Nhìn lại cả hành trình, từ một buổi tối bực mình vì cái lỗi tự động viết hoa của bộ gõ cũ, cho đến bây giờ khi đã có một công cụ vừa vặn cho riêng mình mỗi ngày, mình thấy rất vui.</p>
+<p>Kora sinh ra không phải để cạnh tranh hay so kè với bất kỳ tượng đài nào. Nó đơn giản là câu trả lời cho nhu cầu của chính bản thân mình: một bộ công cụ bàn phím gọn gàng, chạy mượt mà, hiểu được từng ứng dụng mình dùng và trên hết là không bao giờ làm phiền dòng suy nghĩ khi đang gõ phím.</p>
+<p>Đôi khi, giải pháp tốt nhất cho bản thân lại chính là thứ do chính tay mình tạo ra.</p>
+</article></div>
+  </body>
+</html>
